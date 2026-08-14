@@ -160,8 +160,18 @@ par envoi) — plutôt que d'afficher des chiffres inventés, ces KPI ont été 
   société), avec état lu/non lu. Cloche dans la topbar (`/notifications`), filtres par catégorie,
   "tout marquer comme lu".
 - **`activity_logs`** : désormais réellement alimentée (commande créée, statut modifié, invitation
-  envoyée, compte activé, société suspendue/réactivée) et consultable sur `/admin/activity`
-  avec filtres par type d'événement. Alimente aussi le bloc "Activité récente" du dashboard admin.
+  envoyée, compte activé, société suspendue/réactivée, produit créé/modifié) et consultable sur
+  `/admin/activity` avec filtres par type d'événement. Alimente aussi le bloc "Activité récente"
+  du dashboard admin.
+
+## Gestion du catalogue admin (`/admin/catalog`)
+
+- Liste avec recherche, filtre actif/désactivé, création de catégorie à la volée.
+- Création/édition de produit (référence, nom, catégorie, conditionnement, prix indicatif,
+  provenance, stockage, validité, caractéristiques techniques, description, actif/inactif).
+- Images et documents gérés **par URL** (pas d'upload de fichier — aucun stockage de type
+  Vercel Blob/S3 n'est configuré ; à ajouter si un vrai upload est nécessaire).
+- Toute création/modification de produit est tracée dans le journal d'activité.
 
 ## Ce qu'il faut encore confirmer
 
@@ -200,8 +210,6 @@ par envoi) — plutôt que d'afficher des chiffres inventés, ces KPI ont été 
   exact change l'implémentation.
 - **20. Détail société enrichi** (adresses, préférences dans la fiche complète) : la fiche
   actuelle montre déjà utilisateurs + statut ; les blocs adresses par société restent à ajouter.
-- **21-22. CRUD catalogue admin** (création/édition produit, upload photos) : gros chantier,
-  le catalogue reste alimenté par le seed/base pour l'instant, aucune UI de gestion.
 - **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
   pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
 - **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**
