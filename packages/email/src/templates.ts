@@ -1,0 +1,76 @@
+function layout(title: string, body: string): string {
+  return `<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#F1F5F9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 0;">
+      <tr><td align="center">
+        <table width="480" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border-radius:12px;overflow:hidden;">
+          <tr><td style="background:#0F172A;padding:24px 32px;">
+            <span style="color:#FFFFFF;font-size:18px;font-weight:600;letter-spacing:0.02em;">Marin Froid</span>
+          </td></tr>
+          <tr><td style="padding:32px;">
+            <h1 style="font-size:18px;color:#0F172A;margin:0 0 16px;">${title}</h1>
+            <div style="font-size:14px;line-height:1.6;color:#334155;">${body}</div>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+</html>`;
+}
+
+export function invitationEmail(params: { organizationName: string; activationUrl: string }) {
+  return {
+    subject: `Invitation à rejoindre le portail Marin Froid`,
+    html: layout(
+      "Vous êtes invité(e)",
+      `<p>Vous avez été invité(e) à rejoindre le portail de commande privé Marin Froid pour <strong>${params.organizationName}</strong>.</p>
+       <p><a href="${params.activationUrl}" style="display:inline-block;background:#0F172A;color:#FFFFFF;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;">Activer mon compte</a></p>`
+    ),
+  };
+}
+
+export function accountActivatedEmail(params: { fullName: string; loginUrl: string }) {
+  return {
+    subject: `Votre compte Marin Froid est actif`,
+    html: layout(
+      "Compte activé",
+      `<p>Bonjour ${params.fullName}, votre compte est désormais actif.</p>
+       <p><a href="${params.loginUrl}" style="color:#0F172A;font-weight:600;">Se connecter</a></p>`
+    ),
+  };
+}
+
+export function passwordResetEmail(params: { resetUrl: string }) {
+  return {
+    subject: `Réinitialisation de votre mot de passe`,
+    html: layout(
+      "Réinitialiser le mot de passe",
+      `<p>Cliquez sur le lien ci-dessous pour choisir un nouveau mot de passe. Ce lien expire dans 1 heure.</p>
+       <p><a href="${params.resetUrl}" style="display:inline-block;background:#0F172A;color:#FFFFFF;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;">Réinitialiser</a></p>`
+    ),
+  };
+}
+
+export function orderCreatedEmail(params: { reference: string; organizationName: string; itemCount: number; orderUrl: string; isForOps: boolean }) {
+  return {
+    subject: `Commande ${params.reference} ${params.isForOps ? "reçue" : "confirmée"}`,
+    html: layout(
+      params.isForOps ? "Nouvelle commande reçue" : "Commande confirmée",
+      `<p>${params.isForOps ? `Nouvelle commande de <strong>${params.organizationName}</strong>` : "Votre commande a bien été transmise à l'équipe Marin Froid."}</p>
+       <p>Référence : <strong>${params.reference}</strong> — ${params.itemCount} article(s)</p>
+       <p><a href="${params.orderUrl}" style="color:#0F172A;font-weight:600;">Voir la commande</a></p>`
+    ),
+  };
+}
+
+export function orderStatusUpdatedEmail(params: { reference: string; status: string; orderUrl: string }) {
+  return {
+    subject: `Commande ${params.reference} — statut mis à jour`,
+    html: layout(
+      "Statut de commande mis à jour",
+      `<p>La commande <strong>${params.reference}</strong> est maintenant : <strong>${params.status}</strong>.</p>
+       <p><a href="${params.orderUrl}" style="color:#0F172A;font-weight:600;">Voir la commande</a></p>`
+    ),
+  };
+}
