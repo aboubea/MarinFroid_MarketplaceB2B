@@ -67,43 +67,38 @@ async function main() {
     organizationId: demoOrg.id,
   });
 
+  // Catégories et références volontairement génériques : le catalogue réel de Marin Froid
+  // (cuisiniste pour la restauration professionnelle et la restauration collective) n'a pas
+  // encore été communiqué. À remplacer par le vrai catalogue dès qu'il est disponible.
   const [cat1] = await db
     .insert(productCategories)
-    .values({ name: "Poissons", slug: "poissons", position: 1 })
+    .values({ name: "Équipements", slug: "equipements", position: 1 })
     .returning();
   const [cat2] = await db
     .insert(productCategories)
-    .values({ name: "Crustacés", slug: "crustaces", position: 2 })
+    .values({ name: "Consommables & fournitures", slug: "consommables-fournitures", position: 2 })
     .returning();
 
   await db.insert(products).values([
     {
-      categoryId: cat1.id, sku: "POI-001", name: "Filet de cabillaud", unit: "kg",
-      origin: "Atlantique Nord", packaging: "Carton 5kg", indicativePrice: "42.50",
-      storageTemp: "Sous 0/4°C", shelfLife: "24 mois (surgelé)",
-      description: "Filets de cabillaud sans peau, sans arêtes, surgelés individuellement pour une utilisation à la demande.",
-      nutritionalInfo: "Énergie 82 kcal/344 kJ · Matières grasses 0,7g · Glucides 0g · Protéines 18g · Sel 0,2g",
+      categoryId: cat1.id, sku: "EQ-001", name: "Référence d'équipement A", unit: "unité",
+      packaging: "Unité", indicativePrice: "0.00",
+      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
     },
     {
-      categoryId: cat1.id, sku: "POI-002", name: "Pavé de saumon", unit: "kg",
-      origin: "Norvège", packaging: "Carton 5kg", indicativePrice: "34.80",
-      storageTemp: "Sous 0/4°C", shelfLife: "18 mois (surgelé)",
-      description: "Pavés de saumon avec peau, calibre régulier, idéal cuisson four ou plancha.",
-      nutritionalInfo: "Énergie 208 kcal/870 kJ · Matières grasses 13g · Glucides 0g · Protéines 20g · Sel 0,1g",
+      categoryId: cat1.id, sku: "EQ-002", name: "Référence d'équipement B", unit: "unité",
+      packaging: "Unité", indicativePrice: "0.00",
+      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
     },
     {
-      categoryId: cat2.id, sku: "CRU-001", name: "Crevettes entières crues", unit: "kg",
-      origin: "Madagascar", packaging: "Carton 2kg", indicativePrice: "18.90",
-      storageTemp: "Sous -18°C", shelfLife: "12 mois (surgelé)",
-      description: "Crevettes entières crues, calibre 30/40, décongélation rapide.",
-      nutritionalInfo: "Énergie 85 kcal/357 kJ · Matières grasses 0,8g · Glucides 0,5g · Protéines 19g · Sel 1,2g",
+      categoryId: cat2.id, sku: "CONS-001", name: "Référence de consommable A", unit: "unité",
+      packaging: "Lot", indicativePrice: "0.00",
+      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
     },
     {
-      categoryId: cat2.id, sku: "CRU-002", name: "Noix de Saint-Jacques", unit: "kg",
-      origin: "Manche", packaging: "Sachet 1kg", indicativePrice: "28.60",
-      storageTemp: "Sous -18°C", shelfLife: "10 mois (surgelé)",
-      description: "Noix de Saint-Jacques sans corail, calibre 10/20, IQF.",
-      nutritionalInfo: "Énergie 88 kcal/369 kJ · Matières grasses 0,6g · Glucides 3g · Protéines 17g · Sel 0,3g",
+      categoryId: cat2.id, sku: "CONS-002", name: "Référence de consommable B", unit: "unité",
+      packaging: "Lot", indicativePrice: "0.00",
+      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
     },
   ]);
 

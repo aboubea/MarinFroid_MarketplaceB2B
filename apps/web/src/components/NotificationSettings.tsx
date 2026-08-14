@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 interface EventSetting {
   id: string;
@@ -51,55 +53,80 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 }
 
 export function NotificationSettings() {
+  const toast = useToast();
   const [events, setEvents] = useState<EventSetting[]>([]);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [newEmail, setNewEmail] = useState("");
   const [newLabel, setNewLabel] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/notifications/events").then((r) => r.json()).then((d) => setEvents(d.events));
-    fetch("/api/admin/notifications/recipients").then((r) => r.json()).then((d) => setRecipients(d.recipients));
+    safeFetch<{ events: EventSetting[] }>("/api/admin/notifications/events").then((result) => {
+      if (result.ok && result.data) setEvents(result.data.events);
+      else toast.show(result.error ?? "Impossible de charger les événements.", "error");
+    });
+    safeFetch<{ recipients: Recipient[] }>("/api/admin/notifications/recipients").then((result) => {
+      if (result.ok && result.data) setRecipients(result.data.recipients);
+      else toast.show(result.error ?? "Impossible de charger les destinataires.", "error");
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function updateEvent(id: string, patch: Partial<EventSetting>) {
+    const previous = events;
     setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)));
     const event = events.find((e) => e.id === id);
     if (!event) return;
-    await fetch("/api/admin/notifications/events", {
+    const result = await safeFetch("/api/admin/notifications/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, customerEmailEnabled: event.customerEmailEnabled, opsEmailEnabled: event.opsEmailEnabled, ...patch }),
     });
+    if (!result.ok) {
+      setEvents(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour ce réglage.", "error");
+    }
   }
 
   async function addRecipient(e: React.FormEvent) {
     e.preventDefault();
     if (!newEmail) return;
-    const res = await fetch("/api/admin/notifications/recipients", {
+    const result = await safeFetch<{ recipient: Recipient }>("/api/admin/notifications/recipients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: newEmail, label: newLabel }),
     });
-    if (res.ok) {
-      const { recipient } = await res.json();
-      setRecipients((prev) => [...prev, recipient]);
+    if (result.ok && result.data) {
+      setRecipients((prev) => [...prev, result.data!.recipient]);
       setNewEmail("");
       setNewLabel("");
+      toast.show("Destinataire ajouté.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible d'ajouter ce destinataire.", "error");
     }
   }
 
   async function toggleRecipient(id: string, active: boolean) {
+    const previous = recipients;
     setRecipients((prev) => prev.map((r) => (r.id === id ? { ...r, active } : r)));
-    await fetch(`/api/admin/notifications/recipients/${id}`, {
+    const result = await safeFetch(`/api/admin/notifications/recipients/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ active }),
     });
+    if (!result.ok) {
+      setRecipients(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour ce destinataire.", "error");
+    }
   }
 
   async function deleteRecipient(id: string) {
+    const previous = recipients;
     setRecipients((prev) => prev.filter((r) => r.id !== id));
-    await fetch(`/api/admin/notifications/recipients/${id}`, { method: "DELETE" });
+    const result = await safeFetch(`/api/admin/notifications/recipients/${id}`, { method: "DELETE" });
+    if (!result.ok) {
+      setRecipients(previous);
+      toast.show(result.error ?? "Impossible de retirer ce destinataire.", "error");
+    }
   }
 
   return (

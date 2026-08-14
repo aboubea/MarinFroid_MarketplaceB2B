@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
+import { ListSkeleton } from "./Skeleton";
+import { Avatar } from "./Avatar";
+import { EmptyState } from "./EmptyState";
+import { IconPower, IconSearch, IconUserPlus } from "./icons";
 
 interface Member {
   id: string;
@@ -13,75 +19,146 @@ interface Member {
 const ROLE_LABELS: Record<string, string> = {
   org_admin: "Administrateur",
   org_buyer: "Acheteur",
-  org_viewer: "Utilisateur secondaire (lecture)",
+  org_viewer: "Utilisateur secondaire",
 };
 
 export function TeamManager({ currentUserId }: { currentUserId: string }) {
+  const toast = useToast();
   const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [showInvite, setShowInvite] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"org_buyer" | "org_viewer">("org_buyer");
   const [sending, setSending] = useState(false);
-  const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
 
   useEffect(() => {
-    fetch("/api/team/users").then((r) => r.json()).then((d) => setMembers(d.users ?? []));
+    safeFetch<{ users: Member[] }>("/api/team/users").then((result) => {
+      setLoading(false);
+      if (result.ok && result.data) {
+        setMembers(result.data.users ?? []);
+      } else {
+        toast.show(result.error ?? "Impossible de charger l'équipe.", "error");
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return members;
+    return members.filter((m) => m.fullName.toLowerCase().includes(q) || m.email.toLowerCase().includes(q));
+  }, [members, query]);
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
     setSending(true);
-    setStatus("idle");
-    const res = await fetch("/api/team/invite", {
+    const result = await safeFetch("/api/team/invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, role }),
     });
     setSending(false);
-    setStatus(res.ok ? "sent" : "error");
-    if (res.ok) setEmail("");
+    if (result.ok) {
+      setEmail("");
+      setShowInvite(false);
+      toast.show("Invitation envoyée.", "success");
+    } else {
+      toast.show(result.error ?? "Erreur lors de l'envoi de l'invitation.", "error");
+    }
   }
 
   async function toggleActive(id: string, active: boolean) {
+    const previous = members;
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, active } : m)));
-    await fetch(`/api/team/users/${id}/status`, {
+    const result = await safeFetch(`/api/team/users/${id}/status`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ active }),
     });
+    if (!result.ok) {
+      setMembers(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour cet utilisateur.", "error");
+    } else {
+      toast.show(active ? "Utilisateur réactivé." : "Utilisateur désactivé.", "success");
+    }
   }
 
   return (
     <div>
-      <div className="card" style={{ overflow: "hidden", marginBottom: 24 }}>
-        {members.map((m, idx) => (
-          <div key={m.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 20px", borderBottom: idx < members.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13.5 }}>{m.fullName}</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{m.email} · {ROLE_LABELS[m.role] ?? m.role}</div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span className={`badge ${m.active ? "badge-completed" : "badge-cancelled"}`}>{m.active ? "actif" : "désactivé"}</span>
-              {m.id !== currentUserId && m.role !== "org_admin" && (
-                <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => toggleActive(m.id, !m.active)}>
-                  {m.active ? "Désactiver" : "Réactiver"}
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <div className="search-input-wrap" style={{ flex: 1, minWidth: 220, maxWidth: 320 }}>
+          <IconSearch />
+          <input className="input" placeholder="Rechercher un membre..." value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+        <button className="btn-primary" style={{ display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setShowInvite((v) => !v)}>
+          <IconUserPlus /> Inviter un collaborateur
+        </button>
       </div>
 
-      <h2 style={{ fontSize: 15, marginBottom: 12 }}>Inviter un collaborateur</h2>
-      <form onSubmit={handleInvite} className="card" style={{ padding: 18, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <input className="input" style={{ flex: 1, minWidth: 200 }} type="email" placeholder="email@societe.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <select className="input" style={{ width: "auto" }} value={role} onChange={(e) => setRole(e.target.value as "org_buyer" | "org_viewer")}>
-          <option value="org_buyer">Acheteur</option>
-          <option value="org_viewer">Utilisateur secondaire (lecture)</option>
-        </select>
-        <button className="btn-primary" type="submit" disabled={sending}>{sending ? "Envoi..." : "Inviter"}</button>
-      </form>
-      {status === "sent" && <p style={{ color: "var(--color-success)", fontSize: 13, marginTop: 8 }}>Invitation envoyée.</p>}
-      {status === "error" && <p style={{ color: "var(--color-danger)", fontSize: 13, marginTop: 8 }}>Erreur lors de l'envoi.</p>}
+      {showInvite && (
+        <form onSubmit={handleInvite} className="card fade-up" style={{ padding: 18, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 20 }}>
+          <input className="input" style={{ flex: 1, minWidth: 200 }} type="email" placeholder="email@societe.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <select className="input" style={{ width: "auto" }} value={role} onChange={(e) => setRole(e.target.value as "org_buyer" | "org_viewer")}>
+            <option value="org_buyer">Acheteur</option>
+            <option value="org_viewer">Utilisateur secondaire (lecture)</option>
+          </select>
+          <button className="btn-primary" type="submit" disabled={sending}>{sending ? "Envoi..." : "Envoyer l'invitation"}</button>
+          <button className="btn-secondary" type="button" onClick={() => setShowInvite(false)}>Annuler</button>
+        </form>
+      )}
+
+      <div className="card" style={{ overflow: "hidden" }}>
+        {loading ? (
+          <div style={{ padding: 20 }}><ListSkeleton rows={4} /></div>
+        ) : filtered.length === 0 ? (
+          <EmptyState illustration="users" title="Aucun membre" description="Invitez un collaborateur pour qu'il accède au portail." />
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Membre</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Statut</th>
+                  <th style={{ textAlign: "right" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((m) => (
+                  <tr key={m.id}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <Avatar name={m.fullName} />
+                        <span style={{ fontWeight: 600 }}>{m.fullName}</span>
+                      </div>
+                    </td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{m.email}</td>
+                    <td>{ROLE_LABELS[m.role] ?? m.role}</td>
+                    <td>
+                      <span className={`status-dot ${m.active ? "on" : "off"}`}>{m.active ? "Actif" : "Désactivé"}</span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
+                      {m.id !== currentUserId && m.role !== "org_admin" ? (
+                        <button
+                          className="icon-btn danger"
+                          title={m.active ? "Désactiver" : "Réactiver"}
+                          onClick={() => toggleActive(m.id, !m.active)}
+                        >
+                          <IconPower />
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: 12, color: "var(--color-text-faint)" }}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

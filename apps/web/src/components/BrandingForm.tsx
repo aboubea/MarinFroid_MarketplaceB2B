@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 function relativeLuminance(hex: string): number {
   const clean = hex.replace("#", "");
@@ -24,23 +26,29 @@ export function BrandingForm({
   initialPrimaryColor: string;
   initialSecondaryColor: string;
 }) {
+  const toast = useToast();
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor);
   const [secondaryColor, setSecondaryColor] = useState(initialSecondaryColor);
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saving, setSaving] = useState(false);
 
   const contrast = contrastRatio(primaryColor, "#FFFFFF");
   const lowContrast = contrast < 3;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("saving");
-    const res = await fetch("/api/admin/branding", {
+    setSaving(true);
+    const result = await safeFetch("/api/admin/branding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ logoUrl, primaryColor, secondaryColor }),
     });
-    setStatus(res.ok ? "saved" : "error");
+    setSaving(false);
+    if (result.ok) {
+      toast.show("Personnalisation appliquée globalement.", "success");
+    } else {
+      toast.show(result.error ?? "Erreur lors de l'enregistrement.", "error");
+    }
   }
 
   return (
@@ -71,11 +79,9 @@ export function BrandingForm({
       <div className="card" style={{ padding: 16, background: primaryColor }}>
         <span style={{ color: "#fff", fontWeight: 700 }}>Aperçu — Marin Froid</span>
       </div>
-      <button className="btn-primary" type="submit" disabled={status === "saving"}>
-        {status === "saving" ? "Enregistrement..." : "Enregistrer"}
+      <button className="btn-primary" type="submit" disabled={saving}>
+        {saving ? "Enregistrement..." : "Enregistrer"}
       </button>
-      {status === "saved" && <p style={{ color: "var(--color-success)", fontSize: 13 }}>Personnalisation appliquée globalement.</p>}
-      {status === "error" && <p style={{ color: "var(--color-danger)", fontSize: 13 }}>Erreur lors de l'enregistrement.</p>}
     </form>
   );
 }

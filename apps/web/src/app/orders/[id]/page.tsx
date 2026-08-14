@@ -2,10 +2,10 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, deliveryAddresses } from "@marin-froid/db";
+import { orders, orderItems, deliveryAddresses, orderStatusHistory } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { ReorderButton } from "@/components/ReorderButton";
-import { StatusTimeline } from "@/components/StatusTimeline";
+import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 
 export default async function OrderDetailPage({
   params,
@@ -24,17 +24,24 @@ export default async function OrderDetailPage({
   });
   if (!order) notFound();
 
-  const [items, address] = await Promise.all([
+  const [items, address, history] = await Promise.all([
     db.query.orderItems.findMany({ where: eq(orderItems.orderId, order.id) }),
     order.deliveryAddressId
       ? db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, order.deliveryAddressId) })
       : Promise.resolve(null),
+    db.query.orderStatusHistory.findMany({
+      where: eq(orderStatusHistory.orderId, order.id),
+      orderBy: (h, { asc }) => [asc(h.createdAt)],
+    }),
   ]);
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       {confirmed === "1" && (
-        <div className="card" style={{ padding: 16, marginBottom: 24, borderColor: "var(--color-success)", background: "#F0FDF4" }}>
+        <div className="card success-pop" style={{ padding: 16, marginBottom: 24, borderColor: "var(--color-success)", background: "#F0FDF4", display: "flex", alignItems: "center", gap: 10 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
           Commande transmise à l'équipe Marin Froid. Vous recevrez un e-mail de confirmation.
         </div>
       )}
@@ -46,7 +53,12 @@ export default async function OrderDetailPage({
         <span className={`badge badge-${order.status}`}>{order.status}</span>
       </div>
 
-      <StatusTimeline status={order.status} />
+      <div style={{ marginBottom: 20 }}>
+        <OrderPreparationTimeline
+          status={order.status}
+          history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
+        />
+      </div>
 
       {address && (
         <div className="card" style={{ padding: 16, marginBottom: 20, fontSize: 13, color: "var(--color-text-muted)" }}>

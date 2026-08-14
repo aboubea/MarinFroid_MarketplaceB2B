@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getDb } from "@/lib/db";
+import { ToastProvider } from "@/components/Toast";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -28,7 +29,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const brandingStyle = await getBrandingStyle();
   return (
     <html lang="fr" className={inter.variable}>
-      <body style={brandingStyle}>{children}</body>
+      <body style={brandingStyle}>
+        <ToastProvider>{children}</ToastProvider>
+      </body>
     </html>
   );
 }

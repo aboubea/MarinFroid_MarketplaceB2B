@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { IconDownload, IconSearch } from "./icons";
+import { EmptyState } from "./EmptyState";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
+import { ListSkeleton } from "./Skeleton";
 
 interface OrderRow {
   id: string;
@@ -31,7 +35,9 @@ const TABS = [
 const STATUSES = ["submitted", "acknowledged", "processing", "shipped", "completed", "cancelled"];
 
 export function AdminOrdersBoard() {
+  const toast = useToast();
   const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("all");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -39,7 +45,15 @@ export function AdminOrdersBoard() {
   const [savingStatus, setSavingStatus] = useState(false);
 
   useEffect(() => {
-    fetch("/api/admin/orders").then((r) => r.json()).then((d) => setOrders(d.orders));
+    safeFetch<{ orders: OrderRow[] }>("/api/admin/orders").then((result) => {
+      setLoading(false);
+      if (result.ok && result.data) {
+        setOrders(result.data.orders);
+      } else {
+        toast.show(result.error ?? "Impossible de charger les commandes.", "error");
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -47,7 +61,14 @@ export function AdminOrdersBoard() {
       setDetail(null);
       return;
     }
-    fetch(`/api/admin/orders/${selectedId}`).then((r) => r.json()).then((d) => setDetail(d));
+    safeFetch<OrderDetail>(`/api/admin/orders/${selectedId}`).then((result) => {
+      if (result.ok && result.data) {
+        setDetail(result.data);
+      } else {
+        toast.show(result.error ?? "Impossible de charger la commande.", "error");
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
   const filtered = useMemo(() => {
@@ -62,14 +83,19 @@ export function AdminOrdersBoard() {
   async function handleStatusChange(status: string) {
     if (!detail) return;
     setSavingStatus(true);
-    await fetch(`/api/admin/orders/${detail.order.id}/status`, {
+    const result = await safeFetch(`/api/admin/orders/${detail.order.id}/status`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
+    setSavingStatus(false);
+    if (!result.ok) {
+      toast.show(result.error ?? "Impossible de mettre à jour le statut.", "error");
+      return;
+    }
     setDetail({ ...detail, order: { ...detail.order, status } });
     setOrders((prev) => prev.map((o) => (o.id === detail.order.id ? { ...o, status } : o)));
-    setSavingStatus(false);
+    toast.show("Statut mis à jour.", "success");
   }
 
   return (
@@ -93,9 +119,11 @@ export function AdminOrdersBoard() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: detail ? "1fr 380px" : "1fr", gap: 16, alignItems: "start" }}>
-        <div className="card" style={{ overflow: "hidden" }}>
-          {filtered.length === 0 ? (
-            <div style={{ padding: 24, color: "var(--color-text-muted)" }}>Aucune commande.</div>
+        <div className={filtered.length === 0 ? "" : "card"} style={filtered.length === 0 ? {} : { overflow: "hidden" }}>
+          {loading ? (
+            <ListSkeleton rows={5} />
+          ) : filtered.length === 0 ? (
+            <EmptyState illustration="inbox" title="Aucune commande" description="Aucune commande ne correspond à ces filtres pour le moment." />
           ) : (
             filtered.map((o, idx) => (
               <button

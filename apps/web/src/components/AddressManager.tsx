@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 export interface Address {
   id: string;
@@ -14,6 +16,7 @@ export interface Address {
 }
 
 export function AddressManager({ initialAddresses }: { initialAddresses: Address[] }) {
+  const toast = useToast();
   const [addresses, setAddresses] = useState(initialAddresses);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ label: "", line1: "", line2: "", city: "", postalCode: "", country: "FR", isDefault: false });
@@ -22,23 +25,30 @@ export function AddressManager({ initialAddresses }: { initialAddresses: Address
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/addresses", {
+    const result = await safeFetch<{ address: Address }>("/api/addresses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
     setSaving(false);
-    if (res.ok) {
-      const { address } = await res.json();
-      setAddresses((prev) => (form.isDefault ? prev.map((a) => ({ ...a, isDefault: false })) : prev).concat(address));
+    if (result.ok && result.data) {
+      setAddresses((prev) => (form.isDefault ? prev.map((a) => ({ ...a, isDefault: false })) : prev).concat(result.data!.address));
       setForm({ label: "", line1: "", line2: "", city: "", postalCode: "", country: "FR", isDefault: false });
       setShowForm(false);
+      toast.show("Adresse ajoutée.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible d'ajouter l'adresse.", "error");
     }
   }
 
   async function handleDelete(id: string) {
+    const previous = addresses;
     setAddresses((prev) => prev.filter((a) => a.id !== id));
-    await fetch(`/api/addresses/${id}`, { method: "DELETE" });
+    const result = await safeFetch(`/api/addresses/${id}`, { method: "DELETE" });
+    if (!result.ok) {
+      setAddresses(previous);
+      toast.show(result.error ?? "Impossible de supprimer l'adresse.", "error");
+    }
   }
 
   return (

@@ -5,6 +5,16 @@ import { getDb } from "@/lib/db";
 import { organizations, users } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { OrgStatusToggle } from "@/components/OrgStatusToggle";
+import { Avatar } from "@/components/Avatar";
+import { EmptyState } from "@/components/EmptyState";
+
+const ROLE_LABELS: Record<string, string> = {
+  mf_admin: "Admin Marin Froid",
+  mf_ops: "Équipe commandes",
+  org_admin: "Administrateur",
+  org_buyer: "Acheteur",
+  org_viewer: "Utilisateur secondaire",
+};
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,17 +35,37 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
       <h2 style={{ fontSize: 15, marginBottom: 12 }}>Utilisateurs</h2>
       <div className="card" style={{ overflow: "hidden" }}>
         {orgUsers.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--color-text-muted)" }}>Aucun utilisateur actif pour le moment.</div>
+          <EmptyState illustration="users" title="Aucun utilisateur" description="Cette société n'a pas encore d'utilisateur actif." />
         ) : (
-          orgUsers.map((u, idx) => (
-            <div key={u.id} style={{ padding: 16, borderBottom: idx < orgUsers.length - 1 ? "1px solid var(--color-border)" : "none", display: "flex", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 14 }}>{u.fullName}</div>
-                <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{u.email} · {u.role}</div>
-              </div>
-              <span className={`badge ${u.active ? "badge-completed" : "badge-cancelled"}`}>{u.active ? "actif" : "désactivé"}</span>
-            </div>
-          ))
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Membre</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orgUsers.map((u) => (
+                  <tr key={u.id}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <Avatar name={u.fullName} />
+                        <span style={{ fontWeight: 600 }}>{u.fullName}</span>
+                      </div>
+                    </td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{u.email}</td>
+                    <td>{ROLE_LABELS[u.role] ?? u.role}</td>
+                    <td>
+                      <span className={`status-dot ${u.active ? "on" : "off"}`}>{u.active ? "Actif" : "Désactivé"}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </AdminShell>

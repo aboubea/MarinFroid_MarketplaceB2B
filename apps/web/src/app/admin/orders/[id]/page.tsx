@@ -2,9 +2,10 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, organizations } from "@marin-froid/db";
+import { orders, orderItems, organizations, orderStatusHistory } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
+import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,9 +15,13 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
   if (!order) notFound();
 
-  const [organization, items] = await Promise.all([
+  const [organization, items, history] = await Promise.all([
     db.query.organizations.findFirst({ where: eq(organizations.id, order.organizationId) }),
     db.query.orderItems.findMany({ where: eq(orderItems.orderId, order.id) }),
+    db.query.orderStatusHistory.findMany({
+      where: eq(orderStatusHistory.orderId, order.id),
+      orderBy: (h, { asc }) => [asc(h.createdAt)],
+    }),
   ]);
 
   return (
@@ -29,6 +34,13 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           </p>
         </div>
         <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <OrderPreparationTimeline
+          status={order.status}
+          history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
+        />
       </div>
 
       <div className="card" style={{ overflow: "hidden" }}>

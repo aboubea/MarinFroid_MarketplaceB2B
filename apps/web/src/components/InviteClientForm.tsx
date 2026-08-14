@@ -2,30 +2,34 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 export function InviteClientForm() {
   const router = useRouter();
+  const toast = useToast();
   const [orgName, setOrgName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactName, setContactName] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [sending, setSending] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("sending");
-    const res = await fetch("/api/admin/clients/invite", {
+    setSending(true);
+    const result = await safeFetch("/api/admin/clients/invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orgName, contactEmail, contactName }),
     });
-    if (res.ok) {
-      setStatus("sent");
+    setSending(false);
+    if (result.ok) {
       setOrgName("");
       setContactEmail("");
       setContactName("");
+      toast.show("Invitation envoyée.", "success");
       router.refresh();
     } else {
-      setStatus("error");
+      toast.show(result.error ?? "Erreur lors de l'envoi.", "error");
     }
   }
 
@@ -34,11 +38,9 @@ export function InviteClientForm() {
       <input className="input" placeholder="Nom de la société" value={orgName} onChange={(e) => setOrgName(e.target.value)} required />
       <input className="input" placeholder="Nom du contact" value={contactName} onChange={(e) => setContactName(e.target.value)} required />
       <input className="input" type="email" placeholder="Email du contact" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} required />
-      <button className="btn-primary" type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Envoi..." : "Inviter"}
+      <button className="btn-primary" type="submit" disabled={sending}>
+        {sending ? "Envoi..." : "Inviter"}
       </button>
-      {status === "sent" && <p style={{ gridColumn: "1 / -1", color: "var(--color-success)", fontSize: 13 }}>Invitation envoyée.</p>}
-      {status === "error" && <p style={{ gridColumn: "1 / -1", color: "var(--color-danger)", fontSize: 13 }}>Erreur lors de l'envoi.</p>}
     </form>
   );
 }

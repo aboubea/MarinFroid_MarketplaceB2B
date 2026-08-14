@@ -35,7 +35,7 @@ export function AppShell({
             <Link href="/cart" aria-label="Panier"><CartIcon /></Link>
           </div>
         </header>
-        <main className="container fade-up" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>

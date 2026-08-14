@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ProductTile } from "./ProductTile";
 import { IconSearch } from "./icons";
+import { EmptyState } from "./EmptyState";
 
 interface Product {
   id: string;
@@ -69,9 +70,11 @@ export function CatalogBrowser({ categories, products }: { categories: Category[
       </div>
 
       {filtered.length === 0 ? (
-        <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>
-          Aucun produit ne correspond à votre recherche.
-        </div>
+        <EmptyState
+          illustration="search"
+          title="Aucun résultat"
+          description="Essayez un autre terme de recherche ou changez de catégorie."
+        />
       ) : (
         grouped.map((cat) => (
           <section key={cat.id} className="fade-up" style={{ marginBottom: 32 }}>

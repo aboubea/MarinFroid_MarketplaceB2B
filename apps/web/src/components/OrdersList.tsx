@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { EmptyState } from "./EmptyState";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 interface Order {
   id: string;
@@ -13,22 +16,33 @@ interface Order {
 
 export function OrdersList({ orders }: { orders: Order[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   async function handleReorder(e: React.MouseEvent, orderId: string) {
     e.preventDefault();
     e.stopPropagation();
     setReorderingId(orderId);
-    const res = await fetch(`/api/orders/${orderId}/reorder`, { method: "POST" });
+    const result = await safeFetch(`/api/orders/${orderId}/reorder`, { method: "POST" });
     setReorderingId(null);
-    if (res.ok) {
+    if (result.ok) {
       window.dispatchEvent(new CustomEvent("cart:updated"));
+      toast.show("Articles ajoutés au panier.", "success");
       router.push("/cart");
+    } else {
+      toast.show(result.error ?? "Impossible de recommander cette commande.", "error");
     }
   }
 
   if (orders.length === 0) {
-    return <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>Aucune commande.</div>;
+    return (
+      <EmptyState
+        illustration="inbox"
+        title="Aucune commande pour le moment"
+        description="Vos commandes apparaîtront ici dès que vous en aurez passé une."
+        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir le catalogue</a>}
+      />
+    );
   }
 
   return (
