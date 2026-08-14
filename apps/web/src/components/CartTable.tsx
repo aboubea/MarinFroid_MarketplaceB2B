@@ -9,6 +9,7 @@ interface Item {
   sku: string;
   unit: string;
   quantity: number;
+  indicativePrice: string | null;
 }
 
 export function CartTable({ initialItems }: { initialItems: Item[] }) {
@@ -46,8 +47,11 @@ export function CartTable({ initialItems }: { initialItems: Item[] }) {
     return <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>Votre panier est vide.</div>;
   }
 
+  const subtotal = items.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
+  const hasPricing = items.some((i) => i.indicativePrice);
+
   return (
-    <div>
+    <div style={{ display: "grid", gridTemplateColumns: hasPricing ? "1fr 320px" : "1fr", gap: 20, alignItems: "start" }}>
       <div className="card" style={{ overflow: "hidden" }}>
         {items.map((item, idx) => (
           <div
@@ -62,22 +66,50 @@ export function CartTable({ initialItems }: { initialItems: Item[] }) {
           >
             <div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{item.name}</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.sku} · {item.unit}</div>
+              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
+                {item.sku} · {item.unit}
+                {item.indicativePrice && ` · ${Number(item.indicativePrice).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}`}
+              </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <button className="btn-secondary" style={{ padding: "4px 10px" }} onClick={() => updateQuantity(item.productId, item.quantity - 1)}>−</button>
-              <span style={{ minWidth: 24, textAlign: "center" }}>{item.quantity}</span>
-              <button className="btn-secondary" style={{ padding: "4px 10px" }} onClick={() => updateQuantity(item.productId, item.quantity + 1)}>+</button>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div className="stepper">
+                <button className="stepper-btn" onClick={() => updateQuantity(item.productId, item.quantity - 1)}>−</button>
+                <span style={{ minWidth: 24, textAlign: "center" }}>{item.quantity}</span>
+                <button className="stepper-btn" onClick={() => updateQuantity(item.productId, item.quantity + 1)}>+</button>
+              </div>
+              {item.indicativePrice && (
+                <div style={{ fontWeight: 700, fontSize: 14, minWidth: 70, textAlign: "right" }}>
+                  {(Number(item.indicativePrice) * item.quantity).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                </div>
+              )}
             </div>
           </div>
         ))}
       </div>
-      {error && <p style={{ color: "var(--color-danger)", marginTop: 12, fontSize: 13 }}>{error}</p>}
-      <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
-        <button className="btn-primary" onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Validation..." : "Valider la commande"}
-        </button>
-      </div>
+
+      {hasPricing ? (
+        <div className="card" style={{ padding: 20, position: "sticky", top: 20 }}>
+          <h2 style={{ fontSize: 15, marginBottom: 16 }}>Résumé</h2>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
+            <span style={{ color: "var(--color-text-muted)" }}>Sous-total indicatif</span>
+            <span>{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+          </div>
+          <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 16 }}>
+            Montant indicatif — le prix définitif est confirmé par l'équipe Marin Froid, hors TVA et livraison.
+          </p>
+          {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>}
+          <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
+            {submitting ? "Validation..." : "Valider la commande"}
+          </button>
+        </div>
+      ) : (
+        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end", gridColumn: "1 / -1" }}>
+          {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginRight: 16 }}>{error}</p>}
+          <button className="btn-primary" onClick={handleSubmit} disabled={submitting}>
+            {submitting ? "Validation..." : "Valider la commande"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { products, productCategories } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
-import { QuickAddButton } from "@/components/QuickAddButton";
+import { ProductTile } from "@/components/ProductTile";
 
 export default async function CatalogPage() {
   const { session, organization } = await requireClientSession();
@@ -23,11 +23,16 @@ export default async function CatalogPage() {
             <h2 style={{ fontSize: 16, marginBottom: 12 }}>{cat.name}</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
               {items.map((p) => (
-                <div key={p.id} className="card" style={{ padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div style={{ fontWeight: 600, fontSize: 14 }}>{p.name}</div>
-                  <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{p.sku} · {p.unit}</div>
-                  <QuickAddButton productId={p.id} />
-                </div>
+                <ProductTile
+                  key={p.id}
+                  productId={p.id}
+                  name={p.name}
+                  sku={p.sku}
+                  unit={p.unit}
+                  origin={p.origin}
+                  packaging={p.packaging}
+                  price={p.indicativePrice}
+                />
               ))}
             </div>
           </section>

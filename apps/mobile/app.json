@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Marin Froid",
+    "slug": "marin-froid-b2b",
+    "scheme": "marinfroid",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "fr.marinfroid.b2b"
+    },
+    "android": {
+      "package": "fr.marinfroid.b2b"
+    },
+    "plugins": ["expo-router"],
+    "extra": {
+      "apiUrl": "http://localhost:3000"
+    }
+  }
+}

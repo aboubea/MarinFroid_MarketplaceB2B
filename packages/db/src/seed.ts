@@ -68,10 +68,10 @@ async function main() {
     .returning();
 
   await db.insert(products).values([
-    { categoryId: cat1.id, sku: "POI-001", name: "Filet de cabillaud", unit: "kg" },
-    { categoryId: cat1.id, sku: "POI-002", name: "Pavé de saumon", unit: "kg" },
-    { categoryId: cat2.id, sku: "CRU-001", name: "Crevettes roses", unit: "kg" },
-    { categoryId: cat2.id, sku: "CRU-002", name: "Noix de Saint-Jacques", unit: "kg" },
+    { categoryId: cat1.id, sku: "POI-001", name: "Filet de cabillaud", unit: "kg", origin: "Atlantique Nord", packaging: "Carton 5kg", indicativePrice: "42.50" },
+    { categoryId: cat1.id, sku: "POI-002", name: "Pavé de saumon", unit: "kg", origin: "Norvège", packaging: "Carton 5kg", indicativePrice: "34.80" },
+    { categoryId: cat2.id, sku: "CRU-001", name: "Crevettes entières crues", unit: "kg", origin: "Madagascar", packaging: "Carton 2kg", indicativePrice: "18.90" },
+    { categoryId: cat2.id, sku: "CRU-002", name: "Noix de Saint-Jacques", unit: "kg", origin: "Manche", packaging: "Sachet 1kg", indicativePrice: "28.60" },
   ]);
 
   console.log("Seed complete. Demo login: acheteur@demo.fr / ChangeMe123!");

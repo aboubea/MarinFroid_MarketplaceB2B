@@ -56,6 +56,7 @@ export async function getCartWithItems(organizationId: string, userId: string) {
       name: products.name,
       sku: products.sku,
       unit: products.unit,
+      indicativePrice: products.indicativePrice,
     })
     .from(cartItems)
     .innerJoin(products, eq(products.id, cartItems.productId))

@@ -5,6 +5,7 @@ import {
   timestamp,
   boolean,
   integer,
+  numeric,
   pgEnum,
   uniqueIndex,
   index,
@@ -109,6 +110,9 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   description: text("description"),
   unit: text("unit").notNull().default("unité"),
+  origin: text("origin"),
+  packaging: text("packaging"),
+  indicativePrice: numeric("indicative_price", { precision: 10, scale: 2 }),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({

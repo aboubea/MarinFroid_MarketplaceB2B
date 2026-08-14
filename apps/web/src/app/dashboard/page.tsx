@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, ne, and } from "drizzle-orm";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, products } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
-import { QuickAddButton } from "@/components/QuickAddButton";
+import { ProductTile } from "@/components/ProductTile";
 
 export default async function DashboardPage() {
   const { session, organization } = await requireClientSession();
@@ -16,6 +16,10 @@ export default async function DashboardPage() {
     limit: 3,
   });
 
+  const inProgressOrders = await db.query.orders.findMany({
+    where: and(eq(orders.organizationId, organization.id), ne(orders.status, "completed"), ne(orders.status, "cancelled")),
+  });
+
   const recentItems = recentOrders.length
     ? await db
         .select({
@@ -23,6 +27,9 @@ export default async function DashboardPage() {
           name: products.name,
           sku: products.sku,
           unit: products.unit,
+          origin: products.origin,
+          packaging: products.packaging,
+          indicativePrice: products.indicativePrice,
         })
         .from(orderItems)
         .innerJoin(products, eq(products.id, orderItems.productId))
@@ -33,11 +40,27 @@ export default async function DashboardPage() {
     : [];
 
   const uniqueRecent = Array.from(new Map(recentItems.map((i) => [i.productId, i])).values());
+  const lastOrder = recentOrders[0];
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Bonjour {session.fullName.split(" ")[0]}</h1>
-      <p style={{ color: "var(--color-text-muted)", marginBottom: 32 }}>Reprenez où vous en étiez.</p>
+      <p style={{ color: "var(--color-text-muted)", marginBottom: 24 }}>Voici un aperçu de votre activité.</p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 40 }}>
+        <div className="stat-card">
+          <div className="stat-value">{inProgressOrders.length}</div>
+          <div className="stat-label">Commande(s) en cours</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{lastOrder ? new Date(lastOrder.createdAt).toLocaleDateString("fr-FR") : "—"}</div>
+          <div className="stat-label">Dernière commande</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{uniqueRecent.length}</div>
+          <div className="stat-label">Produits habituels</div>
+        </div>
+      </div>
 
       <section style={{ marginBottom: 40 }}>
         <h2 style={{ fontSize: 16, marginBottom: 12 }}>Vos produits habituels</h2>
@@ -48,11 +71,16 @@ export default async function DashboardPage() {
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
             {uniqueRecent.map((item) => (
-              <div key={item.productId} className="card" style={{ padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ fontWeight: 600, fontSize: 14 }}>{item.name}</div>
-                <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.sku} · {item.unit}</div>
-                <QuickAddButton productId={item.productId} />
-              </div>
+              <ProductTile
+                key={item.productId}
+                productId={item.productId}
+                name={item.name}
+                sku={item.sku}
+                unit={item.unit}
+                origin={item.origin}
+                packaging={item.packaging}
+                price={item.indicativePrice}
+              />
             ))}
           </div>
         )}
