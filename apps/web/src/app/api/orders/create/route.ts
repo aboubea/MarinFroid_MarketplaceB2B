@@ -5,11 +5,14 @@ import { getDb } from "@/lib/db";
 import { organizations, users } from "@marin-froid/db";
 import { submitOrderFromCart } from "@/lib/order-service";
 
-export async function POST() {
+export async function POST(request: Request) {
   const session = await getSession();
   if (!session || !session.organizationId) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
   }
+  const body = await request.json().catch(() => ({}));
+  const deliveryAddressId: string | null = body?.deliveryAddressId ?? null;
+
   const db = getDb();
   const [org, user] = await Promise.all([
     db.query.organizations.findFirst({ where: eq(organizations.id, session.organizationId) }),
@@ -25,6 +28,7 @@ export async function POST() {
       organizationName: org.name,
       userId: user.id,
       userEmail: user.email,
+      deliveryAddressId,
     });
     return NextResponse.json({ orderId: order.id, reference: order.reference });
   } catch (err) {

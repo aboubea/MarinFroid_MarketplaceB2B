@@ -18,6 +18,7 @@ export async function submitOrderFromCart(params: {
   organizationName: string;
   userId: string;
   userEmail: string;
+  deliveryAddressId?: string | null;
 }) {
   const db = getDb();
   const { cart, items } = await getCartWithItems(params.organizationId, params.userId);
@@ -32,6 +33,7 @@ export async function submitOrderFromCart(params: {
       reference,
       organizationId: params.organizationId,
       placedByUserId: params.userId,
+      deliveryAddressId: params.deliveryAddressId ?? null,
       status: "submitted",
     })
     .returning();

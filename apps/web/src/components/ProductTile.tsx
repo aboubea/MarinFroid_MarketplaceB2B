@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export function ProductTile({
   productId,
@@ -37,8 +38,10 @@ export function ProductTile({
 
   return (
     <div className="product-tile">
-      <div className="product-thumb">{sku}</div>
-      <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
+      <Link href={`/catalog/${productId}`}>
+        <div className="product-thumb">{sku}</div>
+        <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
+      </Link>
       <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
         {origin ? `${origin} · ` : ""}{packaging ?? unit}
       </div>
