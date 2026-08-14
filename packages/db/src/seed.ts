@@ -67,6 +67,13 @@ async function main() {
 
   await db.insert(users).values([
     {
+      email: "responsable@demo.fr",
+      passwordHash: hashPassword("ChangeMe123!"),
+      fullName: "Responsable Démo",
+      role: "org_admin",
+      organizationId: demoOrg.id,
+    },
+    {
       email: "acheteur@demo.fr",
       passwordHash: hashPassword("ChangeMe123!"),
       fullName: "Acheteur Démo",
@@ -86,6 +93,7 @@ async function main() {
   console.log("Demo logins (all ChangeMe123!):");
   console.log("  admin@marinfroid.fr        (mf_admin — dashboard Administration)");
   console.log("  preparation@marinfroid.fr  (mf_ops — dashboard Préparation)");
+  console.log("  responsable@demo.fr        (org_admin — dashboard client, gère l'équipe)");
   console.log("  acheteur@demo.fr           (org_buyer — dashboard client)");
   console.log("  compta@demo.fr             (org_viewer — lecture / administratif)");
 }

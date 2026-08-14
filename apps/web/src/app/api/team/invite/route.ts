@@ -7,6 +7,7 @@ import { invitations, organizations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
 import { logActivity } from "@/lib/activity";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 const ALLOWED_ROLES = ["org_buyer", "org_viewer"] as const;
 
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
       organizationName: organization.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,
     });
-    await emailClient.send({ to: email, ...template }).catch((err) => console.error("email error", err));
+    await sendTrackedEmail(emailClient, "invitation_sent", { to: email, ...template });
   }
 
   await logActivity({

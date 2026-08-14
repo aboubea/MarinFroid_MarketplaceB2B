@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db";
 import { organizations, invitations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 export async function POST(request: Request) {
   const session = await requireMarinFroidSession();
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
       organizationName: org.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,
     });
-    await emailClient.send({ to: contactEmail, ...template }).catch((err) => console.error("email error", err));
+    await sendTrackedEmail(emailClient, "invitation_sent", { to: contactEmail, ...template });
   }
 
   await logActivity({

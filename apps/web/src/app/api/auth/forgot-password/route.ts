@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 import { getDb } from "@/lib/db";
 import { users } from "@marin-froid/db";
 import { createEmailClient, passwordResetEmail } from "@marin-froid/email";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
       const emailClient = createEmailClient(apiKey);
       const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
       const template = passwordResetEmail({ resetUrl: `${baseUrl}/reset-password?token=${token}` });
-      await emailClient.send({ to: user.email, ...template }).catch((err) => console.error("email error", err));
+      await sendTrackedEmail(emailClient, "password_reset", { to: user.email, ...template });
     }
   }
 

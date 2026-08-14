@@ -5,6 +5,7 @@ import { invitations, users, organizations } from "@marin-froid/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { createEmailClient, accountActivatedEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 export async function POST(request: Request) {
   const { token, fullName, password } = await request.json();
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
     const emailClient = createEmailClient(apiKey);
     const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
     const template = accountActivatedEmail({ fullName, loginUrl: `${baseUrl}/login` });
-    await emailClient.send({ to: user.email, ...template }).catch((err) => console.error("email error", err));
+    await sendTrackedEmail(emailClient, "account_activated", { to: user.email, ...template });
   }
 
   await logActivity({
