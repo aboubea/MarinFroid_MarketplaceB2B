@@ -2,7 +2,7 @@
 
 import { Sidebar } from "./Sidebar";
 import { CartIcon } from "./CartIcon";
-import { IconHome, IconGrid, IconList, IconUser, IconUsers } from "./icons";
+import { IconHome, IconGrid, IconList, IconUser, IconUsers, IconRefresh } from "./icons";
 import Link from "next/link";
 
 export function AppShell({
@@ -19,6 +19,7 @@ export function AppShell({
   const links = [
     { href: "/dashboard", label: "Tableau de bord", icon: <IconHome /> },
     { href: "/catalog", label: "Catalogue", icon: <IconGrid /> },
+    { href: "/reachat", label: "Réachat rapide", icon: <IconRefresh size={16} /> },
     { href: "/orders", label: "Commandes", icon: <IconList /> },
     ...(role === "org_admin" ? [{ href: "/team", label: "Équipe", icon: <IconUsers /> }] : []),
     { href: "/account", label: "Compte", icon: <IconUser /> },

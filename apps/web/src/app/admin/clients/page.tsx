@@ -4,8 +4,7 @@ import { getDb } from "@/lib/db";
 import { organizations } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { InviteClientForm } from "@/components/InviteClientForm";
-import { EmptyState } from "@/components/EmptyState";
-import { ClientsTable } from "@/components/ClientsTable";
+import { AdminClientsBoard } from "@/components/AdminClientsBoard";
 
 export default async function AdminClientsPage() {
   const session = await requireMarinFroidSession();
@@ -21,17 +20,9 @@ export default async function AdminClientsPage() {
         <InviteClientForm />
       </div>
 
-      {list.length === 0 ? (
-        <EmptyState
-          illustration="users"
-          title="Aucun client"
-          description="Invitez une première société avec le formulaire ci-dessus."
-        />
-      ) : (
-        <ClientsTable
-          organizations={list.map((o) => ({ id: o.id, name: o.name, status: o.status, createdAt: o.createdAt.toString() }))}
-        />
-      )}
+      <AdminClientsBoard
+        initialOrganizations={list.map((o) => ({ id: o.id, name: o.name, status: o.status, createdAt: o.createdAt.toString() }))}
+      />
     </AdminShell>
   );
 }
