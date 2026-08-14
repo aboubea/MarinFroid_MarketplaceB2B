@@ -22,6 +22,9 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const session = await getSessionFromRequest(request);
   if (!session || !session.organizationId) return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
+  if (session.role === "org_viewer") {
+    return NextResponse.json({ error: "Votre profil (lecture / administratif) ne permet pas de valider une commande." }, { status: 403 });
+  }
 
   const db = getDb();
   const [org, user] = await Promise.all([
@@ -36,6 +39,7 @@ export async function POST(request: Request) {
       organizationName: org.name,
       userId: user.id,
       userEmail: user.email,
+      userFullName: user.fullName,
     });
     return NextResponse.json({ orderId: order.id, reference: order.reference });
   } catch (err) {

@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db";
 import { invitations, organizations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
+import { logActivity } from "@/lib/activity";
 
 const ALLOWED_ROLES = ["org_buyer", "org_viewer"] as const;
 
@@ -46,6 +47,15 @@ export async function POST(request: Request) {
     });
     await emailClient.send({ to: email, ...template }).catch((err) => console.error("email error", err));
   }
+
+  await logActivity({
+    actorUserId: session.userId,
+    actorLabel: session.fullName,
+    organizationId: session.organizationId,
+    action: "invitation_sent",
+    entityType: "user",
+    summary: `Collaborateur invité (${email}) par ${organization.name}`,
+  });
 
   return NextResponse.json({ ok: true });
 }

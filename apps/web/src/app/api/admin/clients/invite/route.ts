@@ -4,6 +4,7 @@ import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations, invitations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(request: Request) {
   const session = await requireMarinFroidSession();
@@ -38,6 +39,16 @@ export async function POST(request: Request) {
     });
     await emailClient.send({ to: contactEmail, ...template }).catch((err) => console.error("email error", err));
   }
+
+  await logActivity({
+    actorUserId: session.userId,
+    actorLabel: session.fullName,
+    organizationId: org.id,
+    action: "invitation_sent",
+    entityType: "organization",
+    entityId: org.id,
+    summary: `Société « ${org.name} » invitée (contact ${contactEmail})`,
+  });
 
   return NextResponse.json({ ok: true, organizationId: org.id });
 }

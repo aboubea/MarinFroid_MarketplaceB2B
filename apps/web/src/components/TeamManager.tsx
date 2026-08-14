@@ -19,7 +19,7 @@ interface Member {
 const ROLE_LABELS: Record<string, string> = {
   org_admin: "Administrateur",
   org_buyer: "Acheteur",
-  org_viewer: "Utilisateur secondaire",
+  org_viewer: "Lecture / administratif",
 };
 
 export function TeamManager({ currentUserId }: { currentUserId: string }) {
@@ -101,7 +101,7 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
           <input className="input" style={{ flex: 1, minWidth: 200 }} type="email" placeholder="email@societe.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <select className="input" style={{ width: "auto" }} value={role} onChange={(e) => setRole(e.target.value as "org_buyer" | "org_viewer")}>
             <option value="org_buyer">Acheteur</option>
-            <option value="org_viewer">Utilisateur secondaire (lecture)</option>
+            <option value="org_viewer">Lecture / administratif</option>
           </select>
           <button className="btn-primary" type="submit" disabled={sending}>{sending ? "Envoi..." : "Envoyer l'invitation"}</button>
           <button className="btn-secondary" type="button" onClick={() => setShowInvite(false)}>Annuler</button>

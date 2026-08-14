@@ -16,7 +16,7 @@ interface Item {
   indicativePrice: string | null;
 }
 
-export function CartTable({ initialItems, addresses }: { initialItems: Item[]; addresses: Address[] }) {
+export function CartTable({ initialItems, addresses, canSubmit }: { initialItems: Item[]; addresses: Address[]; canSubmit: boolean }) {
   const router = useRouter();
   const toast = useToast();
   const [items, setItems] = useState(initialItems);
@@ -135,9 +135,15 @@ export function CartTable({ initialItems, addresses }: { initialItems: Item[]; a
           </>
         )}
 
-        <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Validation..." : "Valider la commande"}
-        </button>
+        {canSubmit ? (
+          <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
+            {submitting ? "Validation..." : "Valider la commande"}
+          </button>
+        ) : (
+          <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", background: "var(--color-bg)", padding: "10px 12px", borderRadius: "var(--radius-md)" }}>
+            Votre profil (lecture / administratif) permet de consulter le panier mais pas de valider une commande. Contactez un acheteur ou l'administrateur de votre société.
+          </p>
+        )}
       </div>
     </div>
   );

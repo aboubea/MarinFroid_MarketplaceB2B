@@ -5,8 +5,19 @@ import { getDb } from "@/lib/db";
 import { orders, orderStatusHistory, users } from "@marin-froid/db";
 import { createEmailClient, orderStatusUpdatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
+import { logActivity, notifyUser } from "@/lib/activity";
+import { getOrgBroadcastUsers } from "@/lib/org-recipients";
 
 const VALID_STATUSES = ["submitted", "acknowledged", "processing", "shipped", "completed", "cancelled"] as const;
+
+const STATUS_LABELS: Record<string, string> = {
+  submitted: "reçue",
+  acknowledged: "confirmée",
+  processing: "en préparation",
+  shipped: "expédiée",
+  completed: "livrée",
+  cancelled: "annulée",
+};
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -24,6 +35,35 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   await db.update(orders).set({ status, updatedAt: new Date() }).where(eq(orders.id, id));
   await db.insert(orderStatusHistory).values({ orderId: id, status, changedByUserId: session.userId });
 
+  await logActivity({
+    actorUserId: session.userId,
+    actorLabel: session.fullName,
+    organizationId: order.organizationId,
+    action: "order_status_updated",
+    entityType: "order",
+    entityId: order.id,
+    summary: `Commande ${order.reference} passée au statut « ${STATUS_LABELS[status] ?? status} »`,
+  });
+
+  await notifyUser({
+    userId: order.placedByUserId,
+    organizationId: order.organizationId,
+    category: "order_status_updated",
+    title: `Commande ${order.reference} ${STATUS_LABELS[status] ?? status}`,
+    orderId: order.id,
+  });
+
+  const broadcastUsers = await getOrgBroadcastUsers(order.organizationId, order.placedByUserId);
+  for (const user of broadcastUsers) {
+    await notifyUser({
+      userId: user.id,
+      organizationId: order.organizationId,
+      category: "order_status_updated",
+      title: `Commande ${order.reference} ${STATUS_LABELS[status] ?? status}`,
+      orderId: order.id,
+    });
+  }
+
   const placedByUser = await db.query.users.findFirst({ where: eq(users.id, order.placedByUserId) });
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey && placedByUser && (await isNotificationEnabled("order_status_updated", "customer"))) {
@@ -34,7 +74,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       status,
       orderUrl: `${baseUrl}/orders/${order.id}`,
     });
-    await emailClient.send({ to: placedByUser.email, ...template }).catch((err) => console.error("email error", err));
+    const recipients = [placedByUser.email, ...broadcastUsers.map((u) => u.email)];
+    for (const email of recipients) {
+      await emailClient.send({ to: email, ...template }).catch((err) => console.error("email error", err));
+    }
   }
 
   return NextResponse.json({ ok: true });

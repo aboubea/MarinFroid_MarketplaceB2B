@@ -4,6 +4,8 @@ import { orders, orderItems, orderStatusHistory, notificationRecipients } from "
 import { getCartWithItems, clearCart } from "./cart";
 import { createEmailClient, orderCreatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "./notification-settings";
+import { logActivity, notifyUser } from "./activity";
+import { getOrgBroadcastUsers } from "./org-recipients";
 
 function generateReference() {
   const now = new Date();
@@ -19,6 +21,7 @@ export async function submitOrderFromCart(params: {
   organizationName: string;
   userId: string;
   userEmail: string;
+  userFullName?: string;
   deliveryAddressId?: string | null;
 }) {
   const db = getDb();
@@ -54,12 +57,44 @@ export async function submitOrderFromCart(params: {
 
   await clearCart(cart.id);
 
+  await logActivity({
+    actorUserId: params.userId,
+    actorLabel: params.userFullName ?? params.userEmail,
+    organizationId: params.organizationId,
+    action: "order_created",
+    entityType: "order",
+    entityId: order.id,
+    summary: `Commande ${reference} créée par ${params.organizationName}`,
+  });
+
+  await notifyUser({
+    userId: params.userId,
+    organizationId: params.organizationId,
+    category: "order_created",
+    title: `Commande ${reference} transmise`,
+    body: `${items.length} article(s) — en attente de confirmation par l'équipe Marin Froid.`,
+    orderId: order.id,
+  });
+
+  const broadcastUsers = await getOrgBroadcastUsers(params.organizationId, params.userId);
+  for (const user of broadcastUsers) {
+    await notifyUser({
+      userId: user.id,
+      organizationId: params.organizationId,
+      category: "order_created",
+      title: `Commande ${reference} transmise par ${params.userFullName ?? params.userEmail}`,
+      body: `${items.length} article(s) — en attente de confirmation par l'équipe Marin Froid.`,
+      orderId: order.id,
+    });
+  }
+
   await sendOrderCreatedEmails({
     reference,
     organizationName: params.organizationName,
     itemCount: items.length,
     orderId: order.id,
     customerEmail: params.userEmail,
+    ccEmails: broadcastUsers.map((u) => u.email),
   });
 
   return order;
@@ -71,6 +106,7 @@ async function sendOrderCreatedEmails(params: {
   itemCount: number;
   orderId: string;
   customerEmail: string;
+  ccEmails?: string[];
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -90,7 +126,10 @@ async function sendOrderCreatedEmails(params: {
       orderUrl,
       isForOps: false,
     });
-    await emailClient.send({ to: params.customerEmail, ...customerTemplate }).catch((err) => console.error("email error", err));
+    const recipients = [params.customerEmail, ...(params.ccEmails ?? [])];
+    for (const email of recipients) {
+      await emailClient.send({ to: email, ...customerTemplate }).catch((err) => console.error("email error", err));
+    }
   }
 
   if (await isNotificationEnabled("order_created", "ops")) {

@@ -12,12 +12,15 @@ export interface SidebarLink {
 export function Sidebar({ links, footerLabel }: { links: SidebarLink[]; footerLabel: string }) {
   const pathname = usePathname();
 
+  const matches = links.filter((link) => pathname === link.href || pathname.startsWith(`${link.href}/`));
+  const bestMatch = matches.sort((a, b) => b.href.length - a.href.length)[0];
+
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">Marin Froid</div>
       <nav className="sidebar-nav">
         {links.map((link) => {
-          const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+          const isActive = link.href === bestMatch?.href;
           return (
             <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`}>
               {link.icon}

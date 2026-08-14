@@ -36,10 +36,13 @@ pnpm dev            # démarre apps/web sur http://localhost:3000
 cd apps/mobile && pnpm start
 ```
 
-Comptes de démonstration après `pnpm db:seed` :
+Comptes de démonstration après `pnpm db:seed` (mot de passe `ChangeMe123!` partout), un par
+rôle pour tester les 3 dashboards :
 
-- Admin Marin Froid : `admin@marinfroid.fr` / `ChangeMe123!`
-- Client démo : `acheteur@demo.fr` / `ChangeMe123!`
+- `admin@marinfroid.fr` (`mf_admin`) → dashboard **Administration** (`/admin/overview`)
+- `preparation@marinfroid.fr` (`mf_ops`) → dashboard **Préparation** (`/admin`)
+- `acheteur@demo.fr` (`org_buyer`) → dashboard **client** (`/dashboard`)
+- `compta@demo.fr` (`org_viewer`, lecture/administratif) → même dashboard client, mais sans pouvoir valider de commande
 
 ## Déploiement (Vercel + Neon)
 
@@ -107,16 +110,65 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
   d'erreur réseau explicite (`safeFetch` distingue erreur réseau vs erreur métier) sur tous les
   formulaires et actions principales.
 
+## Modèle société / utilisateurs / rôles
+
+Le modèle est : une **société** (`organizations`) a plusieurs **utilisateurs** (`users`, rattachés
+via `organizationId`), chacun avec un **rôle** qui définit ce qu'il peut faire — pas de compte
+partagé unique par entreprise.
+
+| Rôle | Peut commander | Peut gérer les utilisateurs | Reçoit les emails/notifications |
+|---|---|---|---|
+| `org_admin` (Admin société) | Oui | Oui (page `/team`) | Oui |
+| `org_buyer` (Acheteur) | Oui | Non | Oui |
+| `org_viewer` (Lecture / administratif — ex. comptabilité) | Non (bloqué à la validation, panier consultable) | Non | Oui |
+
+Concrètement : quand un acheteur valide une commande, l'admin société et les utilisateurs
+"lecture/administratif" de la même société reçoivent aussi l'email et la notification in-app
+(confirmation, changement de statut) — pas seulement celui qui a passé la commande. Voir
+`lib/org-recipients.ts`.
+
+## Trois dashboards, un par rôle
+
+Chaque rôle atterrit sur un dashboard dédié après connexion (`dashboardPathForRole` dans
+`lib/auth.ts`), même charte visuelle (sidebar bleu nuit, cartes claires, tableaux, badges
+pastel), priorité métier différente :
+
+- **Client** (`org_admin`/`org_buyer`/`org_viewer` → `/dashboard`) : dépenses indicatives (30j),
+  commandes (30j), commandes en cours, panier — puis trois colonnes Derniers achats / Réachat
+  express / Panier, et le tableau des commandes récentes. Priorité : recommander vite.
+- **Préparation** (`mf_ops` → `/admin`, cockpit opérationnel) : KPI À traiter / En préparation /
+  Expédiées aujourd'hui / En attente +24h (calculé, pas de date de livraison promise en base
+  donc pas de "retard" fabriqué), puis la file de commandes avec panneau de détail rapide.
+- **Administration** (`mf_admin` → `/admin/overview`, vue transversale) : sociétés actives,
+  utilisateurs actifs, commandes (7j), montant indicatif (30j), activité récente, sociétés à
+  suivre (invitées/suspendues), dernières commandes, destinataires notifications actifs,
+  branding actif.
+
+Les deux rôles Marin Froid gardent accès à toute la navigation admin (commandes, clients,
+invitations, notifications, activité, branding) — seule la page d'atterrissage change.
+
+**Écart assumé avec les maquettes fournies** : "Taux de service", "Taux de délivrabilité email"
+et les créneaux/dates de livraison affichés dans les maquettes ne sont pas calculables avec les
+données actuellement en base (aucun suivi de date de livraison promise, aucun log succès/échec
+par envoi) — plutôt que d'afficher des chiffres inventés, ces KPI ont été remplacés par des
+équivalents réels ou omis.
+
+## Centre de notifications client et journal d'activité admin
+
+- **`client_notifications`** (nouvelle table) : chaque commande créée ou changement de statut
+  génère une notification in-app pour le client concerné (placeur + admin/comptabilité de sa
+  société), avec état lu/non lu. Cloche dans la topbar (`/notifications`), filtres par catégorie,
+  "tout marquer comme lu".
+- **`activity_logs`** : désormais réellement alimentée (commande créée, statut modifié, invitation
+  envoyée, compte activé, société suspendue/réactivée) et consultable sur `/admin/activity`
+  avec filtres par type d'événement. Alimente aussi le bloc "Activité récente" du dashboard admin.
+
 ## Ce qu'il faut encore confirmer
 
 - Nom de domaine expéditeur Resend (DNS/DKIM) et adresse `RESEND_FROM` définitive — voir section dédiée ci-dessous.
 - Si un vrai suivi de crédit/encours client doit remplacer l'affichage indicatif actuel.
 - Comment alimenter concrètement `product_images` / `product_documents` (upload manuel, import fournisseur, etc.) — l'UI de la fiche produit les affiche déjà si présents.
-- Le rôle `org_viewer` ("utilisateur secondaire") est aujourd'hui traité comme lecture seule côté
-  RBAC existant (mêmes routes que `org_buyer`, aucune restriction d'écriture appliquée pour
-  l'instant côté panier/commande) — à durcir si l'intention est vraiment un accès consultation uniquement.
-- Le rôle "comptabilité" n'a pas d'équivalent dédié : `org_viewer` est utilisé comme rôle
-  secondaire générique pour l'instant, à spécialiser si des permissions différentes sont nécessaires.
+- Si un rôle "comptabilité" doit être distinct de `org_viewer` avec des permissions différentes (aujourd'hui les deux sont confondus dans `org_viewer`).
 
 ## Configurer le domaine d'envoi Resend (DNS/DKIM)
 
@@ -143,18 +195,13 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
 
 ## Repoussé (chantiers volumineux, hors de cette itération)
 
-- **16. Centre de notifications client** : nécessite un modèle de données dédié (état
-  lu/non lu par utilisateur) qui n'existe pas encore — pas juste un habillage visuel.
 - **17. Documents client** : à cadrer d'abord — documents liés aux produits (déjà en base via
   `product_documents`) ou documents généraux société (CGV, fiches commerciales) ? Le périmètre
   exact change l'implémentation.
 - **20. Détail société enrichi** (adresses, préférences dans la fiche complète) : la fiche
-  actuelle montre déjà utilisateurs + statut ; les blocs adresses/préférences par société
-  restent à ajouter si utile.
+  actuelle montre déjà utilisateurs + statut ; les blocs adresses par société restent à ajouter.
 - **21-22. CRUD catalogue admin** (création/édition produit, upload photos) : gros chantier,
   le catalogue reste alimenté par le seed/base pour l'instant, aucune UI de gestion.
-- **24. Journal d'activité admin** : la table `activity_logs` existe mais n'est encore
-  alimentée par aucune route — il faut instrumenter chaque action avant de pouvoir l'afficher.
 - **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
   pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
 - **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**

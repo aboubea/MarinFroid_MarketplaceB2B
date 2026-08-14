@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { invitations, users, organizations } from "@marin-froid/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { createEmailClient, accountActivatedEmail } from "@marin-froid/email";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(request: Request) {
   const { token, fullName, password } = await request.json();
@@ -50,6 +51,16 @@ export async function POST(request: Request) {
     const template = accountActivatedEmail({ fullName, loginUrl: `${baseUrl}/login` });
     await emailClient.send({ to: user.email, ...template }).catch((err) => console.error("email error", err));
   }
+
+  await logActivity({
+    actorUserId: user.id,
+    actorLabel: user.fullName,
+    organizationId: user.organizationId,
+    action: "account_activated",
+    entityType: "user",
+    entityId: user.id,
+    summary: `Compte activé par ${user.fullName}`,
+  });
 
   return NextResponse.json({ ok: true });
 }
