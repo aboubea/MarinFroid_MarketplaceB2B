@@ -1,12 +1,13 @@
 "use client";
 
 import { Sidebar } from "./Sidebar";
+import { IconClipboard, IconList, IconUsers, IconPalette } from "./icons";
 
 const LINKS = [
-  { href: "/admin", label: "Commandes à traiter" },
-  { href: "/admin/orders", label: "Commandes" },
-  { href: "/admin/clients", label: "Clients" },
-  { href: "/admin/branding", label: "Branding" },
+  { href: "/admin", label: "À traiter", icon: <IconClipboard /> },
+  { href: "/admin/orders", label: "Commandes", icon: <IconList /> },
+  { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
+  { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
 ];
 
 export function AdminShell({ children, fullName }: { children: React.ReactNode; fullName: string }) {
@@ -18,7 +19,7 @@ export function AdminShell({ children, fullName }: { children: React.ReactNode; 
           <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>
           <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{fullName}</span>
         </header>
-        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container fade-up" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import type { Address } from "./AddressManager";
 
 interface Item {
   productId: string;
@@ -12,11 +13,12 @@ interface Item {
   indicativePrice: string | null;
 }
 
-export function CartTable({ initialItems }: { initialItems: Item[] }) {
+export function CartTable({ initialItems, addresses }: { initialItems: Item[]; addresses: Address[] }) {
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [addressId, setAddressId] = useState<string>(addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? "");
 
   async function updateQuantity(productId: string, quantity: number) {
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.productId !== productId) : prev.map((i) => (i.productId === productId ? { ...i, quantity } : i))));
@@ -31,7 +33,11 @@ export function CartTable({ initialItems }: { initialItems: Item[] }) {
   async function handleSubmit() {
     setSubmitting(true);
     setError(null);
-    const res = await fetch("/api/orders/create", { method: "POST" });
+    const res = await fetch("/api/orders/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deliveryAddressId: addressId || null }),
+    });
     setSubmitting(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -51,7 +57,7 @@ export function CartTable({ initialItems }: { initialItems: Item[] }) {
   const hasPricing = items.some((i) => i.indicativePrice);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: hasPricing ? "1fr 320px" : "1fr", gap: 20, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
       <div className="card" style={{ overflow: "hidden" }}>
         {items.map((item, idx) => (
           <div
@@ -87,29 +93,39 @@ export function CartTable({ initialItems }: { initialItems: Item[] }) {
         ))}
       </div>
 
-      {hasPricing ? (
-        <div className="card" style={{ padding: 20, position: "sticky", top: 20 }}>
-          <h2 style={{ fontSize: 15, marginBottom: 16 }}>Résumé</h2>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-            <span style={{ color: "var(--color-text-muted)" }}>Sous-total indicatif</span>
-            <span>{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+      <div className="card" style={{ padding: 20, position: "sticky", top: 84 }}>
+        <h2 style={{ fontSize: 15, marginBottom: 16 }}>Résumé</h2>
+
+        {addresses.length > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
+              Adresse de livraison
+            </label>
+            <select className="input" value={addressId} onChange={(e) => setAddressId(e.target.value)}>
+              {addresses.map((a) => (
+                <option key={a.id} value={a.id}>{a.label} — {a.city}</option>
+              ))}
+            </select>
           </div>
-          <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 16 }}>
-            Montant indicatif — le prix définitif est confirmé par l'équipe Marin Froid, hors TVA et livraison.
-          </p>
-          {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>}
-          <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "Validation..." : "Valider la commande"}
-          </button>
-        </div>
-      ) : (
-        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end", gridColumn: "1 / -1" }}>
-          {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginRight: 16 }}>{error}</p>}
-          <button className="btn-primary" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "Validation..." : "Valider la commande"}
-          </button>
-        </div>
-      )}
+        )}
+
+        {hasPricing && (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
+              <span style={{ color: "var(--color-text-muted)" }}>Sous-total indicatif</span>
+              <span>{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+            </div>
+            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 16 }}>
+              Montant indicatif — le prix définitif est confirmé par l'équipe Marin Froid, hors TVA et livraison.
+            </p>
+          </>
+        )}
+
+        {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>}
+        <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
+          {submitting ? "Validation..." : "Valider la commande"}
+        </button>
+      </div>
     </div>
   );
 }

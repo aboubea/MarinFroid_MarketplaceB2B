@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { getDb } from "@/lib/db";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Marin Froid — Portail commande B2B",
@@ -24,7 +27,7 @@ async function getBrandingStyle() {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const brandingStyle = await getBrandingStyle();
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <body style={brandingStyle}>{children}</body>
     </html>
   );

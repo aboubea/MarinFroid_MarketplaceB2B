@@ -2,13 +2,14 @@
 
 import { Sidebar } from "./Sidebar";
 import { CartIcon } from "./CartIcon";
+import { IconHome, IconGrid, IconList, IconUser } from "./icons";
 import Link from "next/link";
 
 const LINKS = [
-  { href: "/dashboard", label: "Tableau de bord" },
-  { href: "/catalog", label: "Catalogue" },
-  { href: "/orders", label: "Commandes" },
-  { href: "/account", label: "Compte" },
+  { href: "/dashboard", label: "Tableau de bord", icon: <IconHome /> },
+  { href: "/catalog", label: "Catalogue", icon: <IconGrid /> },
+  { href: "/orders", label: "Commandes", icon: <IconList /> },
+  { href: "/account", label: "Compte", icon: <IconUser /> },
 ];
 
 export function AppShell({
@@ -31,7 +32,7 @@ export function AppShell({
             <Link href="/cart" aria-label="Panier"><CartIcon /></Link>
           </div>
         </header>
-        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container fade-up" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>

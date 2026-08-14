@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 export interface SidebarLink {
   href: string;
   label: string;
+  icon?: React.ReactNode;
 }
 
 export function Sidebar({ links, footerLabel }: { links: SidebarLink[]; footerLabel: string }) {
@@ -19,6 +20,7 @@ export function Sidebar({ links, footerLabel }: { links: SidebarLink[]; footerLa
           const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
           return (
             <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`}>
+              {link.icon}
               {link.label}
             </Link>
           );
@@ -33,9 +35,14 @@ export function Sidebar({ links, footerLabel }: { links: SidebarLink[]; footerLa
             window.location.href = "/login";
           }}
         >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <path d="M16 17l5-5-5-5" />
+            <path d="M21 12H9" />
+          </svg>
           Déconnexion
         </button>
-        <div style={{ fontSize: 12, color: "#94A3B8", padding: "8px 12px 0" }}>{footerLabel}</div>
+        <div style={{ fontSize: 12, color: "#8A93A6", padding: "10px 13px 0" }}>{footerLabel}</div>
       </div>
     </aside>
   );
