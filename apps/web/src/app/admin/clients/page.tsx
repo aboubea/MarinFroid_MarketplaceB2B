@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { desc } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { InviteClientForm } from "@/components/InviteClientForm";
+import { EmptyState } from "@/components/EmptyState";
+import { ClientsTable } from "@/components/ClientsTable";
 
 export default async function AdminClientsPage() {
   const session = await requireMarinFroidSession();
@@ -20,16 +21,17 @@ export default async function AdminClientsPage() {
         <InviteClientForm />
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {list.map((o) => (
-          <Link key={o.id} href={`/admin/clients/${o.id}`} className="card" style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>{o.name}</div>
-            <span className={`badge ${o.status === "active" ? "badge-completed" : o.status === "suspended" ? "badge-cancelled" : "badge-submitted"}`}>
-              {o.status}
-            </span>
-          </Link>
-        ))}
-      </div>
+      {list.length === 0 ? (
+        <EmptyState
+          illustration="users"
+          title="Aucun client"
+          description="Invitez une première société avec le formulaire ci-dessus."
+        />
+      ) : (
+        <ClientsTable
+          organizations={list.map((o) => ({ id: o.id, name: o.name, status: o.status, createdAt: o.createdAt.toString() }))}
+        />
+      )}
     </AdminShell>
   );
 }
