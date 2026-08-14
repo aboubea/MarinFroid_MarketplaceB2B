@@ -1,5 +1,5 @@
 {
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile=false",
-  "buildCommand": "cd ../.. && pnpm db:generate && pnpm db:migrate && pnpm --filter @marin-froid/web build",
+  "buildCommand": "cd ../.. && pnpm db:generate && pnpm db:migrate && pnpm db:seed && pnpm --filter @marin-froid/web build",
   "outputDirectory": ".next"
 }
