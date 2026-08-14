@@ -1,8 +1,15 @@
 # Marin Froid — Portail de commande B2B
 
-Portail privé de commande pour les clients (sociétés invitées) de Marin Froid.
-Aucun paiement en ligne : les prix affichés sont indicatifs, les commandes sont transmises
-directement à l'équipe interne qui confirme le montant définitif.
+Portail privé de commande pour les clients (sociétés invitées) de Marin Froid, cuisiniste pour
+les professionnels (restaurants, restauration collective). Aucun paiement en ligne : les prix
+affichés sont indicatifs, les commandes sont transmises directement à l'équipe interne qui
+confirme le montant définitif.
+
+**Catalogue** : le vrai catalogue produits de Marin Froid n'a pas encore été communiqué. Le
+schéma de données et le seed de démo restent volontairement génériques (catégories,
+références/SKU, conditionnement, prix indicatif, stockage, validité, caractéristiques
+techniques, documents) plutôt que de supposer un secteur précis — à remplacer par le vrai
+catalogue dès qu'il est disponible.
 
 ## Stack
 
@@ -21,7 +28,7 @@ cp .env.example .env
 
 pnpm db:generate   # génère les migrations SQL depuis le schéma Drizzle
 pnpm db:migrate    # applique les migrations sur Neon
-pnpm db:seed        # crée un admin + un client démo + quelques produits avec prix/DLUO/conservation
+pnpm db:seed        # crée un admin + un client démo + des références de démonstration génériques
 
 pnpm dev            # démarre apps/web sur http://localhost:3000
 
@@ -63,8 +70,8 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
   plus proche d'Apple/Airbnb/Spotify que la V1.
 - Catalogue avec **recherche texte + filtres par catégorie** (pills), prix indicatif/origine/
   conditionnement, stepper de quantité, ajout au panier avec feedback immédiat (badge animé).
-- **Fiche produit détaillée** (`/catalog/[id]`) : prix, conditionnement, conservation, DLUO,
-  description, valeurs nutritionnelles, documents téléchargeables (images/documents déjà en
+- **Fiche produit détaillée** (`/catalog/[id]`) : prix, conditionnement, stockage, validité,
+  description, caractéristiques techniques, documents téléchargeables (images/documents déjà en
   base via `product_images` / `product_documents`, à alimenter).
 - **Adresses de livraison** : gestion complète côté client (page Compte — ajout/suppression/
   adresse par défaut) et sélection de l'adresse au moment de valider la commande.
@@ -88,6 +95,17 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
   indicatif si des prix sont renseignés).
 - Personnalisation globale : logo + couleurs appliquées à toute l'app, garde-fou de contraste basique.
 - Emails transactionnels Resend : invitation, activation, commande créée (client + équipe), changement de statut, reset password — chacun désormais activable/désactivable depuis `/admin/notifications`.
+- **Suivi de préparation de commande** : timeline horizontale avec étapes (reçue → confirmée →
+  préparation → expédiée → livrée), dates réelles issues de `order_status_history`, sur la fiche
+  commande client et la fiche commande back-office.
+- **Gestion d'équipe en table** (`/team` côté client, fiche société côté admin) : avatars à
+  initiales, colonnes membre/email/rôle/statut, action de désactivation en icône — inspiré d'un
+  pattern de gestion d'utilisateurs classique, adapté à la palette Marin Froid.
+- **Qualité d'interaction** : skeletons de chargement (coquille sidebar/topbar + contenu, pas de
+  flash de page vide), transitions de page douces, toasts système pour les succès/erreurs,
+  empty states illustrés (panier vide, aucune commande, aucun résultat catalogue...), gestion
+  d'erreur réseau explicite (`safeFetch` distingue erreur réseau vs erreur métier) sur tous les
+  formulaires et actions principales.
 
 ## Ce qu'il faut encore confirmer
 
@@ -110,6 +128,10 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
 
 ## Repoussé (chantiers volumineux, hors de cette itération)
 
+- **Skeletons/toasts/empty states non encore câblés partout** : la passe a couvert le parcours
+  express (catalogue, panier, fiche produit, commandes), le back-office commandes/notifications
+  et la gestion d'équipe — les écrans branding/clients admin restants gardent encore des messages
+  inline plus simples, à harmoniser si besoin.
 - **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
   pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
 - **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**

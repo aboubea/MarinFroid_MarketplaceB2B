@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 export function ProductTile({
   productId,
@@ -22,17 +24,20 @@ export function ProductTile({
 }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const toast = useToast();
 
   async function handleAdd() {
-    const res = await fetch("/api/cart/add", {
+    const result = await safeFetch("/api/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, quantity }),
     });
-    if (res.ok) {
+    if (result.ok) {
       setAdded(true);
       window.dispatchEvent(new CustomEvent("cart:updated"));
       setTimeout(() => setAdded(false), 1200);
+    } else {
+      toast.show(result.error ?? "Impossible d'ajouter au panier.", "error");
     }
   }
 

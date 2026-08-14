@@ -46,7 +46,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <span className="badge badge-completed" style={{ marginBottom: 10 }}>{product.active ? "En stock" : "Indisponible"}</span>
           <h1 style={{ fontSize: 26, margin: "8px 0 4px", letterSpacing: "-0.02em" }}>{product.name}</h1>
           <p style={{ fontSize: 13, color: "var(--color-text-muted)", marginBottom: 20 }}>
-            {product.origin ?? "Origine non renseignée"} · Réf. {product.sku}
+            {product.origin ?? "Provenance non renseignée"} · Réf. {product.sku}
           </p>
 
           {product.indicativePrice && (
@@ -67,12 +67,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.packaging ?? "—"}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Conservation</div>
-              <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.storageTemp ?? "—"}</div>
+              <div style={{ fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Stockage</div>
+              <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.storageInfo ?? "—"}</div>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>DLUO</div>
-              <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.shelfLife ?? "—"}</div>
+              <div style={{ fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Validité</div>
+              <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.validityInfo ?? "—"}</div>
             </div>
           </div>
 
@@ -83,10 +83,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-          {product.nutritionalInfo && (
+          {product.specifications && (
             <div style={{ marginTop: 24 }}>
-              <h2 style={{ fontSize: 14, marginBottom: 8 }}>Valeurs nutritionnelles moyennes (pour 100g)</h2>
-              <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", lineHeight: 1.6, whiteSpace: "pre-line" }}>{product.nutritionalInfo}</p>
+              <h2 style={{ fontSize: 14, marginBottom: 8 }}>Caractéristiques techniques</h2>
+              <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", lineHeight: 1.6, whiteSpace: "pre-line" }}>{product.specifications}</p>
             </div>
           )}
 

@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { safeFetch } from "@/lib/safe-fetch";
 
 const BENEFITS = [
-  "Produits surgelés & frais",
-  "Stocks en temps réel",
+  "Catalogue professionnel dédié",
+  "Disponibilité en temps réel",
   "Commandes express",
   "Livraison planifiée",
 ];
@@ -22,19 +23,17 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const res = await fetch("/api/auth/login", {
+    const result = await safeFetch<{ redirectTo?: string }>("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
     setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Identifiants invalides.");
+    if (!result.ok || !result.data) {
+      setError(result.error ?? "Identifiants invalides.");
       return;
     }
-    const { redirectTo } = await res.json();
-    router.push(redirectTo ?? "/dashboard");
+    router.push(result.data.redirectTo ?? "/dashboard");
     router.refresh();
   }
 
@@ -67,7 +66,7 @@ export default function LoginPage() {
 
         <div style={{ position: "relative" }}>
           <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 24, maxWidth: 380 }}>
-            Le réassort de vos produits de la mer, en moins d'une minute.
+            Vos commandes professionnelles Marin Froid, en moins d'une minute.
           </h1>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
             {BENEFITS.map((b) => (

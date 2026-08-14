@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Address } from "./AddressManager";
+import { EmptyState } from "./EmptyState";
+import { useToast } from "./Toast";
+import { safeFetch } from "@/lib/safe-fetch";
 
 interface Item {
   productId: string;
@@ -15,42 +18,53 @@ interface Item {
 
 export function CartTable({ initialItems, addresses }: { initialItems: Item[]; addresses: Address[] }) {
   const router = useRouter();
+  const toast = useToast();
   const [items, setItems] = useState(initialItems);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [addressId, setAddressId] = useState<string>(addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? "");
 
   async function updateQuantity(productId: string, quantity: number) {
+    const previous = items;
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.productId !== productId) : prev.map((i) => (i.productId === productId ? { ...i, quantity } : i))));
-    await fetch("/api/cart/update", {
+    const result = await safeFetch("/api/cart/update", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, quantity }),
     });
+    if (!result.ok) {
+      setItems(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour le panier.", "error");
+      return;
+    }
     window.dispatchEvent(new CustomEvent("cart:updated"));
   }
 
   async function handleSubmit() {
     setSubmitting(true);
-    setError(null);
-    const res = await fetch("/api/orders/create", {
+    const result = await safeFetch<{ orderId: string }>("/api/orders/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ deliveryAddressId: addressId || null }),
     });
     setSubmitting(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Impossible de valider la commande.");
+    if (!result.ok || !result.data) {
+      toast.show(result.error ?? "Impossible de valider la commande.", "error");
       return;
     }
-    const { orderId } = await res.json();
     window.dispatchEvent(new CustomEvent("cart:updated"));
-    router.push(`/orders/${orderId}?confirmed=1`);
+    toast.show("Commande transmise à l'équipe Marin Froid.", "success");
+    router.push(`/orders/${result.data.orderId}?confirmed=1`);
   }
 
   if (items.length === 0) {
-    return <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>Votre panier est vide.</div>;
+    return (
+      <EmptyState
+        illustration="cart"
+        title="Votre panier est vide"
+        description="Ajoutez des produits depuis le catalogue ou reprenez une commande précédente."
+        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir le catalogue</a>}
+      />
+    );
   }
 
   const subtotal = items.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
@@ -121,7 +135,6 @@ export function CartTable({ initialItems, addresses }: { initialItems: Item[]; a
           </>
         )}
 
-        {error && <p style={{ color: "var(--color-danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>}
         <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
           {submitting ? "Validation..." : "Valider la commande"}
         </button>

@@ -113,9 +113,9 @@ export const products = pgTable("products", {
   origin: text("origin"),
   packaging: text("packaging"),
   indicativePrice: numeric("indicative_price", { precision: 10, scale: 2 }),
-  storageTemp: text("storage_temp"),
-  shelfLife: text("shelf_life"),
-  nutritionalInfo: text("nutritional_info"),
+  storageInfo: text("storage_info"),
+  validityInfo: text("validity_info"),
+  specifications: text("specifications"),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({

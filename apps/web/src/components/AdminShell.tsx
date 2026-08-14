@@ -20,7 +20,7 @@ export function AdminShell({ children, fullName }: { children: React.ReactNode; 
           <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>
           <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{fullName}</span>
         </header>
-        <main className="container fade-up" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>
