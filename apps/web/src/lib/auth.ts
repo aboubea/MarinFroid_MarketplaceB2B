@@ -71,3 +71,9 @@ export async function getSession(): Promise<SessionPayload | null> {
 export function isMarinFroidRole(role: UserRole): boolean {
   return role === "mf_admin" || role === "mf_ops";
 }
+
+export function dashboardPathForRole(role: UserRole): string {
+  if (role === "mf_admin") return "/admin/overview";
+  if (role === "mf_ops") return "/admin";
+  return "/dashboard";
+}

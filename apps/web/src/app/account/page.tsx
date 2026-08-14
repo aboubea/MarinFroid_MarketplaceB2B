@@ -11,7 +11,7 @@ const ROLE_LABELS: Record<string, string> = {
   mf_ops: "Équipe commandes",
   org_admin: "Administrateur",
   org_buyer: "Acheteur",
-  org_viewer: "Utilisateur secondaire",
+  org_viewer: "Lecture / administratif",
 };
 
 export default async function AccountPage() {

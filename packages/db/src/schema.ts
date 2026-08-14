@@ -231,9 +231,35 @@ export const emailLogs = pgTable("email_logs", {
 export const activityLogs = pgTable("activity_logs", {
   id: uuid("id").defaultRandom().primaryKey(),
   actorUserId: uuid("actor_user_id").references(() => users.id),
+  actorLabel: text("actor_label"),
+  organizationId: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
   action: text("action").notNull(),
   entityType: text("entity_type").notNull(),
   entityId: text("entity_id"),
+  summary: text("summary").notNull(),
   metadata: text("metadata"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  createdAtIdx: index("activity_logs_created_at_idx").on(t.createdAt),
+}));
+
+// --- Client-facing notifications ---
+export const clientNotificationCategoryEnum = pgEnum("client_notification_category", [
+  "order_created",
+  "order_status_updated",
+  "system",
+]);
+
+export const clientNotifications = pgTable("client_notifications", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  category: clientNotificationCategoryEnum("category").notNull().default("system"),
+  title: text("title").notNull(),
+  body: text("body"),
+  orderId: uuid("order_id").references(() => orders.id, { onDelete: "cascade" }),
+  readAt: timestamp("read_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  userIdx: index("client_notifications_user_idx").on(t.userId),
+}));

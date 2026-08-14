@@ -1,37 +1,54 @@
-import Link from "next/link";
-import { eq, desc, ne } from "drizzle-orm";
+import { eq, and, gte, lte } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
+import { AdminOrdersBoard } from "@/components/AdminOrdersBoard";
 
-export default async function AdminHomePage() {
+export default async function AdminPreparationPage() {
   const session = await requireMarinFroidSession();
   const db = getDb();
-  const pending = await db.query.orders.findMany({
-    where: ne(orders.status, "completed"),
-    orderBy: [desc(orders.createdAt)],
-    limit: 10,
-  });
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const [toTreat, inPrep, shippedToday, late] = await Promise.all([
+    db.query.orders.findMany({ where: eq(orders.status, "submitted") }),
+    db.query.orders.findMany({ where: eq(orders.status, "processing") }),
+    db.query.orders.findMany({ where: and(eq(orders.status, "shipped"), gte(orders.updatedAt, startOfDay)) }),
+    db.query.orders.findMany({ where: and(eq(orders.status, "submitted"), lte(orders.createdAt, twentyFourHoursAgo)) }),
+  ]);
 
   return (
     <AdminShell fullName={session.fullName}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Commandes à traiter</h1>
-      {pending.length === 0 ? (
-        <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>Aucune commande en attente.</div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {pending.map((o) => (
-            <Link key={o.id} href={`/admin/orders/${o.id}`} className="card" style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: 14 }}>{o.reference}</div>
-                <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleString("fr-FR")}</div>
-              </div>
-              <span className={`badge badge-${o.status}`}>{o.status}</span>
-            </Link>
-          ))}
+      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Préparation des commandes</h1>
+      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
+        Ce qu'il faut traiter maintenant.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 28 }}>
+        <div className="stat-card">
+          <div className="stat-value">{toTreat.length}</div>
+          <div className="stat-label">À traiter</div>
         </div>
-      )}
+        <div className="stat-card">
+          <div className="stat-value">{inPrep.length}</div>
+          <div className="stat-label">En préparation</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{shippedToday.length}</div>
+          <div className="stat-label">Expédiées aujourd'hui</div>
+        </div>
+        {late.length > 0 && (
+          <div className="stat-card" style={{ borderColor: "var(--color-danger)" }}>
+            <div className="stat-value" style={{ color: "var(--color-danger)" }}>{late.length}</div>
+            <div className="stat-label">En attente depuis +24h</div>
+          </div>
+        )}
+      </div>
+
+      <AdminOrdersBoard />
     </AdminShell>
   );
 }

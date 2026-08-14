@@ -2,6 +2,7 @@
 
 import { Sidebar } from "./Sidebar";
 import { CartIcon } from "./CartIcon";
+import { NotificationBell } from "./NotificationBell";
 import { IconHome, IconGrid, IconList, IconUser, IconUsers, IconRefresh } from "./icons";
 import Link from "next/link";
 
@@ -33,6 +34,7 @@ export function AppShell({
           <span style={{ fontSize: 14, fontWeight: 600 }}>Bonjour, {fullName.split(" ")[0]}</span>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{organizationName}</span>
+            <Link href="/notifications" aria-label="Notifications"><NotificationBell /></Link>
             <Link href="/cart" aria-label="Panier"><CartIcon /></Link>
           </div>
         </header>

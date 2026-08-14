@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { users } from "@marin-froid/db";
-import { verifyPassword, createSession, isMarinFroidRole } from "@/lib/auth";
+import { verifyPassword, createSession, dashboardPathForRole } from "@/lib/auth";
 
 export async function POST(request: Request) {
   const { email, password } = await request.json();
@@ -26,6 +26,6 @@ export async function POST(request: Request) {
 
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
 
-  const redirectTo = isMarinFroidRole(user.role) ? "/admin" : "/dashboard";
+  const redirectTo = dashboardPathForRole(user.role);
   return NextResponse.json({ redirectTo });
 }

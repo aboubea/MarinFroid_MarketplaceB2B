@@ -46,26 +46,44 @@ async function main() {
     .values({ name: "Marin Froid", status: "active" })
     .returning();
 
-  await db.insert(users).values({
-    email: "admin@marinfroid.fr",
-    passwordHash: hashPassword("ChangeMe123!"),
-    fullName: "Admin Marin Froid",
-    role: "mf_admin",
-    organizationId: mfOrg.id,
-  });
+  await db.insert(users).values([
+    {
+      email: "admin@marinfroid.fr",
+      passwordHash: hashPassword("ChangeMe123!"),
+      fullName: "Admin Marin Froid",
+      role: "mf_admin",
+      organizationId: mfOrg.id,
+    },
+    {
+      email: "preparation@marinfroid.fr",
+      passwordHash: hashPassword("ChangeMe123!"),
+      fullName: "Équipe Préparation",
+      role: "mf_ops",
+      organizationId: mfOrg.id,
+    },
+  ]);
 
   const [demoOrg] = await db
     .insert(organizations)
     .values({ name: "Client Démo SARL", status: "active" })
     .returning();
 
-  await db.insert(users).values({
-    email: "acheteur@demo.fr",
-    passwordHash: hashPassword("ChangeMe123!"),
-    fullName: "Acheteur Démo",
-    role: "org_buyer",
-    organizationId: demoOrg.id,
-  });
+  await db.insert(users).values([
+    {
+      email: "acheteur@demo.fr",
+      passwordHash: hashPassword("ChangeMe123!"),
+      fullName: "Acheteur Démo",
+      role: "org_buyer",
+      organizationId: demoOrg.id,
+    },
+    {
+      email: "compta@demo.fr",
+      passwordHash: hashPassword("ChangeMe123!"),
+      fullName: "Comptabilité Démo",
+      role: "org_viewer",
+      organizationId: demoOrg.id,
+    },
+  ]);
 
   // Catégories et références volontairement génériques : le catalogue réel de Marin Froid
   // (cuisiniste pour la restauration professionnelle et la restauration collective) n'a pas
@@ -102,7 +120,11 @@ async function main() {
     },
   ]);
 
-  console.log("Seed complete. Demo login: acheteur@demo.fr / ChangeMe123!");
+  console.log("Seed complete. Demo logins (all ChangeMe123!):");
+  console.log("  admin@marinfroid.fr        (mf_admin — dashboard Administration)");
+  console.log("  preparation@marinfroid.fr  (mf_ops — dashboard Préparation)");
+  console.log("  acheteur@demo.fr           (org_buyer — dashboard client)");
+  console.log("  compta@demo.fr             (org_viewer — lecture / administratif)");
 }
 
 main().catch((err) => {

@@ -10,6 +10,9 @@ export async function POST(request: Request) {
   if (!session || !session.organizationId) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
   }
+  if (session.role === "org_viewer") {
+    return NextResponse.json({ error: "Votre profil (lecture / administratif) ne permet pas de valider une commande." }, { status: 403 });
+  }
   const body = await request.json().catch(() => ({}));
   const deliveryAddressId: string | null = body?.deliveryAddressId ?? null;
 
@@ -28,6 +31,7 @@ export async function POST(request: Request) {
       organizationName: org.name,
       userId: user.id,
       userEmail: user.email,
+      userFullName: user.fullName,
       deliveryAddressId,
     });
     return NextResponse.json({ orderId: order.id, reference: order.reference });

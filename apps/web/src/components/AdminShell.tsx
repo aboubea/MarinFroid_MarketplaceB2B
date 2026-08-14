@@ -1,14 +1,16 @@
 "use client";
 
 import { Sidebar } from "./Sidebar";
-import { IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconUserPlus } from "./icons";
+import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconUserPlus, IconActivity } from "./icons";
 
 const LINKS = [
-  { href: "/admin", label: "À traiter", icon: <IconClipboard /> },
+  { href: "/admin/overview", label: "Administration", icon: <IconHome /> },
+  { href: "/admin", label: "Préparation", icon: <IconClipboard /> },
   { href: "/admin/orders", label: "Commandes", icon: <IconList /> },
   { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
   { href: "/admin/invitations", label: "Invitations", icon: <IconUserPlus /> },
   { href: "/admin/notifications", label: "Emails & notifications", icon: <IconBell /> },
+  { href: "/admin/activity", label: "Activité", icon: <IconActivity /> },
   { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
 ];
 
