@@ -43,7 +43,7 @@ export default async function DashboardPage() {
   const lastOrder = recentOrders[0];
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name}>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Bonjour {session.fullName.split(" ")[0]}</h1>
       <p style={{ color: "var(--color-text-muted)", marginBottom: 24 }}>Voici un aperçu de votre activité.</p>
 

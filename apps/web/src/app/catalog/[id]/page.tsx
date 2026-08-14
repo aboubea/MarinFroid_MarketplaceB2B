@@ -21,7 +21,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   ]);
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name}>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <Link href="/catalog" style={{ fontSize: 13, color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20 }}>
         ← Retour au catalogue
       </Link>

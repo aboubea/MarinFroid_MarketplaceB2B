@@ -4,6 +4,7 @@ import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderStatusHistory, users } from "@marin-froid/db";
 import { createEmailClient, orderStatusUpdatedEmail } from "@marin-froid/email";
+import { isNotificationEnabled } from "@/lib/notification-settings";
 
 const VALID_STATUSES = ["submitted", "acknowledged", "processing", "shipped", "completed", "cancelled"] as const;
 
@@ -25,7 +26,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   const placedByUser = await db.query.users.findFirst({ where: eq(users.id, order.placedByUserId) });
   const apiKey = process.env.RESEND_API_KEY;
-  if (apiKey && placedByUser) {
+  if (apiKey && placedByUser && (await isNotificationEnabled("order_status_updated", "customer"))) {
     const emailClient = createEmailClient(apiKey);
     const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
     const template = orderStatusUpdatedEmail({

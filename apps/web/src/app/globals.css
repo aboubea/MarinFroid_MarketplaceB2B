@@ -294,3 +294,9 @@ a.card:hover, .card.interactive:hover {
   color: var(--color-text-faint);
 }
 .search-input-wrap .input { padding-left: 38px; }
+
+.login-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+@media (max-width: 860px) {
+  .login-split { grid-template-columns: 1fr; }
+  .login-split-brand { display: none; }
+}

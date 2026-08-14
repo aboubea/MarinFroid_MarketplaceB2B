@@ -59,7 +59,8 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
 
 - Auth par invitation (société + contact), activation de compte, login, mot de passe oublié.
 - Design : police Inter, ombres/hover/transitions soignées, sidebar avec icônes, cartes avec
-  élévation au survol — direction plus proche d'Apple/Airbnb/Spotify que la V1.
+  élévation au survol, **login en split-screen** (branding bleu nuit + formulaire) — direction
+  plus proche d'Apple/Airbnb/Spotify que la V1.
 - Catalogue avec **recherche texte + filtres par catégorie** (pills), prix indicatif/origine/
   conditionnement, stepper de quantité, ajout au panier avec feedback immédiat (badge animé).
 - **Fiche produit détaillée** (`/catalog/[id]`) : prix, conditionnement, conservation, DLUO,
@@ -67,20 +68,37 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
   base via `product_images` / `product_documents`, à alimenter).
 - **Adresses de livraison** : gestion complète côté client (page Compte — ajout/suppression/
   adresse par défaut) et sélection de l'adresse au moment de valider la commande.
+- **Historique de commande avec timeline de statut** et action "Recommander" directement
+  disponible sur chaque ligne de l'historique.
+- **Back-office étoffé** (`/admin/orders`) : liste filtrable par statut (onglets), recherche,
+  **panneau de détail rapide** (articles, historique de statut, changement de statut) sans
+  quitter la liste, et **export CSV** des commandes.
+- **Paramétrage des emails & notifications** (`/admin/notifications`) : activer/désactiver
+  l'envoi par événement métier (commande créée, statut modifié, invitation, activation, reset
+  mot de passe) séparément pour le client et pour l'équipe, plus gestion des destinataires
+  équipe (ajout/désactivation/suppression) — remplace la liste `notification_recipients`
+  jusque-là non éditable depuis l'UI.
+- **Rôles secondaires** : un `org_admin` peut désormais gérer sa propre équipe sur `/team`
+  (visible uniquement pour ce rôle) — inviter un collaborateur en choisissant Acheteur
+  (`org_buyer`) ou Utilisateur secondaire lecture seule (`org_viewer`), et désactiver/réactiver
+  un utilisateur de sa société (sauf lui-même et les autres admins).
 - Mobile (Expo) : login, tableau de bord (produits habituels + dernières commandes), catalogue,
   panier avec badge sur l'onglet, validation, historique, duplication de commande.
 - Panier web en deux colonnes : détail commande + résumé (sélecteur d'adresse, sous-total
   indicatif si des prix sont renseignés).
-- Back-office Marin Froid : liste/détail commandes, changement de statut, liste/détail clients, suspension.
 - Personnalisation globale : logo + couleurs appliquées à toute l'app, garde-fou de contraste basique.
-- Emails transactionnels Resend : invitation, activation, commande créée (client + équipe), changement de statut, reset password.
+- Emails transactionnels Resend : invitation, activation, commande créée (client + équipe), changement de statut, reset password — chacun désormais activable/désactivable depuis `/admin/notifications`.
 
 ## Ce qu'il faut encore confirmer
 
 - Nom de domaine expéditeur Resend (DNS/DKIM) et adresse `RESEND_FROM` définitive — voir section dédiée ci-dessous.
-- Règles précises de désactivation utilisateur côté admin société (`org_admin`) — actuellement seul Marin Froid peut suspendre une société entière.
 - Si un vrai suivi de crédit/encours client doit remplacer l'affichage indicatif actuel.
 - Comment alimenter concrètement `product_images` / `product_documents` (upload manuel, import fournisseur, etc.) — l'UI de la fiche produit les affiche déjà si présents.
+- Le rôle `org_viewer` ("utilisateur secondaire") est aujourd'hui traité comme lecture seule côté
+  RBAC existant (mêmes routes que `org_buyer`, aucune restriction d'écriture appliquée pour
+  l'instant côté panier/commande) — à durcir si l'intention est vraiment un accès consultation uniquement.
+- Le rôle "comptabilité" n'a pas d'équivalent dédié : `org_viewer` est utilisé comme rôle
+  secondaire générique pour l'instant, à spécialiser si des permissions différentes sont nécessaires.
 
 ## Configurer le domaine d'envoi Resend (DNS/DKIM)
 
@@ -92,15 +110,18 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
 
 ## Repoussé (chantiers volumineux, hors de cette itération)
 
-- **Back-office étoffé** (vue planning, exports commandes, paramétrage fin des destinataires
-  email par type d'événement — maquettes 08/09) : nécessite un vrai module de configuration
-  des notifications (table `notification_rules` déjà prévue en base mais pas encore utilisée)
-  et une vue d'export — à cadrer comme un chantier à part entière.
-- **Rôles secondaires** (comptabilité, utilisateur secondaire, permissions fines pour
-  `org_admin` sur les utilisateurs de sa société) : implique de revoir le RBAC actuel
-  (5 rôles fixes) vers un système de permissions plus granulaire.
+- **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
+  pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
+- **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**
+  (suggestions de la maquette 09) : `email_logs` existe en base mais n'est pas encore affiché.
+- **Permissions fines par module** (au-delà du binaire buyer/viewer) : le RBAC reste à 5 rôles
+  fixes, pas de système de permissions à la carte.
 - **QA + build mobile** (tests des parcours critiques en conditions réelles, configuration EAS
   pour un build App Store/Play Store) : nécessite un compte Apple/Google Developer et des tests
   sur device réels, hors de ce que je peux valider depuis cette session.
 - **Monitoring / analytics légers** : pas encore mis en place, à définir selon l'outil souhaité
   (Vercel Analytics, Sentry, Plausible...).
+- **Réplique pixel-parfaite des 9 maquettes** : la direction artistique (sidebar bleu nuit,
+  cartes claires, split-screen login, timeline statut, panneau détail back-office) a été
+  appliquée, mais certains détails visuels (photos produits réelles, galerie fiche produit,
+  micro-interactions précises) restent à affiner avec de vrais assets.

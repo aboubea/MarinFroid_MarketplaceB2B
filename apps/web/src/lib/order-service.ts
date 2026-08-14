@@ -3,6 +3,7 @@ import { getDb } from "./db";
 import { orders, orderItems, orderStatusHistory, notificationRecipients } from "@marin-froid/db";
 import { getCartWithItems, clearCart } from "./cart";
 import { createEmailClient, orderCreatedEmail } from "@marin-froid/email";
+import { isNotificationEnabled } from "./notification-settings";
 
 function generateReference() {
   const now = new Date();
@@ -81,24 +82,28 @@ async function sendOrderCreatedEmails(params: {
   const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
   const orderUrl = `${baseUrl}/orders/${params.orderId}`;
 
-  const customerTemplate = orderCreatedEmail({
-    reference: params.reference,
-    organizationName: params.organizationName,
-    itemCount: params.itemCount,
-    orderUrl,
-    isForOps: false,
-  });
-  await emailClient.send({ to: params.customerEmail, ...customerTemplate }).catch((err) => console.error("email error", err));
+  if (await isNotificationEnabled("order_created", "customer")) {
+    const customerTemplate = orderCreatedEmail({
+      reference: params.reference,
+      organizationName: params.organizationName,
+      itemCount: params.itemCount,
+      orderUrl,
+      isForOps: false,
+    });
+    await emailClient.send({ to: params.customerEmail, ...customerTemplate }).catch((err) => console.error("email error", err));
+  }
 
-  const recipients = await db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) });
-  const opsTemplate = orderCreatedEmail({
-    reference: params.reference,
-    organizationName: params.organizationName,
-    itemCount: params.itemCount,
-    orderUrl,
-    isForOps: true,
-  });
-  for (const recipient of recipients) {
-    await emailClient.send({ to: recipient.email, ...opsTemplate }).catch((err) => console.error("email error", err));
+  if (await isNotificationEnabled("order_created", "ops")) {
+    const recipients = await db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) });
+    const opsTemplate = orderCreatedEmail({
+      reference: params.reference,
+      organizationName: params.organizationName,
+      itemCount: params.itemCount,
+      orderUrl,
+      isForOps: true,
+    });
+    for (const recipient of recipients) {
+      await emailClient.send({ to: recipient.email, ...opsTemplate }).catch((err) => console.error("email error", err));
+    }
   }
 }

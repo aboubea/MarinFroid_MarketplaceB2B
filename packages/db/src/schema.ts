@@ -206,6 +206,17 @@ export const notificationRecipients = pgTable("notification_recipients", {
   active: boolean("active").notNull().default(true),
 });
 
+export const notificationEventSettings = pgTable("notification_event_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  eventKey: text("event_key").notNull(),
+  label: text("label").notNull(),
+  customerEmailEnabled: boolean("customer_email_enabled").notNull().default(true),
+  opsEmailEnabled: boolean("ops_email_enabled").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  eventKeyIdx: uniqueIndex("notification_event_settings_key_idx").on(t.eventKey),
+}));
+
 // --- Email & activity logs ---
 export const emailLogs = pgTable("email_logs", {
   id: uuid("id").defaultRandom().primaryKey(),

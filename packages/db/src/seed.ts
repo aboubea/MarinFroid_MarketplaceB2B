@@ -6,6 +6,7 @@ import {
   products,
   brandingSettings,
   notificationRecipients,
+  notificationEventSettings,
 } from "./schema";
 import { randomUUID } from "node:crypto";
 import { scryptSync, randomBytes } from "node:crypto";
@@ -31,6 +32,14 @@ async function main() {
     email: "commandes@marinfroid.fr",
     label: "Équipe commandes",
   });
+
+  await db.insert(notificationEventSettings).values([
+    { eventKey: "order_created", label: "Commande créée" },
+    { eventKey: "order_status_updated", label: "Changement de statut" },
+    { eventKey: "invitation_sent", label: "Invitation envoyée" },
+    { eventKey: "account_activated", label: "Compte activé" },
+    { eventKey: "password_reset", label: "Réinitialisation mot de passe" },
+  ]);
 
   const [mfOrg] = await db
     .insert(organizations)

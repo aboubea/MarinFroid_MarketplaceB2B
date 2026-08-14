@@ -13,7 +13,7 @@ export default async function AccountPage() {
   });
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name}>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 24 }}>Compte</h1>
       <div className="card" style={{ padding: 24, maxWidth: 480, marginBottom: 32 }}>
         <div style={{ marginBottom: 12 }}>
