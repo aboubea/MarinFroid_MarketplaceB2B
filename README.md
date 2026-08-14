@@ -126,12 +126,35 @@ crédit/plafond d'encours — ce dernier point reste hors MVP tant qu'il n'est p
 4. Mettre à jour `RESEND_FROM` dans les variables d'environnement Vercel avec une adresse `@` de ce domaine (ex. `Marin Froid <commandes@marinfroid.fr>`).
 5. Cette étape nécessite un accès à la zone DNS du domaine — à faire par la personne qui gère l'hébergement/domaine de Marin Froid, je ne peux pas la faire depuis cette session.
 
+## Écrans ajoutés (deuxième planche de maquettes)
+
+- **10-11. Activation / mot de passe oublié / reset** : même shell split-screen que le login
+  (`AuthSplitShell`), l'activation prévisualise la société associée à l'invitation avant de
+  demander le mot de passe.
+- **12. Mon compte** : cartes empilées (identité avec avatar, société, sécurité), la gestion
+  des adresses reste juste en dessous (écran 13, déjà couvert précédemment).
+- **14. Réachat rapide** (`/reachat`) : agrège l'historique de commandes de la société pour
+  afficher les références déjà commandées avec nombre de commandes, dernière date, quantité
+  habituelle pré-remplie, tri "Les plus commandés" / "Récents".
+- **19. Clients admin** : liste + panneau de détail rapide (même pattern que les commandes),
+  bascule active/suspendue directement depuis le panneau, aperçu utilisateurs + dernières commandes.
+- **23. Invitations admin** (`/admin/invitations`) : suivi de toutes les invitations envoyées
+  (société + équipe), renvoi avec nouveau lien, annulation, détection des invitations expirées.
+
 ## Repoussé (chantiers volumineux, hors de cette itération)
 
-- **Skeletons/toasts/empty states non encore câblés partout** : la passe a couvert le parcours
-  express (catalogue, panier, fiche produit, commandes), le back-office commandes/notifications
-  et la gestion d'équipe — les écrans branding/clients admin restants gardent encore des messages
-  inline plus simples, à harmoniser si besoin.
+- **16. Centre de notifications client** : nécessite un modèle de données dédié (état
+  lu/non lu par utilisateur) qui n'existe pas encore — pas juste un habillage visuel.
+- **17. Documents client** : à cadrer d'abord — documents liés aux produits (déjà en base via
+  `product_documents`) ou documents généraux société (CGV, fiches commerciales) ? Le périmètre
+  exact change l'implémentation.
+- **20. Détail société enrichi** (adresses, préférences dans la fiche complète) : la fiche
+  actuelle montre déjà utilisateurs + statut ; les blocs adresses/préférences par société
+  restent à ajouter si utile.
+- **21-22. CRUD catalogue admin** (création/édition produit, upload photos) : gros chantier,
+  le catalogue reste alimenté par le seed/base pour l'instant, aucune UI de gestion.
+- **24. Journal d'activité admin** : la table `activity_logs` existe mais n'est encore
+  alimentée par aucune route — il faut instrumenter chaque action avant de pouvoir l'afficher.
 - **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
   pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
 - **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**
