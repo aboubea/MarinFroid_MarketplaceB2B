@@ -5,11 +5,12 @@ les professionnels (restaurants, restauration collective). Aucun paiement en lig
 affichés sont indicatifs, les commandes sont transmises directement à l'équipe interne qui
 confirme le montant définitif.
 
-**Catalogue** : le vrai catalogue produits de Marin Froid n'a pas encore été communiqué. Le
-schéma de données et le seed de démo restent volontairement génériques (catégories,
-références/SKU, conditionnement, prix indicatif, stockage, validité, caractéristiques
-techniques, documents) plutôt que de supposer un secteur précis — à remplacer par le vrai
-catalogue dès qu'il est disponible.
+**Catalogue** : le vrai catalogue (34 références, 3 catégories — Laverie, Four, Traitement de
+l'eau) est chargé via `pnpm db:seed:catalog` (`packages/db/src/seed-catalog.ts`), extrait d'un
+document fournisseur transmis par l'utilisateur. Les prix HT et références sont ceux du
+document d'origine ; le nom du fournisseur/document n'apparaît nulle part sur la plateforme,
+seul le vendeur Marin Froid est visible côté client. Le script est idempotent (skip les
+références déjà présentes) et peut être relancé sans risque de doublon.
 
 ## Stack
 
@@ -28,7 +29,8 @@ cp .env.example .env
 
 pnpm db:generate   # génère les migrations SQL depuis le schéma Drizzle
 pnpm db:migrate    # applique les migrations sur Neon
-pnpm db:seed        # crée un admin + un client démo + des références de démonstration génériques
+pnpm db:seed        # crée les organisations/comptes de base (admin, préparation, acheteur, lecture)
+pnpm db:seed:catalog # charge le vrai catalogue (34 références) — idempotent, peut être relancé
 
 pnpm dev            # démarre apps/web sur http://localhost:3000
 

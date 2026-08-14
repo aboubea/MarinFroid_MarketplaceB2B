@@ -8,7 +8,8 @@
     "db:generate": "pnpm --filter @marin-froid/db generate",
     "db:migrate": "pnpm --filter @marin-froid/db migrate",
     "db:seed": "pnpm --filter @marin-froid/db seed",
-    "db:seed:additional-roles": "pnpm --filter @marin-froid/db seed:additional-roles"
+    "db:seed:additional-roles": "pnpm --filter @marin-froid/db seed:additional-roles",
+    "db:seed:catalog": "pnpm --filter @marin-froid/db seed:catalog"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

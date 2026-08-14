@@ -2,13 +2,10 @@ import { createDb } from "./index";
 import {
   organizations,
   users,
-  productCategories,
-  products,
   brandingSettings,
   notificationRecipients,
   notificationEventSettings,
 } from "./schema";
-import { randomUUID } from "node:crypto";
 import { scryptSync, randomBytes } from "node:crypto";
 
 function hashPassword(password: string): string {
@@ -85,42 +82,8 @@ async function main() {
     },
   ]);
 
-  // Catégories et références volontairement génériques : le catalogue réel de Marin Froid
-  // (cuisiniste pour la restauration professionnelle et la restauration collective) n'a pas
-  // encore été communiqué. À remplacer par le vrai catalogue dès qu'il est disponible.
-  const [cat1] = await db
-    .insert(productCategories)
-    .values({ name: "Équipements", slug: "equipements", position: 1 })
-    .returning();
-  const [cat2] = await db
-    .insert(productCategories)
-    .values({ name: "Consommables & fournitures", slug: "consommables-fournitures", position: 2 })
-    .returning();
-
-  await db.insert(products).values([
-    {
-      categoryId: cat1.id, sku: "EQ-001", name: "Référence d'équipement A", unit: "unité",
-      packaging: "Unité", indicativePrice: "0.00",
-      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
-    },
-    {
-      categoryId: cat1.id, sku: "EQ-002", name: "Référence d'équipement B", unit: "unité",
-      packaging: "Unité", indicativePrice: "0.00",
-      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
-    },
-    {
-      categoryId: cat2.id, sku: "CONS-001", name: "Référence de consommable A", unit: "unité",
-      packaging: "Lot", indicativePrice: "0.00",
-      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
-    },
-    {
-      categoryId: cat2.id, sku: "CONS-002", name: "Référence de consommable B", unit: "unité",
-      packaging: "Lot", indicativePrice: "0.00",
-      description: "Fiche de démonstration — à remplacer par une référence réelle du catalogue Marin Froid.",
-    },
-  ]);
-
-  console.log("Seed complete. Demo logins (all ChangeMe123!):");
+  console.log("Seed complete. Run `pnpm db:seed:catalog` next to load the real product catalog.");
+  console.log("Demo logins (all ChangeMe123!):");
   console.log("  admin@marinfroid.fr        (mf_admin — dashboard Administration)");
   console.log("  preparation@marinfroid.fr  (mf_ops — dashboard Préparation)");
   console.log("  acheteur@demo.fr           (org_buyer — dashboard client)");
