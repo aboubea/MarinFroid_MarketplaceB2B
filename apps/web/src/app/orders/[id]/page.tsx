@@ -6,6 +6,7 @@ import { orders, orderItems, deliveryAddresses, orderStatusHistory } from "@mari
 import { AppShell } from "@/components/AppShell";
 import { ReorderButton } from "@/components/ReorderButton";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function OrderDetailPage({
   params,
@@ -50,7 +51,7 @@ export default async function OrderDetailPage({
           <h1 style={{ fontSize: 24 }}>{order.reference}</h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: 13 }}>{new Date(order.createdAt).toLocaleString("fr-FR")}</p>
         </div>
-        <span className={`badge badge-${order.status}`}>{order.status}</span>
+        <span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>
       </div>
 
       <div style={{ marginBottom: 20 }}>

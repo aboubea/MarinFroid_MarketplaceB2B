@@ -6,6 +6,7 @@ import { orders, orderItems, products } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { getCartWithItems } from "@/lib/cart";
 import { DashboardQuickAdd } from "@/components/DashboardQuickAdd";
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function DashboardPage() {
   const { session, organization } = await requireClientSession();
@@ -195,7 +196,7 @@ export default async function DashboardPage() {
                   <tr key={o.id}>
                     <td><Link href={`/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
                     <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
-                    <td><span className={`badge badge-${o.status}`}>{o.status}</span></td>
+                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
                   </tr>
                 ))}
               </tbody>
