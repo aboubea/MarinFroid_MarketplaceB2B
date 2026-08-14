@@ -6,6 +6,7 @@ import { EmptyState } from "./EmptyState";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
 import { ListSkeleton } from "./Skeleton";
+import { orderStatusLabel } from "@/lib/order-status";
 
 interface OrderRow {
   id: string;
@@ -145,7 +146,7 @@ export function AdminOrdersBoard() {
                   <div style={{ fontWeight: 600, fontSize: 13.5 }}>{o.reference} — {o.organizationName}</div>
                   <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleString("fr-FR")}</div>
                 </div>
-                <span className={`badge badge-${o.status}`}>{o.status}</span>
+                <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
               </button>
             ))
           )}

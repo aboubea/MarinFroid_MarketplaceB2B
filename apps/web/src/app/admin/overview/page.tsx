@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { eq, desc, gte, and, or, inArray } from "drizzle-orm";
+import { eq, desc, gte, lte, and, or, inArray } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function AdminOverviewPage() {
   const session = await requireMarinFroidSession();
@@ -21,6 +22,8 @@ export default async function AdminOverviewPage() {
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const lateThreshold = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  const openStatuses = ["submitted", "acknowledged", "processing", "shipped"] as const;
 
   const [
     activeOrgs,
@@ -30,6 +33,8 @@ export default async function AdminOverviewPage() {
     recentActivity,
     orgsToWatch,
     recentOrders,
+    ordersInProgress,
+    lateOrders,
     activeRecipients,
     branding,
   ] = await Promise.all([
@@ -59,9 +64,22 @@ export default async function AdminOverviewPage() {
       .innerJoin(organizations, eq(organizations.id, orders.organizationId))
       .orderBy(desc(orders.createdAt))
       .limit(6),
+    db.query.orders.findMany({ where: inArray(orders.status, [...openStatuses]) }),
+    db.query.orders.findMany({
+      where: and(inArray(orders.status, [...openStatuses]), lte(orders.createdAt, lateThreshold)),
+      limit: 6,
+      orderBy: [orders.createdAt],
+    }),
     db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) }),
     db.query.brandingSettings.findFirst(),
   ]);
+
+  const lateOrdersWithOrg = await Promise.all(
+    lateOrders.map(async (o) => ({
+      ...o,
+      organization: await db.query.organizations.findFirst({ where: eq(organizations.id, o.organizationId) }),
+    })),
+  );
 
   const indicativeRevenue30d = items30d.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
   const hasPricing = items30d.some((i) => i.indicativePrice);
@@ -70,6 +88,30 @@ export default async function AdminOverviewPage() {
     <AdminShell fullName={session.fullName}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Administration</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>Vue globale et configuration.</p>
+
+      <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.4, color: "var(--color-text-muted)", marginBottom: 10 }}>
+        Performance
+      </h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+        {hasPricing && (
+          <div className="stat-card">
+            <div className="stat-value">{indicativeRevenue30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
+            <div className="stat-label">CA indicatif (30j)</div>
+          </div>
+        )}
+        <div className="stat-card">
+          <div className="stat-value">{orders7d.length}</div>
+          <div className="stat-label">Commandes (7j)</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{ordersInProgress.length}</div>
+          <div className="stat-label">Commandes en cours</div>
+        </div>
+        <div className="stat-card" style={lateOrders.length > 0 ? { borderColor: "var(--color-danger, #DC2626)" } : undefined}>
+          <div className="stat-value" style={lateOrders.length > 0 ? { color: "var(--color-danger, #DC2626)" } : undefined}>{lateOrders.length}</div>
+          <div className="stat-label">Commandes en retard (+3j)</div>
+        </div>
+      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         <div className="stat-card">
@@ -80,17 +122,37 @@ export default async function AdminOverviewPage() {
           <div className="stat-value">{activeUsers.length}</div>
           <div className="stat-label">Utilisateurs actifs</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{orders7d.length}</div>
-          <div className="stat-label">Commandes (7j)</div>
-        </div>
-        {hasPricing && (
-          <div className="stat-card">
-            <div className="stat-value">{indicativeRevenue30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
-            <div className="stat-label">Montant indicatif (30j)</div>
-          </div>
-        )}
       </div>
+
+      {lateOrdersWithOrg.length > 0 && (
+        <section style={{ marginBottom: 16 }}>
+          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Commandes en retard</h2>
+          <div className="card" style={{ overflow: "hidden" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>N° Commande</th>
+                  <th>Client</th>
+                  <th>Statut</th>
+                  <th>Depuis</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lateOrdersWithOrg.map((o) => (
+                  <tr key={o.id}>
+                    <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{o.organization?.name ?? "—"}</td>
+                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                    <td style={{ color: "var(--color-danger, #DC2626)", fontWeight: 600 }}>
+                      {Math.floor((Date.now() - new Date(o.createdAt).getTime()) / (24 * 60 * 60 * 1000))} j
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16, alignItems: "start" }}>
         <section>
@@ -162,7 +224,7 @@ export default async function AdminOverviewPage() {
                   <tr key={o.id}>
                     <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
                     <td style={{ color: "var(--color-text-muted)" }}>{o.organizationName}</td>
-                    <td><span className={`badge badge-${o.status}`}>{o.status}</span></td>
+                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
                     <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
                   </tr>
                 ))}

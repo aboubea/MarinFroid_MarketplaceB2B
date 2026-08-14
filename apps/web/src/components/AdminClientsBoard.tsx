@@ -7,6 +7,7 @@ import { IconSearch } from "./icons";
 import { ListSkeleton } from "./Skeleton";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
+import { orderStatusLabel } from "@/lib/order-status";
 
 interface OrgRow {
   id: string;
@@ -175,7 +176,7 @@ export function AdminClientsBoard({ initialOrganizations }: { initialOrganizatio
                   {detail.recentOrders.map((o) => (
                     <div key={o.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}>
                       <span>{o.reference}</span>
-                      <span className={`badge badge-${o.status}`}>{o.status}</span>
+                      <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
                     </div>
                   ))}
                 </div>

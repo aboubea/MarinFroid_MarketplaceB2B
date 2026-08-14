@@ -6,6 +6,7 @@ import { useState } from "react";
 import { EmptyState } from "./EmptyState";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
+import { orderStatusLabel } from "@/lib/order-status";
 
 interface Order {
   id: string;
@@ -54,7 +55,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
             <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span className={`badge badge-${o.status}`}>{o.status}</span>
+            <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
             <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }} onClick={(e) => handleReorder(e, o.id)} disabled={reorderingId === o.id}>
               {reorderingId === o.id ? "..." : "Recommander"}
             </button>
