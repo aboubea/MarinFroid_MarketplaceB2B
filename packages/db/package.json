@@ -8,7 +8,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
     "seed": "tsx src/seed.ts",
-    "seed:additional-roles": "tsx src/seed-additional-roles.ts"
+    "seed:additional-roles": "tsx src/seed-additional-roles.ts",
+    "seed:catalog": "tsx src/seed-catalog.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
