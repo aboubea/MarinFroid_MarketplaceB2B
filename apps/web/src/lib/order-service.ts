@@ -6,6 +6,7 @@ import { createEmailClient, orderCreatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "./notification-settings";
 import { logActivity, notifyUser } from "./activity";
 import { getOrgBroadcastUsers } from "./org-recipients";
+import { sendTrackedEmail } from "./email-log";
 
 function generateReference() {
   const now = new Date();
@@ -128,7 +129,7 @@ async function sendOrderCreatedEmails(params: {
     });
     const recipients = [params.customerEmail, ...(params.ccEmails ?? [])];
     for (const email of recipients) {
-      await emailClient.send({ to: email, ...customerTemplate }).catch((err) => console.error("email error", err));
+      await sendTrackedEmail(emailClient, "order_created", { to: email, ...customerTemplate, relatedOrderId: params.orderId });
     }
   }
 
@@ -142,7 +143,7 @@ async function sendOrderCreatedEmails(params: {
       isForOps: true,
     });
     for (const recipient of recipients) {
-      await emailClient.send({ to: recipient.email, ...opsTemplate }).catch((err) => console.error("email error", err));
+      await sendTrackedEmail(emailClient, "order_created", { to: recipient.email, ...opsTemplate, relatedOrderId: params.orderId });
     }
   }
 }

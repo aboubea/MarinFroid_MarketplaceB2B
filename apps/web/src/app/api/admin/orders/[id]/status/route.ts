@@ -7,6 +7,7 @@ import { createEmailClient, orderStatusUpdatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
 import { logActivity, notifyUser } from "@/lib/activity";
 import { getOrgBroadcastUsers } from "@/lib/org-recipients";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 const VALID_STATUSES = ["submitted", "acknowledged", "processing", "shipped", "completed", "cancelled"] as const;
 
@@ -76,7 +77,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     });
     const recipients = [placedByUser.email, ...broadcastUsers.map((u) => u.email)];
     for (const email of recipients) {
-      await emailClient.send({ to: email, ...template }).catch((err) => console.error("email error", err));
+      await sendTrackedEmail(emailClient, "order_status_updated", { to: email, ...template, relatedOrderId: order.id });
     }
   }
 

@@ -11,7 +11,7 @@ function hashPassword(password: string): string {
 
 async function ensureUser(
   db: ReturnType<typeof createDb>,
-  params: { email: string; fullName: string; role: "mf_ops" | "org_viewer"; organizationId: string }
+  params: { email: string; fullName: string; role: "mf_ops" | "org_admin" | "org_viewer"; organizationId: string }
 ) {
   const existing = await db.query.users.findFirst({ where: eq(users.email, params.email) });
   if (existing) {
@@ -41,6 +41,7 @@ async function main() {
   }
 
   await ensureUser(db, { email: "preparation@marinfroid.fr", fullName: "Équipe Préparation", role: "mf_ops", organizationId: mfOrg.id });
+  await ensureUser(db, { email: "responsable@demo.fr", fullName: "Responsable Démo", role: "org_admin", organizationId: demoOrg.id });
   await ensureUser(db, { email: "compta@demo.fr", fullName: "Comptabilité Démo", role: "org_viewer", organizationId: demoOrg.id });
 
   console.log("Done.");

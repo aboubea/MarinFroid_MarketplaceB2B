@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db";
 import { invitations, organizations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
+import { sendTrackedEmail } from "@/lib/email-log";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -29,7 +30,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       organizationName: organization.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,
     });
-    await emailClient.send({ to: invitation.email, ...template }).catch((err) => console.error("email error", err));
+    await sendTrackedEmail(emailClient, "invitation_sent", { to: invitation.email, ...template });
   }
 
   return NextResponse.json({ ok: true });

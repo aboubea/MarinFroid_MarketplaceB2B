@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { organizations, users } from "@marin-froid/db";
+import { organizations, users, deliveryAddresses } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { OrgStatusToggle } from "@/components/OrgStatusToggle";
 import { Avatar } from "@/components/Avatar";
@@ -24,6 +24,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   const organization = await db.query.organizations.findFirst({ where: eq(organizations.id, id) });
   if (!organization) notFound();
   const orgUsers = await db.query.users.findMany({ where: eq(users.organizationId, id) });
+  const addresses = await db.query.deliveryAddresses.findMany({ where: eq(deliveryAddresses.organizationId, id) });
 
   return (
     <AdminShell fullName={session.fullName}>
@@ -65,6 +66,37 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+      </div>
+
+      <h2 style={{ fontSize: 15, margin: "24px 0 12px" }}>Adresses de livraison</h2>
+      <div className="card" style={{ overflow: "hidden" }}>
+        {addresses.length === 0 ? (
+          <EmptyState illustration="box" title="Aucune adresse" description="Cette société n'a pas encore renseigné d'adresse de livraison." />
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {addresses.map((a, idx) => (
+              <div
+                key={a.id}
+                style={{
+                  padding: "14px 16px",
+                  borderBottom: idx < addresses.length - 1 ? "1px solid var(--color-border)" : "none",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 13.5 }}>
+                    {a.label} {a.isDefault && <span className="badge badge-completed" style={{ marginLeft: 6 }}>par défaut</span>}
+                  </div>
+                  <div style={{ fontSize: 12.5, color: "var(--color-text-muted)", marginTop: 2 }}>
+                    {a.line1}{a.line2 ? `, ${a.line2}` : ""} · {a.postalCode} {a.city} · {a.country}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
