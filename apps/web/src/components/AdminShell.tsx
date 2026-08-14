@@ -1,12 +1,13 @@
 "use client";
 
 import { Sidebar } from "./Sidebar";
-import { IconClipboard, IconList, IconUsers, IconPalette } from "./icons";
+import { IconClipboard, IconList, IconUsers, IconPalette, IconBell } from "./icons";
 
 const LINKS = [
   { href: "/admin", label: "À traiter", icon: <IconClipboard /> },
   { href: "/admin/orders", label: "Commandes", icon: <IconList /> },
   { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
+  { href: "/admin/notifications", label: "Emails & notifications", icon: <IconBell /> },
   { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
 ];
 

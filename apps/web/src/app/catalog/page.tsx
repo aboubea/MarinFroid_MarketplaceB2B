@@ -13,7 +13,7 @@ export default async function CatalogPage() {
   const allProducts = await db.query.products.findMany({ where: eq(products.active, true) });
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name}>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 20 }}>Catalogue</h1>
       <CatalogBrowser
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
