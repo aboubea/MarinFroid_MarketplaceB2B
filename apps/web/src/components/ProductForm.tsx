@@ -193,7 +193,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
     <div className={isEdit ? "grid-sidebar-340" : undefined} style={{ display: isEdit ? undefined : "grid", gridTemplateColumns: isEdit ? undefined : "1fr", gap: 24, alignItems: "start", maxWidth: 900 }}>
       <form onSubmit={handleSubmit} className="card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
         <div>
-          <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Informations générales</h2>
+          <h2 className="section-title">Informations générales</h2>
           <div className="grid-split-2" style={{ gap: 10, marginBottom: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Référence (SKU)</label>
@@ -224,7 +224,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
         </div>
 
         <div>
-          <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Conditionnement & prix</h2>
+          <h2 className="section-title">Conditionnement & prix</h2>
           <div className="grid-split-3" style={{ gap: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Unité</label>
@@ -242,7 +242,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
         </div>
 
         <div>
-          <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Détails complémentaires</h2>
+          <h2 className="section-title">Détails complémentaires</h2>
           <div className="grid-split-2" style={{ gap: 10, marginBottom: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Provenance</label>
@@ -277,8 +277,8 @@ export function ProductForm({ existing, images: initialImages, documents: initia
 
       {isEdit && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="card" style={{ padding: 18 }}>
-            <h2 style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Images</h2>
+          <div className="card" style={{ padding: 16 }}>
+            <h2 className="section-title">Images</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: 8, marginBottom: 10 }}>
               {images.map((img) => (
                 <div key={img.id} style={{ position: "relative" }}>
@@ -308,8 +308,8 @@ export function ProductForm({ existing, images: initialImages, documents: initia
             </div>
           </div>
 
-          <div className="card" style={{ padding: 18 }}>
-            <h2 style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Documents</h2>
+          <div className="card" style={{ padding: 16 }}>
+            <h2 className="section-title">Documents</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
               {documents.map((doc) => (
                 <div key={doc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12 }}>
