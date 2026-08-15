@@ -218,6 +218,11 @@ a.card:hover, .card.interactive:hover {
 }
 .stat-card .stat-value { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--color-text); }
 .stat-card .stat-label { font-size: 12.5px; color: var(--color-text-muted); margin-top: 2px; }
+.stat-card-sm { padding: var(--space-3) var(--space-4); }
+.stat-card-sm .stat-value { font-size: 20px; }
+
+.data-table-compact thead th { padding: 8px 16px; }
+.data-table-compact tbody td { padding: 8px 16px; }
 
 .product-tile {
   background: var(--color-surface);

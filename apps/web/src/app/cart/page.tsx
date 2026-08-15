@@ -17,7 +17,12 @@ export default async function CartPage() {
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 24 }}>Panier</h1>
-      <CartTable initialItems={items} addresses={addresses} canSubmit={session.role !== "org_viewer"} />
+      <CartTable
+        initialItems={items}
+        addresses={addresses}
+        canSubmit={session.role !== "org_viewer"}
+        isOrgAdmin={session.role === "org_admin"}
+      />
     </AppShell>
   );
 }

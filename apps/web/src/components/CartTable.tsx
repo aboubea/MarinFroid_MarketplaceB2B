@@ -16,7 +16,17 @@ interface Item {
   indicativePrice: string | null;
 }
 
-export function CartTable({ initialItems, addresses, canSubmit }: { initialItems: Item[]; addresses: Address[]; canSubmit: boolean }) {
+export function CartTable({
+  initialItems,
+  addresses,
+  canSubmit,
+  isOrgAdmin,
+}: {
+  initialItems: Item[];
+  addresses: Address[];
+  canSubmit: boolean;
+  isOrgAdmin: boolean;
+}) {
   const router = useRouter();
   const toast = useToast();
   const [items, setItems] = useState(initialItems);
@@ -111,18 +121,24 @@ export function CartTable({ initialItems, addresses, canSubmit }: { initialItems
       <div className="card" style={{ padding: 20, position: "sticky", top: 84 }}>
         <h2 style={{ fontSize: 15, marginBottom: 16 }}>Résumé</h2>
 
-        {addresses.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
-              Adresse de livraison
-            </label>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
+            Adresse de livraison
+          </label>
+          {addresses.length > 0 ? (
             <select className="input" value={addressId} onChange={(e) => setAddressId(e.target.value)}>
               {addresses.map((a) => (
                 <option key={a.id} value={a.id}>{a.label} — {a.city}</option>
               ))}
             </select>
-          </div>
-        )}
+          ) : (
+            <p style={{ fontSize: 12, color: "var(--color-text-muted)", background: "var(--color-bg)", padding: "8px 10px", borderRadius: "var(--radius-md)" }}>
+              {isOrgAdmin
+                ? <>Aucune adresse enregistrée. Ajoutez-en une depuis <a href="/account" style={{ fontWeight: 600, color: "var(--color-text)" }}>Mon compte</a>.</>
+                : "Aucune adresse enregistrée. Seul l'administrateur de votre société peut en ajouter, depuis son compte."}
+            </p>
+          )}
+        </div>
 
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
