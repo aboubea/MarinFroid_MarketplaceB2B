@@ -2,16 +2,7 @@ import Link from "next/link";
 import { eq, desc, gte, lte, and, or, inArray } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import {
-  organizations,
-  users,
-  orders,
-  orderItems,
-  products,
-  activityLogs,
-  notificationRecipients,
-  brandingSettings,
-} from "@marin-froid/db";
+import { organizations, users, orders, orderItems, products, activityLogs } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
@@ -36,8 +27,6 @@ export default async function AdminOverviewPage() {
     recentOrders,
     ordersInProgress,
     lateOrders,
-    activeRecipients,
-    branding,
   ] = await Promise.all([
     db.query.organizations.findMany({ where: eq(organizations.status, "active") }),
     db.query.users.findMany({ where: eq(users.active, true) }),
@@ -71,8 +60,6 @@ export default async function AdminOverviewPage() {
       limit: 6,
       orderBy: [orders.createdAt],
     }),
-    db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) }),
-    db.query.brandingSettings.findFirst(),
   ]);
 
   const lateOrdersWithOrg = await Promise.all(
@@ -223,34 +210,6 @@ export default async function AdminOverviewPage() {
         </div>
       </section>
 
-      <div className="grid-split-2" style={{ gap: 16 }}>
-        <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Email & notifications</h2>
-          <div className="card" style={{ padding: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-              <span style={{ color: "var(--color-text-muted)" }}>Destinataires actifs</span>
-              <span style={{ fontWeight: 700 }}>{activeRecipients.length}</span>
-            </div>
-            <Link href="/admin/notifications" className="btn-secondary" style={{ display: "inline-block", marginTop: 8, fontSize: 12.5 }}>
-              Gérer les notifications
-            </Link>
-          </div>
-        </section>
-
-        <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Branding actif</h2>
-          <div className="card" style={{ padding: 16, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "var(--radius-md)", background: branding?.primaryColor ?? "#0F172A" }} />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>Marin Froid</div>
-                <div style={{ fontSize: 11.5, color: "var(--color-text-muted)" }}>{branding?.primaryColor ?? "#0F172A"}</div>
-              </div>
-            </div>
-            <Link href="/admin/branding" className="btn-secondary" style={{ fontSize: 12.5 }}>Modifier</Link>
-          </div>
-        </section>
-      </div>
     </AdminShell>
   );
 }
