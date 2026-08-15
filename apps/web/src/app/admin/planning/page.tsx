@@ -52,7 +52,7 @@ export default async function AdminPlanningPage() {
         Charge par étape, commandes les plus anciennes en premier.
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${COLUMNS.length}, minmax(0, 1fr))`, gap: 14 }}>
+      <div className="planning-board">
         {columnsData.map((col) => (
           <div key={col.status}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>

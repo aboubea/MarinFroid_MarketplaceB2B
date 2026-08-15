@@ -32,7 +32,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {product.sku}
           </div>
           {images.length > 0 && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+            <div className="product-thumb-grid">
               {images.map((img) => (
                 <div key={img.id} className="product-thumb" style={{ aspectRatio: "1 / 1", fontSize: 9 }}>
                   img
@@ -61,7 +61,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           <ProductDetailAdd productId={product.id} />
 
-          <div className="card" style={{ padding: 20, marginTop: 28, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          <div className="card product-specs-grid" style={{ padding: 20, marginTop: 28 }}>
             <div>
               <div style={{ fontSize: 11, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Conditionnement</div>
               <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 2 }}>{product.packaging ?? "—"}</div>

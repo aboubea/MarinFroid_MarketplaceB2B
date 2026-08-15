@@ -190,7 +190,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: isEdit ? "1fr 340px" : "1fr", gap: 24, alignItems: "start", maxWidth: 900 }}>
+    <div className={isEdit ? "grid-sidebar-340" : undefined} style={{ display: isEdit ? undefined : "grid", gridTemplateColumns: isEdit ? undefined : "1fr", gap: 24, alignItems: "start", maxWidth: 900 }}>
       <form onSubmit={handleSubmit} className="card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Informations générales</h2>

@@ -125,7 +125,7 @@ export function AdminOrdersBoard() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: detail ? "1fr 380px" : "1fr", gap: 16, alignItems: "start" }}>
+      <div className={detail ? "grid-sidebar-380" : undefined} style={{ display: detail ? undefined : "grid", gridTemplateColumns: detail ? undefined : "1fr", gap: 16, alignItems: "start" }}>
         <div className={filtered.length === 0 ? "" : "card"} style={filtered.length === 0 ? {} : { overflow: "hidden" }}>
           {loading ? (
             <ListSkeleton rows={5} />
