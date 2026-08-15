@@ -87,11 +87,20 @@ export default async function DashboardPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role} compact>
-      <PageHeader title={`Bonjour, ${session.fullName.split(" ")[0]} 👋`} subtitle="Voici un aperçu de votre activité." compact />
+      <PageHeader
+        title={`Bonjour, ${session.fullName.split(" ")[0]} 👋`}
+        subtitle="Voici un aperçu de votre activité."
+        compact
+        action={
+          <Link href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>
+            Commander
+          </Link>
+        }
+      />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 18 }}>
         {hasPricing && (
-          <div className="stat-card stat-card-sm">
+          <div className="stat-card stat-card-sm stat-card-accent">
             <div className="stat-value">{spend30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
             <div className="stat-label">Dépenses indicatives (30j)</div>
           </div>

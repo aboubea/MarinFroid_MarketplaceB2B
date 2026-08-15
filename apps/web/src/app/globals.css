@@ -106,6 +106,14 @@ button {
 .page-title { font-size: 28px; margin-bottom: 5px; font-weight: 750; letter-spacing: -0.03em; }
 .page-subtitle { color: var(--color-text-muted); font-size: 14px; margin: 0; line-height: 1.5; }
 .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-faint);
+  margin-bottom: 12px;
+}
 
 .card {
   background: var(--color-surface);
@@ -331,6 +339,14 @@ a.card:hover, .card.interactive:hover {
 .stat-card-sm { padding: var(--space-4); }
 .stat-card-sm .stat-value { font-size: 23px; }
 .stat-card-sm .stat-label { font-size: 12.5px; margin-top: 3px; }
+
+/* Highlights the single KPI that matters most on a dashboard, so the row
+   reads as a hierarchy instead of four equal-weight numbers. */
+.stat-card-accent {
+  background: linear-gradient(150deg, var(--color-primary-soft) 0%, var(--color-surface) 70%);
+  border-color: transparent;
+}
+.stat-card-accent .stat-value { color: var(--color-primary-hover); }
 
 .data-table-compact thead th { padding: 8px 16px; }
 .data-table-compact tbody td { padding: 8px 16px; }
