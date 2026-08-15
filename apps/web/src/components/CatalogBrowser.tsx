@@ -80,7 +80,7 @@ export function CatalogBrowser({ categories, products }: { categories: Category[
         grouped.map((cat) => (
           <section key={cat.id} className="fade-up" style={{ marginBottom: 32 }}>
             <h2 className="section-title">{cat.name}</h2>
-            <div className="catalog-grid">
+            <div className="catalog-grid stagger-in">
               {cat.items.map((p) => (
                 <ProductTile
                   key={p.id}
