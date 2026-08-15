@@ -629,6 +629,34 @@ a.card:hover, .card.interactive:hover {
 .status-dot.on { color: var(--color-success); }
 .status-dot.off { color: var(--color-text-faint); }
 
+/* Buy bar — inline on desktop, docked to the bottom of the screen on mobile
+   so the purchase action is always one thumb-reach away. */
+.buy-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.buy-bar-cta { padding: 14px 26px; font-size: 15px; }
+
+@media (max-width: 700px) {
+  .buy-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -6px 24px rgba(23, 26, 33, 0.1);
+  }
+  .buy-bar-cta { flex: 1; }
+  /* Keep the last block of page content clear of the docked bar. */
+  .has-buy-bar { padding-bottom: 92px; }
+}
+
 /* Catalogue grid — larger, more breathable tiles (Airbnb-like) */
 .catalog-grid {
   display: grid;

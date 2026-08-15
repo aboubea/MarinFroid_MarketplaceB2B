@@ -14,6 +14,7 @@ interface Product {
   origin: string | null;
   packaging: string | null;
   indicativePrice: string | null;
+  imageUrl?: string | null;
 }
 
 interface Category {
@@ -90,6 +91,7 @@ export function CatalogBrowser({ categories, products }: { categories: Category[
                   origin={p.origin}
                   packaging={p.packaging}
                   price={p.indicativePrice}
+                  imageUrl={p.imageUrl}
                 />
               ))}
             </div>
