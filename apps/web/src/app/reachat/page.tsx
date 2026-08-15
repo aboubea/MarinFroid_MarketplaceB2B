@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { orders, orderItems, products } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { ReachatBrowser } from "@/components/ReachatBrowser";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function ReachatPage() {
   const { session, organization } = await requireClientSession();
@@ -72,10 +73,7 @@ export default async function ReachatPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Mes produits habituels</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        Retrouvez vos références récurrentes et lancez une commande express.
-      </p>
+      <PageHeader title="Mes produits habituels" subtitle="Retrouvez vos références récurrentes et lancez une commande express." />
       <ReachatBrowser items={items} />
     </AppShell>
   );

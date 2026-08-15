@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { emailLogs, orders } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { NotificationSettings } from "@/components/NotificationSettings";
+import { PageHeader } from "@/components/PageHeader";
 
 const TEMPLATE_LABELS: Record<string, string> = {
   order_created: "Commande créée",
@@ -34,10 +35,7 @@ export default async function AdminNotificationsPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Emails & notifications</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        Choisissez qui reçoit un email pour chaque événement métier.
-      </p>
+      <PageHeader title="Emails & notifications" subtitle="Choisissez qui reçoit un email pour chaque événement métier." />
       <NotificationSettings />
 
       <h2 style={{ fontSize: 15, marginTop: 32, marginBottom: 10 }}>Statut d'envoi</h2>

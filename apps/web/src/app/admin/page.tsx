@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { orders } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { AdminOrdersBoard } from "@/components/AdminOrdersBoard";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminPreparationPage() {
   const session = await requireMarinFroidSession();
@@ -22,10 +23,7 @@ export default async function AdminPreparationPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Préparation des commandes</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        Ce qu'il faut traiter maintenant.
-      </p>
+      <PageHeader title="Préparation des commandes" subtitle="Ce qu'il faut traiter maintenant." />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 28 }}>
         <div className="stat-card">

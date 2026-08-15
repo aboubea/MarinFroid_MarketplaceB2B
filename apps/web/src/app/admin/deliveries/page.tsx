@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { orders, organizations, deliveryAddresses, orderItems } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { DeliveriesRoutePanel, type DeliveryStop } from "@/components/DeliveriesRoutePanel";
+import { PageHeader } from "@/components/PageHeader";
 
 function targetThursday(): Date {
   const d = new Date();
@@ -71,11 +72,10 @@ export default async function AdminDeliveriesPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Livraisons du jour</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        {isToday ? "Tournée d'aujourd'hui" : `Prochaine tournée — jeudi ${start.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`}
-        {" · "}Départ Marin Froid, Chemin du Chapitre, Toulouse.
-      </p>
+      <PageHeader
+        title="Livraisons du jour"
+        subtitle={`${isToday ? "Tournée d'aujourd'hui" : `Prochaine tournée — jeudi ${start.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`} · Départ Marin Froid, Chemin du Chapitre, Toulouse.`}
+      />
 
       <DeliveriesRoutePanel initialStops={stops} />
     </AdminShell>

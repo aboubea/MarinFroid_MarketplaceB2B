@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
 import { getOrderTotals } from "@/lib/order-totals";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminOverviewPage() {
   const session = await requireMarinFroidAdminSession();
@@ -74,8 +75,7 @@ export default async function AdminOverviewPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Administration</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>Vue globale et configuration.</p>
+      <PageHeader title="Administration" subtitle="Vue globale et configuration." />
 
       <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.4, color: "var(--color-text-muted)", marginBottom: 10 }}>
         Performance

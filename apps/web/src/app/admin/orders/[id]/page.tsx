@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { OrderItemsPrepPanel } from "@/components/OrderItemsPrepPanel";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,15 +31,11 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 24 }}>{order.reference}</h1>
-          <p style={{ color: "var(--color-text-muted)", fontSize: 13 }}>
-            {organization?.name} · {new Date(order.createdAt).toLocaleString("fr-FR")}
-          </p>
-        </div>
-        <OrderStatusSelect orderId={order.id} currentStatus={order.status} hideNextForStatuses={["processing"]} />
-      </div>
+      <PageHeader
+        title={order.reference}
+        subtitle={`${organization?.name} · ${new Date(order.createdAt).toLocaleString("fr-FR")}`}
+        action={<OrderStatusSelect orderId={order.id} currentStatus={order.status} hideNextForStatuses={["processing"]} />}
+      />
 
       <div style={{ marginBottom: 20 }}>
         <OrderPreparationTimeline

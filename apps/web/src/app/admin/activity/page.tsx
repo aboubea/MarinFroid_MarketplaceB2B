@@ -1,16 +1,14 @@
 import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { AdminShell } from "@/components/AdminShell";
 import { ActivityLog } from "@/components/ActivityLog";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminActivityPage() {
   const session = await requireMarinFroidAdminSession();
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Journal d'activité</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        Traçabilité des actions effectuées sur la plateforme.
-      </p>
+      <PageHeader title="Journal d'activité" subtitle="Traçabilité des actions effectuées sur la plateforme." />
       <ActivityLog />
     </AdminShell>
   );
