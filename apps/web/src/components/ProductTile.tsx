@@ -13,6 +13,7 @@ export function ProductTile({
   origin,
   packaging,
   price,
+  imageUrl,
 }: {
   productId: string;
   name: string;
@@ -21,6 +22,7 @@ export function ProductTile({
   origin?: string | null;
   packaging?: string | null;
   price?: string | null;
+  imageUrl?: string | null;
 }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -44,7 +46,14 @@ export function ProductTile({
   return (
     <div className="product-tile">
       <Link href={`/catalog/${productId}`} style={{ display: "block" }}>
-        <div className="product-thumb">{sku}</div>
+        <div className="product-thumb">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            sku
+          )}
+        </div>
         <div className="product-tile-body">
           <div className="product-tile-name">{name}</div>
           <div className="product-tile-meta">

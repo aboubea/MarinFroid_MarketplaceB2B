@@ -21,7 +21,7 @@ async function main() {
 
   const [branding] = await db
     .insert(brandingSettings)
-    .values({ primaryColor: "#0F172A", secondaryColor: "#38BDF8" })
+    .values({ primaryColor: "#0E7C7B", secondaryColor: "#FF5A4E" })
     .returning();
   console.log("Branding seeded:", branding?.id);
 

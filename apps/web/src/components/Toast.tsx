@@ -39,9 +39,9 @@ const ICONS: Record<ToastVariant, React.ReactNode> = {
 };
 
 const COLORS: Record<ToastVariant, { bg: string; fg: string }> = {
-  success: { bg: "#0F172A", fg: "#4ADE80" },
-  error: { bg: "#0F172A", fg: "#F87171" },
-  info: { bg: "#0F172A", fg: "#38BDF8" },
+  success: { bg: "#101720", fg: "#4ADE80" },
+  error: { bg: "#101720", fg: "#FF7A70" },
+  info: { bg: "#101720", fg: "#3FD8CB" },
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -64,10 +64,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           position: "fixed",
           bottom: 24,
           right: 24,
+          left: 24,
           zIndex: 1000,
           display: "flex",
           flexDirection: "column",
-          gap: 8,
+          alignItems: "flex-end",
+          gap: 10,
           pointerEvents: "none",
         }}
       >
@@ -81,13 +83,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               gap: 10,
               background: COLORS[t.variant].bg,
               color: "#fff",
-              padding: "12px 16px",
-              borderRadius: "var(--radius-md)",
+              padding: "14px 20px",
+              borderRadius: "var(--radius-pill)",
               boxShadow: "var(--shadow-elevated)",
-              fontSize: 13.5,
-              fontWeight: 500,
-              minWidth: 240,
-              maxWidth: 360,
+              fontSize: 14,
+              fontWeight: 550,
+              letterSpacing: "-0.01em",
+              maxWidth: 420,
               pointerEvents: "auto",
             }}
           >

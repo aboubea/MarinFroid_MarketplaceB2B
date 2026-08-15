@@ -77,12 +77,10 @@ export default async function AdminOverviewPage() {
     <AdminShell fullName={session.fullName} role={session.role}>
       <PageHeader title="Administration" subtitle="Vue globale et configuration." />
 
-      <h2 style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.4, color: "var(--color-text-muted)", marginBottom: 10 }}>
-        Performance
-      </h2>
+      <h2 className="eyebrow">Performance</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
         {hasPricing && (
-          <div className="stat-card">
+          <div className="stat-card stat-card-accent">
             <div className="stat-value">{indicativeRevenue30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
             <div className="stat-label">CA indicatif (30j)</div>
           </div>

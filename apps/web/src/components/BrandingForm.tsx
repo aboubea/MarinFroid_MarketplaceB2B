@@ -86,34 +86,67 @@ export function BrandingForm({
         <input className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." />
       </div>
       <div>
-        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Couleur principale</label>
+        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Couleur d&apos;action</label>
+        <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "0 0 6px" }}>
+          Boutons « Ajouter au panier », liens et champs actifs.
+        </p>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} />
           <input className="input" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} />
         </div>
       </div>
       <div>
-        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Couleur secondaire</label>
+        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Couleur d&apos;accent</label>
+        <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "0 0 6px" }}>
+          Validation de commande et repère de navigation actif.
+        </p>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} />
           <input className="input" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} />
         </div>
       </div>
       {lowContrast && (
-        <p style={{ fontSize: 12, color: "var(--color-warning)" }}>
-          Attention : le contraste de la couleur principale sur fond clair est faible, cela peut nuire à la lisibilité.
+        <p style={{ fontSize: 12, color: "var(--color-warning)", background: "var(--color-warning-soft)", padding: "10px 12px", borderRadius: "var(--radius-md)", margin: 0 }}>
+          Attention : le contraste de la couleur d&apos;action sur fond clair est faible, le texte blanc des boutons risque d&apos;être peu lisible.
         </p>
       )}
-      <div className="card" style={{ padding: 16, background: primaryColor, display: "flex", alignItems: "center", gap: 10 }}>
-        {logoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={logoUrl} alt="Logo" style={{ height: 24, maxWidth: 80, objectFit: "contain" }} />
-        )}
-        <span style={{ color: "#fff", fontWeight: 700 }}>Aperçu — Marin Froid</span>
+
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Aperçu</div>
+        <div className="card" style={{ padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Logo" style={{ height: 26, maxWidth: 90, objectFit: "contain" }} />
+            )}
+            <span style={{ fontWeight: 700, letterSpacing: "-0.02em" }}>Marin Froid</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button type="button" className="btn-primary" style={{ background: primaryColor, boxShadow: "none" }}>
+              Ajouter au panier
+            </button>
+            <button type="button" className="btn-accent" style={{ background: secondaryColor, boxShadow: "none" }}>
+              Valider la commande
+            </button>
+          </div>
+        </div>
       </div>
-      <button className="btn-primary" type="submit" disabled={saving}>
-        {saving ? "Enregistrement..." : "Enregistrer"}
-      </button>
+
+      <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+        <button className="btn-primary" type="submit" disabled={saving}>
+          {saving ? "Enregistrement..." : "Enregistrer"}
+        </button>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => {
+            setPrimaryColor("#0E7C7B");
+            setSecondaryColor("#FF5A4E");
+          }}
+        >
+          Couleurs recommandées
+        </button>
+      </div>
     </form>
   );
 }

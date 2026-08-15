@@ -199,8 +199,8 @@ export const orderStatusHistory = pgTable("order_status_history", {
 export const brandingSettings = pgTable("branding_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
   logoUrl: text("logo_url"),
-  primaryColor: text("primary_color").notNull().default("#0F172A"),
-  secondaryColor: text("secondary_color").notNull().default("#38BDF8"),
+  primaryColor: text("primary_color").notNull().default("#0E7C7B"),
+  secondaryColor: text("secondary_color").notNull().default("#FF5A4E"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

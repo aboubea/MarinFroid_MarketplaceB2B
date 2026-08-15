@@ -41,6 +41,8 @@
   --shadow-elevated: 0 16px 44px rgba(23, 26, 33, 0.18);
   --shadow-cta: 0 2px 8px rgba(14, 124, 123, 0.28);
   --shadow-cta-hover: 0 8px 22px rgba(14, 124, 123, 0.36);
+  --shadow-accent: 0 2px 8px rgba(255, 90, 78, 0.3);
+  --shadow-accent-hover: 0 8px 22px rgba(255, 90, 78, 0.38);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -104,6 +106,14 @@ button {
 .page-title { font-size: 28px; margin-bottom: 5px; font-weight: 750; letter-spacing: -0.03em; }
 .page-subtitle { color: var(--color-text-muted); font-size: 14px; margin: 0; line-height: 1.5; }
 .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-faint);
+  margin-bottom: 12px;
+}
 
 .card {
   background: var(--color-surface);
@@ -145,9 +155,9 @@ a.card:hover, .card.interactive:hover {
   font-size: 14px;
   letter-spacing: -0.008em;
   transition: background 0.18s var(--ease), transform 0.16s var(--ease-spring), box-shadow 0.2s var(--ease);
-  box-shadow: 0 2px 8px rgba(255, 90, 78, 0.3);
+  box-shadow: var(--shadow-accent);
 }
-.btn-accent:hover { background: var(--color-accent-hover); box-shadow: 0 8px 22px rgba(255, 90, 78, 0.38); transform: translateY(-1px); }
+.btn-accent:hover { background: var(--color-accent-hover); box-shadow: var(--shadow-accent-hover); transform: translateY(-1px); }
 .btn-accent:active { transform: scale(0.96) translateY(0); }
 .btn-accent:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none; }
 
@@ -330,6 +340,14 @@ a.card:hover, .card.interactive:hover {
 .stat-card-sm .stat-value { font-size: 23px; }
 .stat-card-sm .stat-label { font-size: 12.5px; margin-top: 3px; }
 
+/* Highlights the single KPI that matters most on a dashboard, so the row
+   reads as a hierarchy instead of four equal-weight numbers. */
+.stat-card-accent {
+  background: linear-gradient(150deg, var(--color-primary-soft) 0%, var(--color-surface) 70%);
+  border-color: transparent;
+}
+.stat-card-accent .stat-value { color: var(--color-primary-hover); }
+
 .data-table-compact thead th { padding: 8px 16px; }
 .data-table-compact tbody td { padding: 8px 16px; }
 
@@ -486,9 +504,27 @@ a.card:hover, .card.interactive:hover {
   .container { padding: 0 var(--space-4); }
 }
 
+/* Topbar actions get a proper 44px touch target (Apple/Material minimum). */
+.topbar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: background 0.15s var(--ease), transform 0.16s var(--ease-spring);
+}
+.topbar-action:hover { background: var(--color-bg); }
+.topbar-action:active { transform: scale(0.9); }
+
 @media (max-width: 640px) {
   .container { padding: 0 var(--space-3); }
-  .topbar { padding: 0 var(--space-4); }
+  .topbar { padding: 0 var(--space-3); height: 64px; }
+  /* The org name duplicates the sidebar footer — drop it before it squeezes
+     the greeting and the action buttons on a phone. */
+  .topbar-org { display: none; }
+  .page-title { font-size: 24px; }
+  .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
 }
 
 /* Responsive grid utilities: replace hard-coded inline gridTemplateColumns
@@ -564,10 +600,43 @@ a.card:hover, .card.interactive:hover {
   100% { background-position: calc(200px + 100%) 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #EEF0F3 25%, #F5F6F8 37%, #EEF0F3 63%);
+  background: linear-gradient(90deg, #EFEFEA 25%, #F7F7F4 37%, #EFEFEA 63%);
   background-size: 400px 100%;
   animation: shimmer 1.4s ease-in-out infinite;
   border-radius: var(--radius-sm);
+}
+
+/* Motion polish ------------------------------------------------------- */
+
+@keyframes cartPulse {
+  0% { box-shadow: 0 0 0 0 rgba(14, 124, 123, 0.45); }
+  100% { box-shadow: 0 0 0 14px rgba(14, 124, 123, 0); }
+}
+.cart-pulse { animation: cartPulse 0.6s var(--ease) 1; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Staggered entrance for grids/lists — feels alive without being slow. */
+.stagger-in > * { animation: riseIn 0.4s var(--ease) both; }
+.stagger-in > *:nth-child(1) { animation-delay: 0.02s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.08s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.11s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.14s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.17s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(n + 8) { animation-delay: 0.22s; }
+
+/* Respect users who ask the OS to reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .empty-state {
@@ -626,6 +695,34 @@ a.card:hover, .card.interactive:hover {
 .status-dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 .status-dot.on { color: var(--color-success); }
 .status-dot.off { color: var(--color-text-faint); }
+
+/* Buy bar — inline on desktop, docked to the bottom of the screen on mobile
+   so the purchase action is always one thumb-reach away. */
+.buy-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.buy-bar-cta { padding: 14px 26px; font-size: 15px; }
+
+@media (max-width: 700px) {
+  .buy-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -6px 24px rgba(23, 26, 33, 0.1);
+  }
+  .buy-bar-cta { flex: 1; }
+  /* Keep the last block of page content clear of the docked bar. */
+  .has-buy-bar { padding-bottom: 92px; }
+}
 
 /* Catalogue grid — larger, more breathable tiles (Airbnb-like) */
 .catalog-grid {

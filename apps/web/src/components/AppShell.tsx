@@ -33,11 +33,15 @@ export function AppShell({
       <Sidebar links={links} footerLabel={organizationName} />
       <div>
         <header className="topbar">
-          <span style={{ fontSize: 14, fontWeight: 600 }}>Bonjour, {fullName.split(" ")[0]}</span>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{organizationName}</span>
-            <Link href="/notifications" aria-label="Notifications"><NotificationBell /></Link>
-            <Link href="/cart" aria-label="Panier"><CartIcon /></Link>
+          <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
+            Bonjour, {fullName.split(" ")[0]}
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span className="topbar-org" style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginRight: 8 }}>
+              {organizationName}
+            </span>
+            <Link href="/notifications" aria-label="Notifications" className="topbar-action"><NotificationBell /></Link>
+            <Link href="/cart" aria-label="Panier" className="topbar-action"><CartIcon /></Link>
           </div>
         </header>
         <main className="container" style={{ paddingTop: compact ? 18 : 32, paddingBottom: compact ? 20 : 64, maxWidth: "100%" }}>

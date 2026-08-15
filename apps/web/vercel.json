@@ -1,6 +1,6 @@
 {
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile=false",
-  "buildCommand": "cd ../.. && pnpm db:generate && pnpm db:migrate && pnpm db:seed:additional-roles && pnpm db:seed:catalog && pnpm --filter @marin-froid/web build",
+  "buildCommand": "cd ../.. && pnpm db:generate && pnpm db:migrate && pnpm db:seed:additional-roles && pnpm db:seed:catalog && pnpm db:seed:brand-palette && pnpm --filter @marin-froid/web build",
   "outputDirectory": ".next",
   "crons": [
     { "path": "/api/cron/deliveries", "schedule": "0 6 * * *" }

@@ -9,7 +9,8 @@
     "db:migrate": "pnpm --filter @marin-froid/db migrate",
     "db:seed": "pnpm --filter @marin-froid/db seed",
     "db:seed:additional-roles": "pnpm --filter @marin-froid/db seed:additional-roles",
-    "db:seed:catalog": "pnpm --filter @marin-froid/db seed:catalog"
+    "db:seed:catalog": "pnpm --filter @marin-froid/db seed:catalog",
+    "db:seed:brand-palette": "pnpm --filter @marin-froid/db seed:brand-palette"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

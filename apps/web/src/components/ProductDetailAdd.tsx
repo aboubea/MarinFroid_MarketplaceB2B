@@ -26,13 +26,17 @@ export function ProductDetailAdd({ productId }: { productId: string }) {
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <div className="stepper">
-        <button className="stepper-btn" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
-        <span style={{ minWidth: 24, textAlign: "center", fontSize: 14 }}>{quantity}</span>
-        <button className="stepper-btn" onClick={() => setQuantity((q) => q + 1)}>+</button>
+    <div className="buy-bar">
+      <div className="stepper" style={{ padding: 4 }}>
+        <button className="stepper-btn" aria-label="Diminuer la quantité" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
+        <span style={{ minWidth: 30, textAlign: "center", fontSize: 15, fontWeight: 700 }}>{quantity}</span>
+        <button className="stepper-btn" aria-label="Augmenter la quantité" onClick={() => setQuantity((q) => q + 1)}>+</button>
       </div>
-      <button className={`btn-primary ${added ? "success-pop" : ""}`} onClick={handleAdd}>
+      <button
+        className={`btn-primary buy-bar-cta ${added ? "success-pop" : ""}`}
+        onClick={handleAdd}
+        style={added ? { background: "var(--color-success)" } : undefined}
+      >
         {added ? "Ajouté au panier ✓" : "Ajouter au panier"}
       </button>
     </div>
