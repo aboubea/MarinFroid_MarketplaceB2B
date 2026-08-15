@@ -31,7 +31,7 @@ export function AppShell({
   return (
     <div className="app-shell">
       <Sidebar links={links} footerLabel={organizationName} />
-      <div>
+      <div className="app-shell-content">
         <header className="topbar">
           <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
             Bonjour, {fullName.split(" ")[0]}
@@ -44,7 +44,7 @@ export function AppShell({
             <Link href="/cart" aria-label="Panier" className="topbar-action"><CartIcon /></Link>
           </div>
         </header>
-        <main className="container" style={{ paddingTop: compact ? 18 : 32, paddingBottom: compact ? 20 : 64, maxWidth: "100%" }}>
+        <main className="container app-shell-scroll" style={{ paddingTop: compact ? 18 : 32, paddingBottom: compact ? 20 : 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>

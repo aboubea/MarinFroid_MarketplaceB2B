@@ -32,12 +32,12 @@ export function AdminShell({ children, fullName, role }: { children: React.React
   return (
     <div className="app-shell">
       <Sidebar links={links} footerLabel="Équipe Marin Froid" />
-      <div>
+      <div className="app-shell-content">
         <header className="topbar">
           <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>
           <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{fullName}</span>
         </header>
-        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container app-shell-scroll" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>

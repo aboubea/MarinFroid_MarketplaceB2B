@@ -234,10 +234,24 @@ a.card:hover, .card.interactive:hover {
 }
 .fade-up { animation: fadeUp 0.35s var(--ease) both; }
 
+/* App shell: the sidebar and topbar are fixed; only the content column
+   scrolls, in its own frame, instead of the whole page. */
 .app-shell {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+.app-shell-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.app-shell-scroll {
+  flex: 1;
+  overflow-y: auto;
 }
 .sidebar {
   background: linear-gradient(180deg, var(--color-ink-soft) 0%, var(--color-ink) 100%);

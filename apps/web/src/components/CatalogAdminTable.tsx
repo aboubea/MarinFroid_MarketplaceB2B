@@ -74,9 +74,9 @@ export function CatalogAdminTable() {
         ) : filtered.length === 0 ? (
           <EmptyState illustration="box" title="Aucun produit" description="Ajoutez une première référence au catalogue." />
         ) : (
-          <div style={{ overflow: "auto", maxHeight: "calc(100vh - 320px)" }}>
+          <div style={{ overflowX: "auto" }}>
             <table className="data-table">
-              <thead style={{ position: "sticky", top: 0, zIndex: 1, background: "var(--color-surface-alt)" }}>
+              <thead>
                 <tr>
                   <th>Produit</th>
                   <th>Référence</th>

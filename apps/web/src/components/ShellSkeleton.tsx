@@ -19,12 +19,12 @@ export function AppShellSkeleton({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell">
       <SidebarSkeleton />
-      <div>
+      <div className="app-shell-content">
         <header className="topbar">
           <SkeletonBlock width={140} height={16} />
           <SkeletonBlock width={90} height={32} style={{ borderRadius: "50%" }} />
         </header>
-        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container app-shell-scroll" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>
