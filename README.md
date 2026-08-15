@@ -58,6 +58,7 @@ sinon il ne détecte pas Next.js (erreur "No Next.js version detected").
 5. `apps/web/vercel.json` (lu automatiquement une fois le Root Directory positionné) installe les dépendances depuis la racine du monorepo puis exécute `db:generate` + `db:migrate` avant le build Next.js — la base Neon est donc toujours à jour à chaque déploiement.
 6. Le seed (`pnpm db:seed`) n'est **pas** exécuté automatiquement en continu — il a été lancé une fois manuellement contre la base de prod pour créer le compte admin et les données de référence. Ne pas le remettre dans `buildCommand` en continu : il n'est pas idempotent (recréerait des sociétés/produits en double à chaque déploiement).
 7. Mobile : configurer `apps/mobile/app.json` → `expo.extra.apiUrl` avec l'URL Vercel de production avant un build EAS.
+8. Upload du logo (page Branding) : dans le projet Vercel → **Storage → Create Database → Blob**, créer un store — Vercel injecte automatiquement la variable `BLOB_READ_WRITE_TOKEN` sur le projet (aucune valeur à copier manuellement). Sans cette variable, l'upload de fichier échoue proprement (message d'erreur explicite) mais le champ URL du logo reste utilisable en solution de repli.
 
 ## Prix et facturation
 

@@ -12,6 +12,7 @@
     "@marin-froid/db": "workspace:*",
     "@marin-froid/email": "workspace:*",
     "@marin-froid/types": "workspace:*",
+    "@vercel/blob": "^0.27.1",
     "drizzle-orm": "^0.36.4",
     "next": "^15.0.3",
     "react": "^18.3.1",
