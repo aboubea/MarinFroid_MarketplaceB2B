@@ -2,11 +2,10 @@ import Link from "next/link";
 import { eq, desc, gte, lte, and, or, inArray } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { organizations, users, orders, orderItems, products, activityLogs } from "@marin-froid/db";
+import { organizations, users, orders, orderItems, products } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
-import { RecentActivityFeed } from "@/components/RecentActivityFeed";
 import { getOrderTotals } from "@/lib/order-totals";
 
 export default async function AdminOverviewPage() {
@@ -23,7 +22,6 @@ export default async function AdminOverviewPage() {
     activeUsers,
     orders7d,
     items30d,
-    recentActivity,
     orgsToWatch,
     recentOrders,
     ordersInProgress,
@@ -38,7 +36,6 @@ export default async function AdminOverviewPage() {
       .innerJoin(orders, eq(orders.id, orderItems.orderId))
       .innerJoin(products, eq(products.id, orderItems.productId))
       .where(gte(orders.createdAt, thirtyDaysAgo)),
-    db.query.activityLogs.findMany({ orderBy: [desc(activityLogs.createdAt)], limit: 6 }),
     db.query.organizations.findMany({
       where: or(eq(organizations.status, "invited"), eq(organizations.status, "suspended")),
       limit: 6,
@@ -143,14 +140,41 @@ export default async function AdminOverviewPage() {
 
       <div className="grid-split-2" style={{ gap: 16, marginBottom: 16, alignItems: "start" }}>
         <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Activité récente</h2>
-          <div className="card" style={{ overflow: "hidden" }}>
-            <RecentActivityFeed
-              initialActivity={recentActivity.map((a) => ({ id: a.id, summary: a.summary, actorLabel: a.actorLabel, createdAt: a.createdAt.toString() }))}
-              initialHasMore={recentActivity.length === 6}
-            />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <h2 style={{ fontSize: 15 }}>Dernières commandes</h2>
+            <Link href="/admin/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir toutes les commandes →</Link>
           </div>
-          <Link href="/admin/activity" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir toute l'activité →</Link>
+          <div className="card" style={{ overflow: "hidden" }}>
+            {recentOrders.length === 0 ? (
+              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucune commande.</div>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table className="data-table data-table-compact">
+                  <thead>
+                    <tr>
+                      <th>N° Commande</th>
+                      <th>Client</th>
+                      <th>Montant</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentOrders.map((o) => {
+                      const total = recentOrdersTotals.get(o.id) ?? 0;
+                      return (
+                        <tr key={o.id}>
+                          <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                          <td style={{ color: "var(--color-text-muted)" }}>{o.organizationName}</td>
+                          <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
+                          <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </section>
 
         <section>
@@ -179,45 +203,6 @@ export default async function AdminOverviewPage() {
           <Link href="/admin/clients" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir toutes les sociétés →</Link>
         </section>
       </div>
-
-      <section style={{ marginBottom: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <h2 style={{ fontSize: 15 }}>Dernières commandes</h2>
-          <Link href="/admin/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir toutes les commandes →</Link>
-        </div>
-        <div className="card" style={{ overflow: "hidden" }}>
-          {recentOrders.length === 0 ? (
-            <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucune commande.</div>
-          ) : (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>N° Commande</th>
-                  <th>Client</th>
-                  <th>Montant</th>
-                  <th>Statut</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((o) => {
-                  const total = recentOrdersTotals.get(o.id) ?? 0;
-                  return (
-                    <tr key={o.id}>
-                      <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
-                      <td style={{ color: "var(--color-text-muted)" }}>{o.organizationName}</td>
-                      <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
-                      <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
-                      <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </section>
-
     </AdminShell>
   );
 }
