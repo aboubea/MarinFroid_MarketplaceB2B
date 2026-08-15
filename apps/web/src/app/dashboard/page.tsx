@@ -81,8 +81,6 @@ export default async function DashboardPage() {
     ? await db.query.orderItems.findMany({ where: eq(orderItems.orderId, recentOrders[0].id) })
     : [];
 
-  const cartTotal = cart.items.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
-
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Bonjour, {session.fullName.split(" ")[0]} 👋</h1>
@@ -109,7 +107,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 32, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32, alignItems: "start" }}>
         <section>
           <h2 style={{ fontSize: 15, marginBottom: 10 }}>Derniers achats</h2>
           <div className="card" style={{ overflow: "hidden" }}>
@@ -142,35 +140,6 @@ export default async function DashboardPage() {
             )}
           </div>
           <Link href="/reachat" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir plus de produits →</Link>
-        </section>
-
-        <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Panier ({cart.items.length} article{cart.items.length > 1 ? "s" : ""})</h2>
-          <div className="card" style={{ padding: 16 }}>
-            {cart.items.length === 0 ? (
-              <div style={{ fontSize: 12.5, color: "var(--color-text-muted)" }}>Votre panier est vide.</div>
-            ) : (
-              <>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
-                  {cart.items.slice(0, 4).map((item) => (
-                    <div key={item.productId} style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5 }}>
-                      <span>{item.name} × {item.quantity}</span>
-                      {item.indicativePrice && <span style={{ fontWeight: 600 }}>{(Number(item.indicativePrice) * item.quantity).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>}
-                    </div>
-                  ))}
-                </div>
-                {cartTotal > 0 && (
-                  <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: 13, marginBottom: 12, paddingTop: 8, borderTop: "1px solid var(--color-border)" }}>
-                    <span>Total HT</span>
-                    <span>{cartTotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
-                  </div>
-                )}
-              </>
-            )}
-            <Link href="/cart" className="btn-primary" style={{ display: "block", textAlign: "center", width: "100%" }}>
-              Voir le panier
-            </Link>
-          </div>
         </section>
       </div>
 
