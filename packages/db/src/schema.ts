@@ -59,6 +59,8 @@ export const deliveryAddresses = pgTable("delivery_addresses", {
   postalCode: text("postal_code").notNull(),
   country: text("country").notNull().default("FR"),
   isDefault: boolean("is_default").notNull().default(false),
+  lat: numeric("lat", { precision: 9, scale: 6 }),
+  lng: numeric("lng", { precision: 9, scale: 6 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

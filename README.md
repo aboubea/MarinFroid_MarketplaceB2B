@@ -12,6 +12,14 @@ document d'origine ; le nom du fournisseur/document n'apparaît nulle part sur l
 seul le vendeur Marin Froid est visible côté client. Le script est idempotent (skip les
 références déjà présentes) et peut être relancé sans risque de doublon.
 
+**Livraisons du jour** (`/admin/deliveries`, rôle préparation) : liste les commandes prévues
+pour le jeudi de livraison, avec un bouton « Optimiser ma tournée » qui géocode les adresses
+(OpenStreetMap Nominatim, sans clé API) et calcule l'ordre de passage par plus proche voisin
+depuis le dépôt Marin Froid (Chemin du Chapitre, Toulouse). Les coordonnées sont mises en cache
+sur `delivery_addresses.lat/lng` après le premier géocodage. C'est une heuristique de distance à
+vol d'oiseau, pas un vrai calcul d'itinéraire routier — passer à une API d'optimisation
+d'itinéraire (ex. Mapbox) donnerait un ordre plus fidèle à la route réelle si besoin.
+
 ## Stack
 
 - **apps/web** — Next.js 15 (App Router) + React + TypeScript, police Inter, nav latérale sombre inspirée des maquettes fournies
@@ -211,12 +219,6 @@ par envoi) — plutôt que d'afficher des chiffres inventés, ces KPI ont été 
 - **17. Documents client** : à cadrer d'abord — documents liés aux produits (déjà en base via
   `product_documents`) ou documents généraux société (CGV, fiches commerciales) ? Le périmètre
   exact change l'implémentation.
-- **20. Détail société enrichi** (adresses, préférences dans la fiche complète) : la fiche
-  actuelle montre déjà utilisateurs + statut ; les blocs adresses par société restent à ajouter.
-- **Vue planning** back-office (maquette 08, notion de charge/priorisation opérationnelle) :
-  pas implémentée, le back-office reste liste + panneau détail + statuts pour l'instant.
-- **Aperçu email avant envoi** et **statut de santé Resend / logs d'envoi visibles dans l'UI**
-  (suggestions de la maquette 09) : `email_logs` existe en base mais n'est pas encore affiché.
 - **Permissions fines par module** (au-delà du binaire buyer/viewer) : le RBAC reste à 5 rôles
   fixes, pas de système de permissions à la carte.
 - **QA + build mobile** (tests des parcours critiques en conditions réelles, configuration EAS
