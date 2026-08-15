@@ -72,6 +72,7 @@ export const users = pgTable("users", {
   fullName: text("full_name").notNull(),
   role: userRoleEnum("role").notNull(),
   organizationId: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
+  permissions: text("permissions"),
   active: boolean("active").notNull().default(true),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
   resetToken: text("reset_token"),

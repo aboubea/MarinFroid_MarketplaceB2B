@@ -172,7 +172,7 @@ export function CartTable({
           </button>
         ) : (
           <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", background: "var(--color-bg)", padding: "10px 12px", borderRadius: "var(--radius-md)" }}>
-            Votre profil (lecture / administratif) permet de consulter le panier mais pas de valider une commande. Contactez un acheteur ou l'administrateur de votre société.
+            Votre profil ne permet pas de valider une commande. Contactez l'administrateur de votre société.
           </p>
         )}
       </div>

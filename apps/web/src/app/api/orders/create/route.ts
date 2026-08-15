@@ -4,14 +4,12 @@ import { getSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { organizations, users } from "@marin-froid/db";
 import { submitOrderFromCart } from "@/lib/order-service";
+import { getEffectivePermissions } from "@/lib/permissions";
 
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session || !session.organizationId) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
-  }
-  if (session.role === "org_viewer") {
-    return NextResponse.json({ error: "Votre profil (lecture / administratif) ne permet pas de valider une commande." }, { status: 403 });
   }
   const body = await request.json().catch(() => ({}));
   const deliveryAddressId: string | null = body?.deliveryAddressId ?? null;
@@ -24,6 +22,9 @@ export async function POST(request: Request) {
   ]);
   if (!org || !user) {
     return NextResponse.json({ error: "Compte introuvable." }, { status: 404 });
+  }
+  if (!getEffectivePermissions(user).canOrder) {
+    return NextResponse.json({ error: "Votre profil ne permet pas de valider une commande." }, { status: 403 });
   }
 
   try {

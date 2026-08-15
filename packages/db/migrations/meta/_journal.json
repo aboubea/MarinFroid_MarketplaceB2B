@@ -57,6 +57,13 @@
       "when": 1786804780430,
       "tag": "0007_add_address_geocoords",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786805074536,
+      "tag": "0008_add_user_permissions",
+      "breakpoints": true
     }
   ]
 }
