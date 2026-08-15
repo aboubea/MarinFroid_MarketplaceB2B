@@ -152,7 +152,7 @@ export default async function DashboardPage() {
           <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Tout voir</Link>
         </div>
         {recentOrders.length === 0 ? (
-          <div className="card" style={{ padding: 18, color: "var(--color-text-muted)" }}>Aucune commande passée.</div>
+          <div className="card" style={{ padding: 16, color: "var(--color-text-muted)" }}>Aucune commande passée.</div>
         ) : (
           <div className="card" style={{ overflow: "hidden" }}>
             <table className="data-table data-table-compact">

@@ -78,21 +78,21 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           {product.description && (
             <div style={{ marginTop: 24 }}>
-              <h2 style={{ fontSize: 14, marginBottom: 8 }}>Description</h2>
+              <h2 className="section-title">Description</h2>
               <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", lineHeight: 1.6 }}>{product.description}</p>
             </div>
           )}
 
           {product.specifications && (
             <div style={{ marginTop: 24 }}>
-              <h2 style={{ fontSize: 14, marginBottom: 8 }}>Caractéristiques techniques</h2>
+              <h2 className="section-title">Caractéristiques techniques</h2>
               <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", lineHeight: 1.6, whiteSpace: "pre-line" }}>{product.specifications}</p>
             </div>
           )}
 
           {documents.length > 0 && (
             <div style={{ marginTop: 24 }}>
-              <h2 style={{ fontSize: 14, marginBottom: 8 }}>Documents</h2>
+              <h2 className="section-title">Documents</h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {documents.map((doc) => (
                   <a key={doc.id} href={doc.url} target="_blank" rel="noreferrer" className="card interactive" style={{ padding: "10px 14px", fontSize: 13, fontWeight: 500 }}>

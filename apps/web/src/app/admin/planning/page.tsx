@@ -63,7 +63,7 @@ export default async function AdminPlanningPage() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 40 }}>
               {col.orders.length === 0 ? (
-                <div className="card" style={{ padding: 14, fontSize: 12, color: "var(--color-text-faint)" }}>
+                <div className="card" style={{ padding: 16, fontSize: 12, color: "var(--color-text-faint)" }}>
                   Aucune commande.
                 </div>
               ) : (

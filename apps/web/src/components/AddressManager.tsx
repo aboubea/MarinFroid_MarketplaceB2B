@@ -58,7 +58,7 @@ export function AddressManager({ initialAddresses }: { initialAddresses: Address
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
         {addresses.map((a) => (
-          <div key={a.id} className="card" style={{ padding: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div key={a.id} className="card" style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
               <div style={{ fontWeight: 600, fontSize: 13.5 }}>
                 {a.label} {a.isDefault && <span className="badge badge-completed" style={{ marginLeft: 6 }}>par défaut</span>}
