@@ -118,8 +118,8 @@ export function CartTable({
         ))}
       </div>
 
-      <div className="card" style={{ padding: 20, position: "sticky", top: 84 }}>
-        <h2 style={{ fontSize: 15, marginBottom: 16 }}>Résumé</h2>
+      <div className="card" style={{ padding: 22, position: "sticky", top: 88 }}>
+        <h2 className="section-title">Résumé</h2>
 
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
@@ -156,20 +156,41 @@ export function CartTable({
 
         {hasPricing && (
           <>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-              <span style={{ color: "var(--color-text-muted)" }}>Sous-total indicatif</span>
-              <span>{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "baseline",
+                paddingTop: 16,
+                marginBottom: 8,
+                borderTop: "1px solid var(--color-border)",
+              }}
+            >
+              <span style={{ color: "var(--color-text-muted)", fontSize: 13.5, fontWeight: 550 }}>Sous-total indicatif</span>
+              <span style={{ fontSize: 22, fontWeight: 750, letterSpacing: "-0.03em" }}>
+                {subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+              </span>
             </div>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", marginBottom: 16 }}>
+            <p style={{ fontSize: 11.5, color: "var(--color-text-faint)", marginBottom: 18, lineHeight: 1.5 }}>
               Montant indicatif — le prix définitif est confirmé par l'équipe Marin Froid, hors TVA et livraison.
             </p>
           </>
         )}
 
         {canSubmit ? (
-          <button className="btn-primary" style={{ width: "100%" }} onClick={handleSubmit} disabled={submitting}>
-            {submitting ? "Validation..." : "Valider la commande"}
-          </button>
+          <>
+            <button
+              className="btn-accent"
+              style={{ width: "100%", padding: "15px 22px", fontSize: 15 }}
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              {submitting ? "Validation..." : "Valider la commande"}
+            </button>
+            <p style={{ fontSize: 11.5, color: "var(--color-text-faint)", textAlign: "center", marginTop: 10, marginBottom: 0 }}>
+              Aucun paiement en ligne · Livraison le jeudi
+            </p>
+          </>
         ) : (
           <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", background: "var(--color-bg)", padding: "10px 12px", borderRadius: "var(--radius-md)" }}>
             Votre profil ne permet pas de valider une commande. Contactez l'administrateur de votre société.

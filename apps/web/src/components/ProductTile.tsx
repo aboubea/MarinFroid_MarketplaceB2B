@@ -43,26 +43,33 @@ export function ProductTile({
 
   return (
     <div className="product-tile">
-      <Link href={`/catalog/${productId}`}>
+      <Link href={`/catalog/${productId}`} style={{ display: "block" }}>
         <div className="product-thumb">{sku}</div>
-        <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
+        <div className="product-tile-body">
+          <div className="product-tile-name">{name}</div>
+          <div className="product-tile-meta">
+            {origin ? `${origin} · ` : ""}{packaging ?? unit}
+          </div>
+          {price && (
+            <div className="product-tile-price">
+              {Number(price).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+              <span className="unit"> / {unit}</span>
+            </div>
+          )}
+        </div>
       </Link>
-      <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
-        {origin ? `${origin} · ` : ""}{packaging ?? unit}
-      </div>
-      {price && (
-        <div style={{ fontSize: 15, fontWeight: 700 }}>
-          {Number(price).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-          <span style={{ fontSize: 11, fontWeight: 400, color: "var(--color-text-muted)" }}> / {unit}</span>
-        </div>
-      )}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
+
+      <div className="product-tile-actions">
         <div className="stepper">
-          <button className="stepper-btn" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
-          <span style={{ minWidth: 20, textAlign: "center", fontSize: 13 }}>{quantity}</span>
-          <button className="stepper-btn" onClick={() => setQuantity((q) => q + 1)}>+</button>
+          <button className="stepper-btn" aria-label="Diminuer la quantité" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
+          <span style={{ minWidth: 22, textAlign: "center", fontSize: 13.5, fontWeight: 650 }}>{quantity}</span>
+          <button className="stepper-btn" aria-label="Augmenter la quantité" onClick={() => setQuantity((q) => q + 1)}>+</button>
         </div>
-        <button className="btn-primary" style={{ fontSize: 13, padding: "8px 14px" }} onClick={handleAdd}>
+        <button
+          className="btn-primary"
+          style={added ? { background: "var(--color-success)", boxShadow: "none" } : undefined}
+          onClick={handleAdd}
+        >
           {added ? "Ajouté ✓" : "Ajouter"}
         </button>
       </div>
