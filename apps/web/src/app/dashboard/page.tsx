@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     db.query.orders.findMany({
       where: eq(orders.organizationId, organization.id),
       orderBy: [desc(orders.createdAt)],
-      limit: 5,
+      limit: 4,
     }),
     db.query.orders.findMany({
       where: and(eq(orders.organizationId, organization.id), ne(orders.status, "completed"), ne(orders.status, "cancelled")),
@@ -75,84 +75,84 @@ export default async function DashboardPage() {
       });
     }
   }
-  const frequent = Array.from(byProduct.values()).sort((a, b) => b.orderCount - a.orderCount).slice(0, 5);
+  const frequent = Array.from(byProduct.values()).sort((a, b) => b.orderCount - a.orderCount).slice(0, 4);
 
   const lastOrderItems = recentOrders.length
     ? await db.query.orderItems.findMany({ where: eq(orderItems.orderId, recentOrders[0].id) })
     : [];
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Bonjour, {session.fullName.split(" ")[0]} 👋</h1>
-      <p style={{ color: "var(--color-text-muted)", marginBottom: 24 }}>Voici un aperçu de votre activité.</p>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role} compact>
+      <h1 style={{ fontSize: 22, marginBottom: 2 }}>Bonjour, {session.fullName.split(" ")[0]} 👋</h1>
+      <p style={{ color: "var(--color-text-muted)", marginBottom: 16, fontSize: 13.5 }}>Voici un aperçu de votre activité.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 18 }}>
         {hasPricing && (
-          <div className="stat-card">
+          <div className="stat-card stat-card-sm">
             <div className="stat-value">{spend30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
             <div className="stat-label">Dépenses indicatives (30j)</div>
           </div>
         )}
-        <div className="stat-card">
+        <div className="stat-card stat-card-sm">
           <div className="stat-value">{orders30d.length}</div>
           <div className="stat-label">Commandes (30j)</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card stat-card-sm">
           <div className="stat-value">{inProgressOrders.length}</div>
           <div className="stat-label">Commandes en cours</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card stat-card-sm">
           <div className="stat-value">{cart.items.reduce((s, i) => s + i.quantity, 0)}</div>
           <div className="stat-label">Articles dans le panier</div>
         </div>
       </div>
 
-      <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
+      <div className="grid-split-2" style={{ gap: 14, marginBottom: 18, alignItems: "start" }}>
         <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Derniers achats</h2>
+          <h2 style={{ fontSize: 13.5, marginBottom: 6 }}>Derniers achats</h2>
           <div className="card" style={{ overflow: "hidden" }}>
             {lastOrderItems.length === 0 ? (
-              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun achat pour le moment.</div>
+              <div style={{ padding: 14, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun achat pour le moment.</div>
             ) : (
-              lastOrderItems.slice(0, 5).map((item, idx) => (
-                <div key={item.id} style={{ padding: "12px 16px", borderBottom: idx < Math.min(lastOrderItems.length, 5) - 1 ? "1px solid var(--color-border)" : "none" }}>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{item.productNameSnapshot}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--color-text-muted)" }}>Qté habituelle {item.quantity} {item.unitSnapshot}</div>
+              lastOrderItems.slice(0, 4).map((item, idx) => (
+                <div key={item.id} style={{ padding: "9px 14px", borderBottom: idx < Math.min(lastOrderItems.length, 4) - 1 ? "1px solid var(--color-border)" : "none" }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 600 }}>{item.productNameSnapshot}</div>
+                  <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>Qté habituelle {item.quantity} {item.unitSnapshot}</div>
                 </div>
               ))
             )}
           </div>
-          <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir tout l'historique →</Link>
+          <Link href="/orders" style={{ fontSize: 12, fontWeight: 600, display: "inline-block", marginTop: 6 }}>Voir tout l'historique →</Link>
         </section>
 
         <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Réachat express</h2>
+          <h2 style={{ fontSize: 13.5, marginBottom: 6 }}>Réachat express</h2>
           <div className="card" style={{ overflow: "hidden" }}>
             {frequent.length === 0 ? (
-              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d'historique.</div>
+              <div style={{ padding: 14, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d'historique.</div>
             ) : (
               frequent.map((item, idx) => (
-                <div key={item.productId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 16px", borderBottom: idx < frequent.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, flex: 1 }}>{item.name}</div>
+                <div key={item.productId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: idx < frequent.length - 1 ? "1px solid var(--color-border)" : "none" }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 500, flex: 1 }}>{item.name}</div>
                   <DashboardQuickAdd productId={item.productId} />
                 </div>
               ))
             )}
           </div>
-          <Link href="/reachat" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir plus de produits →</Link>
+          <Link href="/reachat" style={{ fontSize: 12, fontWeight: 600, display: "inline-block", marginTop: 6 }}>Voir plus de produits →</Link>
         </section>
       </div>
 
       <section>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <h2 style={{ fontSize: 16 }}>Commandes récentes</h2>
-          <Link href="/orders" style={{ fontSize: 13, fontWeight: 600 }}>Tout voir</Link>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <h2 style={{ fontSize: 14 }}>Commandes récentes</h2>
+          <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Tout voir</Link>
         </div>
         {recentOrders.length === 0 ? (
-          <div className="card" style={{ padding: 24, color: "var(--color-text-muted)" }}>Aucune commande passée.</div>
+          <div className="card" style={{ padding: 18, color: "var(--color-text-muted)" }}>Aucune commande passée.</div>
         ) : (
           <div className="card" style={{ overflow: "hidden" }}>
-            <table className="data-table">
+            <table className="data-table data-table-compact">
               <thead>
                 <tr>
                   <th>N° Commande</th>

@@ -11,11 +11,13 @@ export function AppShell({
   fullName,
   organizationName,
   role,
+  compact,
 }: {
   children: React.ReactNode;
   fullName: string;
   organizationName: string;
   role?: string;
+  compact?: boolean;
 }) {
   const links = [
     { href: "/dashboard", label: "Tableau de bord", icon: <IconHome /> },
@@ -38,7 +40,7 @@ export function AppShell({
             <Link href="/cart" aria-label="Panier"><CartIcon /></Link>
           </div>
         </header>
-        <main className="container" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: "100%" }}>
+        <main className="container" style={{ paddingTop: compact ? 18 : 32, paddingBottom: compact ? 20 : 64, maxWidth: "100%" }}>
           {children}
         </main>
       </div>
