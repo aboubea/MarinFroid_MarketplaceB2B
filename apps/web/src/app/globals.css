@@ -41,6 +41,8 @@
   --shadow-elevated: 0 16px 44px rgba(23, 26, 33, 0.18);
   --shadow-cta: 0 2px 8px rgba(14, 124, 123, 0.28);
   --shadow-cta-hover: 0 8px 22px rgba(14, 124, 123, 0.36);
+  --shadow-accent: 0 2px 8px rgba(255, 90, 78, 0.3);
+  --shadow-accent-hover: 0 8px 22px rgba(255, 90, 78, 0.38);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -145,9 +147,9 @@ a.card:hover, .card.interactive:hover {
   font-size: 14px;
   letter-spacing: -0.008em;
   transition: background 0.18s var(--ease), transform 0.16s var(--ease-spring), box-shadow 0.2s var(--ease);
-  box-shadow: 0 2px 8px rgba(255, 90, 78, 0.3);
+  box-shadow: var(--shadow-accent);
 }
-.btn-accent:hover { background: var(--color-accent-hover); box-shadow: 0 8px 22px rgba(255, 90, 78, 0.38); transform: translateY(-1px); }
+.btn-accent:hover { background: var(--color-accent-hover); box-shadow: var(--shadow-accent-hover); transform: translateY(-1px); }
 .btn-accent:active { transform: scale(0.96) translateY(0); }
 .btn-accent:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none; }
 

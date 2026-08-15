@@ -15,8 +15,8 @@ export default async function AdminBrandingPage() {
       <div className="card" style={{ padding: 24, maxWidth: 480 }}>
         <BrandingForm
           initialLogoUrl={branding?.logoUrl ?? ""}
-          initialPrimaryColor={branding?.primaryColor ?? "#0F172A"}
-          initialSecondaryColor={branding?.secondaryColor ?? "#38BDF8"}
+          initialPrimaryColor={branding?.primaryColor ?? "#0E7C7B"}
+          initialSecondaryColor={branding?.secondaryColor ?? "#FF5A4E"}
         />
       </div>
     </AdminShell>

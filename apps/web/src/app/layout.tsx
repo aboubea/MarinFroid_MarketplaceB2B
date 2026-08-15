@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { getDb } from "@/lib/db";
 import { ToastProvider } from "@/components/Toast";
+import { buildBrandStyle } from "@/lib/brand-theme";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -16,10 +17,7 @@ async function getBrandingStyle() {
     const db = getDb();
     const branding = await db.query.brandingSettings.findFirst();
     if (!branding) return undefined;
-    return {
-      "--color-primary": branding.primaryColor,
-      "--color-secondary": branding.secondaryColor,
-    } as React.CSSProperties;
+    return buildBrandStyle(branding.primaryColor, branding.secondaryColor);
   } catch {
     return undefined;
   }
