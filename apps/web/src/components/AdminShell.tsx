@@ -1,7 +1,7 @@
 "use client";
 
 import { Sidebar } from "./Sidebar";
-import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconUserPlus, IconActivity, IconGrid, IconColumns, IconTruck } from "./icons";
+import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconUserPlus, IconActivity, IconGrid, IconColumns, IconTruck, IconShield } from "./icons";
 
 const ADMIN_ONLY_LINKS = [
   { href: "/admin/overview", label: "Administration", icon: <IconHome /> },
@@ -18,6 +18,7 @@ const ADMIN_ONLY_TAIL_LINKS = [
   { href: "/admin/catalog", label: "Catalogue", icon: <IconGrid /> },
   { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
   { href: "/admin/invitations", label: "Invitations", icon: <IconUserPlus /> },
+  { href: "/admin/staff", label: "Équipe Marin Froid", icon: <IconShield /> },
   { href: "/admin/notifications", label: "Emails & notifications", icon: <IconBell /> },
   { href: "/admin/activity", label: "Activité", icon: <IconActivity /> },
   { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
