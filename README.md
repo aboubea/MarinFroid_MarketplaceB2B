@@ -219,14 +219,25 @@ par envoi) — plutôt que d'afficher des chiffres inventés, ces KPI ont été 
 - **17. Documents client** : à cadrer d'abord — documents liés aux produits (déjà en base via
   `product_documents`) ou documents généraux société (CGV, fiches commerciales) ? Le périmètre
   exact change l'implémentation.
-- **Permissions fines par module** (au-delà du binaire buyer/viewer) : le RBAC reste à 5 rôles
-  fixes, pas de système de permissions à la carte.
 - **QA + build mobile** (tests des parcours critiques en conditions réelles, configuration EAS
   pour un build App Store/Play Store) : nécessite un compte Apple/Google Developer et des tests
   sur device réels, hors de ce que je peux valider depuis cette session.
 - **Monitoring / analytics légers** : pas encore mis en place, à définir selon l'outil souhaité
   (Vercel Analytics, Sentry, Plausible...).
-- **Réplique pixel-parfaite des 9 maquettes** : la direction artistique (sidebar bleu nuit,
-  cartes claires, split-screen login, timeline statut, panneau détail back-office) a été
-  appliquée, mais certains détails visuels (photos produits réelles, galerie fiche produit,
-  micro-interactions précises) restent à affiner avec de vrais assets.
+
+## Permissions
+
+Le RBAC reste à 5 rôles fixes (`mf_admin`, `mf_ops`, `org_admin`, `org_buyer`, `org_viewer`), qui
+fixent des permissions par défaut. Au-delà de ça, un `org_admin` peut personnaliser deux
+permissions par collaborateur (`/team`) : **Peut commander** et **Reçoit les emails de
+commande** — utile par exemple pour donner ponctuellement le droit de commander à un compte
+lecture/administratif, ou pour retirer les emails à un acheteur qui n'en a pas besoin. Stocké en
+JSON sur `users.permissions` (surcharge des valeurs par défaut du rôle), voir
+`apps/web/src/lib/permissions.ts`. La gestion des utilisateurs (inviter/désactiver) reste
+volontairement un droit d'`org_admin` non personnalisable.
+
+## Photos produits
+
+La fiche produit admin (`/admin/catalog/[id]`) permet de téléverser directement des photos
+(PNG/JPEG/WebP, 5 Mo max) via Vercel Blob, en plus du champ URL manuel existant. Nécessite le
+même store Blob que le logo (voir section Déploiement Vercel ci-dessus).

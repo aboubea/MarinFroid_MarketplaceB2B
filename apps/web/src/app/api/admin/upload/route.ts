@@ -4,6 +4,7 @@ import { requireMarinFroidSession } from "@/lib/session-guard";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
+const ALLOWED_FOLDERS = ["branding", "products"];
 
 export async function POST(request: Request) {
   await requireMarinFroidSession();
@@ -20,6 +21,8 @@ export async function POST(request: Request) {
   if (!file || !(file instanceof File)) {
     return NextResponse.json({ error: "Fichier requis." }, { status: 400 });
   }
+  const folderInput = formData?.get("folder");
+  const folder = typeof folderInput === "string" && ALLOWED_FOLDERS.includes(folderInput) ? folderInput : "branding";
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json({ error: "Format non supporté (PNG, JPEG, WebP ou SVG uniquement)." }, { status: 400 });
   }
@@ -27,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Fichier trop volumineux (5 Mo max)." }, { status: 400 });
   }
 
-  const blob = await put(`branding/${Date.now()}-${file.name}`, file, {
+  const blob = await put(`${folder}/${Date.now()}-${file.name}`, file, {
     access: "public",
     addRandomSuffix: true,
   });

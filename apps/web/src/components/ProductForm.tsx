@@ -66,6 +66,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
   const [images, setImages] = useState<ProductImage[]>(initialImages ?? []);
   const [documents, setDocuments] = useState<ProductDocument[]>(initialDocuments ?? []);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [newDocLabel, setNewDocLabel] = useState("");
   const [newDocUrl, setNewDocUrl] = useState("");
 
@@ -137,6 +138,34 @@ export function ProductForm({ existing, images: initialImages, documents: initia
   async function handleRemoveImage(id: string) {
     setImages((prev) => prev.filter((i) => i.id !== id));
     await safeFetch(`/api/admin/catalog/images/${id}`, { method: "DELETE" });
+  }
+
+  async function handleUploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !isEdit) return;
+    setUploadingImage(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "products");
+    const uploadResult = await safeFetch<{ url: string }>("/api/admin/upload", { method: "POST", body: formData });
+    if (!uploadResult.ok || !uploadResult.data) {
+      setUploadingImage(false);
+      toast.show(uploadResult.error ?? "Impossible de téléverser l'image.", "error");
+      return;
+    }
+    const result = await safeFetch<{ image: ProductImage }>(`/api/admin/catalog/products/${existing!.id}/images`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: uploadResult.data.url }),
+    });
+    setUploadingImage(false);
+    if (result.ok && result.data) {
+      setImages((prev) => [...prev, result.data!.image]);
+      toast.show("Image ajoutée.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible d'ajouter l'image.", "error");
+    }
   }
 
   async function handleAddDocument() {
@@ -249,18 +278,32 @@ export function ProductForm({ existing, images: initialImages, documents: initia
       {isEdit && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="card" style={{ padding: 18 }}>
-            <h2 style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Images (URL)</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
+            <h2 style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Images</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: 8, marginBottom: 10 }}>
               {images.map((img) => (
-                <div key={img.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12 }}>
-                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{img.url}</span>
-                  <button type="button" className="icon-btn danger" style={{ width: 24, height: 24, marginLeft: 8 }} onClick={() => handleRemoveImage(img.id)}>×</button>
+                <div key={img.id} style={{ position: "relative" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={img.url} alt="" style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)" }} />
+                  <button
+                    type="button"
+                    className="icon-btn danger"
+                    style={{ position: "absolute", top: 4, right: 4, width: 22, height: 22, background: "rgba(255,255,255,0.9)" }}
+                    onClick={() => handleRemoveImage(img.id)}
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
-              {images.length === 0 && <span style={{ fontSize: 12, color: "var(--color-text-muted)" }}>Aucune image.</span>}
             </div>
+            {images.length === 0 && <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginBottom: 10 }}>Aucune image.</p>}
+
+            <label className="btn-secondary" style={{ fontSize: 12.5, cursor: "pointer", display: "inline-block", marginBottom: 10 }}>
+              {uploadingImage ? "Envoi..." : "Téléverser une photo"}
+              <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleUploadImage} disabled={uploadingImage} style={{ display: "none" }} />
+            </label>
+
             <div style={{ display: "flex", gap: 6 }}>
-              <input className="input" placeholder="https://..." value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} style={{ fontSize: 12 }} />
+              <input className="input" placeholder="ou coller une URL https://..." value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} style={{ fontSize: 12 }} />
               <button type="button" className="btn-secondary" style={{ fontSize: 12, padding: "8px 12px" }} onClick={handleAddImage}>+</button>
             </div>
           </div>

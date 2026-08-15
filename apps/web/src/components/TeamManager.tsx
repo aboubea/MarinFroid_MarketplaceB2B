@@ -14,6 +14,7 @@ interface Member {
   email: string;
   role: string;
   active: boolean;
+  permissions: { canOrder: boolean; canManageUsers: boolean; receivesOrderEmails: boolean };
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -84,6 +85,25 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
     }
   }
 
+  async function togglePermission(id: string, key: "canOrder" | "receivesOrderEmails", value: boolean) {
+    const previous = members;
+    const target = members.find((m) => m.id === id);
+    if (!target) return;
+    const nextPermissions = { ...target.permissions, [key]: value };
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, permissions: nextPermissions } : m)));
+    const result = await safeFetch(`/api/team/users/${id}/permissions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ canOrder: nextPermissions.canOrder, receivesOrderEmails: nextPermissions.receivesOrderEmails }),
+    });
+    if (!result.ok) {
+      setMembers(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour les permissions.", "error");
+    } else {
+      toast.show("Permissions mises à jour.", "success");
+    }
+  }
+
   return (
     <div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -121,6 +141,8 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                   <th>Membre</th>
                   <th>Email</th>
                   <th>Rôle</th>
+                  <th>Peut commander</th>
+                  <th>Reçoit les emails</th>
                   <th>Statut</th>
                   <th style={{ textAlign: "right" }}>Action</th>
                 </tr>
@@ -136,6 +158,28 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{m.email}</td>
                     <td>{ROLE_LABELS[m.role] ?? m.role}</td>
+                    <td>
+                      {m.role === "org_admin" ? (
+                        <span style={{ fontSize: 12, color: "var(--color-text-faint)" }}>Oui</span>
+                      ) : (
+                        <input
+                          type="checkbox"
+                          checked={m.permissions.canOrder}
+                          onChange={(e) => togglePermission(m.id, "canOrder", e.target.checked)}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      {m.role === "org_admin" ? (
+                        <span style={{ fontSize: 12, color: "var(--color-text-faint)" }}>Oui</span>
+                      ) : (
+                        <input
+                          type="checkbox"
+                          checked={m.permissions.receivesOrderEmails}
+                          onChange={(e) => togglePermission(m.id, "receivesOrderEmails", e.target.checked)}
+                        />
+                      )}
+                    </td>
                     <td>
                       <span className={`status-dot ${m.active ? "on" : "off"}`}>{m.active ? "Actif" : "Désactivé"}</span>
                     </td>

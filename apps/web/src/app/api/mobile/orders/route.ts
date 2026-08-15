@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db";
 import { orders } from "@marin-froid/db";
 import { submitOrderFromCart } from "@/lib/order-service";
 import { organizations, users } from "@marin-froid/db";
+import { getEffectivePermissions } from "@/lib/permissions";
 
 export async function GET(request: Request) {
   const session = await getSessionFromRequest(request);
@@ -22,9 +23,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const session = await getSessionFromRequest(request);
   if (!session || !session.organizationId) return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
-  if (session.role === "org_viewer") {
-    return NextResponse.json({ error: "Votre profil (lecture / administratif) ne permet pas de valider une commande." }, { status: 403 });
-  }
 
   const db = getDb();
   const [org, user] = await Promise.all([
@@ -32,6 +30,9 @@ export async function POST(request: Request) {
     db.query.users.findFirst({ where: eq(users.id, session.userId) }),
   ]);
   if (!org || !user) return NextResponse.json({ error: "Compte introuvable." }, { status: 404 });
+  if (!getEffectivePermissions(user).canOrder) {
+    return NextResponse.json({ error: "Votre profil ne permet pas de valider une commande." }, { status: 403 });
+  }
 
   try {
     const order = await submitOrderFromCart({
