@@ -79,7 +79,7 @@ export function AddressManager({ initialAddresses }: { initialAddresses: Address
           <input className="input" placeholder="Nom (ex. Entrepôt principal)" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} required />
           <input className="input" placeholder="Adresse" value={form.line1} onChange={(e) => setForm({ ...form, line1: e.target.value })} required />
           <input className="input" placeholder="Complément (optionnel)" value={form.line2} onChange={(e) => setForm({ ...form, line2: e.target.value })} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div className="grid-split-2" style={{ gap: 10 }}>
             <input className="input" placeholder="Code postal" value={form.postalCode} onChange={(e) => setForm({ ...form, postalCode: e.target.value })} required />
             <input className="input" placeholder="Ville" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} required />
           </div>

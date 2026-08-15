@@ -154,7 +154,7 @@ export default async function AdminOverviewPage() {
         </section>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16, alignItems: "start" }}>
+      <div className="grid-split-2" style={{ gap: 16, marginBottom: 16, alignItems: "start" }}>
         <section>
           <h2 style={{ fontSize: 15, marginBottom: 10 }}>Activité récente</h2>
           <div className="card" style={{ overflow: "hidden" }}>
@@ -234,7 +234,7 @@ export default async function AdminOverviewPage() {
         </div>
       </section>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="grid-split-2" style={{ gap: 16 }}>
         <section>
           <h2 style={{ fontSize: 15, marginBottom: 10 }}>Email & notifications</h2>
           <div className="card" style={{ padding: 16 }}>

@@ -165,7 +165,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
       <form onSubmit={handleSubmit} className="card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Informations générales</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <div className="grid-split-2" style={{ gap: 10, marginBottom: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Référence (SKU)</label>
               <input className="input" value={sku} onChange={(e) => setSku(e.target.value)} required />
@@ -196,7 +196,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
 
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Conditionnement & prix</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+          <div className="grid-split-3" style={{ gap: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Unité</label>
               <input className="input" value={unit} onChange={(e) => setUnit(e.target.value)} />
@@ -214,7 +214,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
 
         <div>
           <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Détails complémentaires</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <div className="grid-split-2" style={{ gap: 10, marginBottom: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Provenance</label>
               <input className="input" value={origin} onChange={(e) => setOrigin(e.target.value)} />
