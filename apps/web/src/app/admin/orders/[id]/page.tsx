@@ -48,7 +48,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       </div>
 
       {(deliveryAddress || order.notes || order.estimatedDeliveryDate) && (
-        <div className="card" style={{ padding: 16, marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div className="card grid-split-2" style={{ padding: 16, marginBottom: 20, gap: 16 }}>
           {deliveryAddress && (
             <div>
               <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: 4 }}>

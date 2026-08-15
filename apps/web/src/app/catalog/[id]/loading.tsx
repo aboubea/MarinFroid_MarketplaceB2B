@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <AppShellSkeleton>
       <SkeletonBlock width={140} height={13} style={{ marginBottom: 20 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 40, alignItems: "start" }}>
+      <div className="grid-media-420" style={{ gap: 40, alignItems: "start" }}>
         <SkeletonBlock height={420} style={{ borderRadius: "var(--radius-lg)" }} />
         <div>
           <SkeletonBlock width={90} height={20} style={{ borderRadius: 999, marginBottom: 12 }} />

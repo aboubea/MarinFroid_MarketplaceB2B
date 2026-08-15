@@ -26,7 +26,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         ← Retour au catalogue
       </Link>
 
-      <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 40, alignItems: "start" }}>
+      <div className="grid-media-420" style={{ gap: 40, alignItems: "start" }}>
         <div>
           <div className="product-thumb" style={{ aspectRatio: "1 / 1", fontSize: 13, marginBottom: 10 }}>
             {product.sku}

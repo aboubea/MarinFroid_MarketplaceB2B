@@ -325,6 +325,23 @@ a.card:hover, .card.interactive:hover {
   table.data-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
 }
 
+/* Responsive grid utilities: replace hard-coded inline gridTemplateColumns
+   on layout containers so they stack instead of forcing page-level
+   horizontal scroll on narrow viewports. */
+.grid-split-2 { display: grid; grid-template-columns: 1fr 1fr; }
+.grid-split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.grid-sidebar-320 { display: grid; grid-template-columns: 1fr 320px; }
+.grid-media-420 { display: grid; grid-template-columns: 420px 1fr; }
+
+@media (max-width: 860px) {
+  .grid-sidebar-320, .grid-media-420 { grid-template-columns: 1fr; }
+  .grid-sidebar-320 > *:last-child { position: static !important; }
+}
+
+@media (max-width: 640px) {
+  .grid-split-2, .grid-split-3 { grid-template-columns: 1fr; }
+}
+
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }

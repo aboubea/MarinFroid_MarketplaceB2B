@@ -72,7 +72,7 @@ export function CartTable({ initialItems, addresses, canSubmit }: { initialItems
   const hasPricing = items.some((i) => i.indicativePrice);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
+    <div className="grid-sidebar-320" style={{ gap: 20, alignItems: "start" }}>
       <div className="card" style={{ overflow: "hidden" }}>
         {items.map((item, idx) => (
           <div

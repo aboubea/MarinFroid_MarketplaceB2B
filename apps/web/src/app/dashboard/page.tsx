@@ -107,7 +107,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32, alignItems: "start" }}>
+      <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
         <section>
           <h2 style={{ fontSize: 15, marginBottom: 10 }}>Derniers achats</h2>
           <div className="card" style={{ overflow: "hidden" }}>
