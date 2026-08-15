@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { requireMarinFroidSession } from "@/lib/session-guard";
+import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations, users, deliveryAddresses } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
@@ -18,7 +18,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await requireMarinFroidSession();
+  const session = await requireMarinFroidAdminSession();
   const db = getDb();
 
   const organization = await db.query.organizations.findFirst({ where: eq(organizations.id, id) });
@@ -27,7 +27,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   const addresses = await db.query.deliveryAddresses.findMany({ where: eq(deliveryAddresses.organizationId, id) });
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <h1 style={{ fontSize: 24 }}>{organization.name}</h1>
         <OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />

@@ -70,7 +70,7 @@ export default async function AdminDeliveriesPage() {
   const isToday = start.toDateString() === new Date().toDateString();
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Livraisons du jour</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
         {isToday ? "Tournée d'aujourd'hui" : `Prochaine tournée — jeudi ${start.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`}

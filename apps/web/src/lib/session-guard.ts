@@ -24,3 +24,14 @@ export async function requireMarinFroidSession() {
   }
   return session!;
 }
+
+export async function requireMarinFroidAdminSession() {
+  const session = await getSession();
+  if (!session || (session.role !== "mf_admin" && session.role !== "mf_ops")) {
+    redirect("/login");
+  }
+  if (session!.role !== "mf_admin") {
+    redirect("/admin");
+  }
+  return session!;
+}

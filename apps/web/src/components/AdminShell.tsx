@@ -3,12 +3,18 @@
 import { Sidebar } from "./Sidebar";
 import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconUserPlus, IconActivity, IconGrid, IconColumns, IconTruck } from "./icons";
 
-const LINKS = [
+const ADMIN_ONLY_LINKS = [
   { href: "/admin/overview", label: "Administration", icon: <IconHome /> },
+];
+
+const SHARED_LINKS = [
   { href: "/admin", label: "Préparation", icon: <IconClipboard /> },
   { href: "/admin/planning", label: "Planning", icon: <IconColumns /> },
   { href: "/admin/deliveries", label: "Livraisons du jour", icon: <IconTruck /> },
   { href: "/admin/orders", label: "Commandes", icon: <IconList /> },
+];
+
+const ADMIN_ONLY_TAIL_LINKS = [
   { href: "/admin/catalog", label: "Catalogue", icon: <IconGrid /> },
   { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
   { href: "/admin/invitations", label: "Invitations", icon: <IconUserPlus /> },
@@ -17,10 +23,15 @@ const LINKS = [
   { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
 ];
 
-export function AdminShell({ children, fullName }: { children: React.ReactNode; fullName: string }) {
+export function AdminShell({ children, fullName, role }: { children: React.ReactNode; fullName: string; role?: string }) {
+  const isAdmin = role === "mf_admin";
+  const links = isAdmin
+    ? [...ADMIN_ONLY_LINKS, ...SHARED_LINKS, ...ADMIN_ONLY_TAIL_LINKS]
+    : SHARED_LINKS;
+
   return (
     <div className="app-shell">
-      <Sidebar links={LINKS} footerLabel="Équipe Marin Froid" />
+      <Sidebar links={links} footerLabel="Équipe Marin Froid" />
       <div>
         <header className="topbar">
           <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>

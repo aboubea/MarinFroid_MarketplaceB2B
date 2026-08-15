@@ -46,7 +46,7 @@ export default async function AdminPlanningPage() {
   );
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Planning</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
         Charge par étape, commandes les plus anciennes en premier.

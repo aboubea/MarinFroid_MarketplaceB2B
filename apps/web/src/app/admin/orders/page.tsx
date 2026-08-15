@@ -6,7 +6,7 @@ export default async function AdminOrdersPage() {
   const session = await requireMarinFroidSession();
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 20 }}>Commandes</h1>
       <AdminOrdersBoard />
     </AdminShell>
