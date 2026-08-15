@@ -15,6 +15,7 @@ import {
 import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
+import { RecentActivityFeed } from "@/components/RecentActivityFeed";
 
 export default async function AdminOverviewPage() {
   const session = await requireMarinFroidSession();
@@ -47,7 +48,7 @@ export default async function AdminOverviewPage() {
       .innerJoin(orders, eq(orders.id, orderItems.orderId))
       .innerJoin(products, eq(products.id, orderItems.productId))
       .where(gte(orders.createdAt, thirtyDaysAgo)),
-    db.query.activityLogs.findMany({ orderBy: [desc(activityLogs.createdAt)], limit: 8 }),
+    db.query.activityLogs.findMany({ orderBy: [desc(activityLogs.createdAt)], limit: 6 }),
     db.query.organizations.findMany({
       where: or(eq(organizations.status, "invited"), eq(organizations.status, "suspended")),
       limit: 6,
@@ -154,18 +155,10 @@ export default async function AdminOverviewPage() {
         <section>
           <h2 style={{ fontSize: 15, marginBottom: 10 }}>Activité récente</h2>
           <div className="card" style={{ overflow: "hidden" }}>
-            {recentActivity.length === 0 ? (
-              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucune activité récente.</div>
-            ) : (
-              recentActivity.map((a, idx) => (
-                <div key={a.id} style={{ padding: "12px 16px", borderBottom: idx < recentActivity.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{a.summary}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--color-text-faint)", marginTop: 2 }}>
-                    {a.actorLabel ?? "Système"} · {new Date(a.createdAt).toLocaleString("fr-FR")}
-                  </div>
-                </div>
-              ))
-            )}
+            <RecentActivityFeed
+              initialActivity={recentActivity.map((a) => ({ id: a.id, summary: a.summary, actorLabel: a.actorLabel, createdAt: a.createdAt.toString() }))}
+              initialHasMore={recentActivity.length === 6}
+            />
           </div>
           <Link href="/admin/activity" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir toute l'activité →</Link>
         </section>
