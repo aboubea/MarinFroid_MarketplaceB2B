@@ -7,6 +7,7 @@ import { ListSkeleton } from "./Skeleton";
 import { IconSearch } from "./icons";
 import { safeFetch } from "@/lib/safe-fetch";
 import { useToast } from "./Toast";
+import { PageHeader } from "./PageHeader";
 
 interface ProductRow {
   id: string;
@@ -49,13 +50,11 @@ export function CatalogAdminTable() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-        <h1 style={{ fontSize: 24 }}>Catalogue</h1>
-        <Link href="/admin/catalog/new" className="btn-primary">+ Ajouter un produit</Link>
-      </div>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        {products.length} référence{products.length > 1 ? "s" : ""}
-      </p>
+      <PageHeader
+        title="Catalogue"
+        subtitle={`${products.length} référence${products.length > 1 ? "s" : ""}`}
+        action={<Link href="/admin/catalog/new" className="btn-primary">+ Ajouter un produit</Link>}
+      />
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 16, alignItems: "center" }}>
         <div className="search-input-wrap" style={{ flex: 1, minWidth: 220 }}>

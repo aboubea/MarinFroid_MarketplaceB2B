@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { OrgStatusToggle } from "@/components/OrgStatusToggle";
 import { Avatar } from "@/components/Avatar";
 import { EmptyState } from "@/components/EmptyState";
+import { PageHeader } from "@/components/PageHeader";
 
 const ROLE_LABELS: Record<string, string> = {
   mf_admin: "Admin Marin Froid",
@@ -28,12 +29,9 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24 }}>{organization.name}</h1>
-        <OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />
-      </div>
+      <PageHeader title={organization.name} action={<OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />} />
 
-      <h2 style={{ fontSize: 15, marginBottom: 12 }}>Utilisateurs</h2>
+      <h2 className="section-title">Utilisateurs</h2>
       <div className="card" style={{ overflow: "hidden" }}>
         {orgUsers.length === 0 ? (
           <EmptyState illustration="users" title="Aucun utilisateur" description="Cette société n'a pas encore d'utilisateur actif." />
@@ -70,7 +68,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
         )}
       </div>
 
-      <h2 style={{ fontSize: 15, margin: "24px 0 12px" }}>Adresses de livraison</h2>
+      <h2 className="section-title" style={{ margin: "24px 0 12px" }}>Adresses de livraison</h2>
       <div className="card" style={{ overflow: "hidden" }}>
         {addresses.length === 0 ? (
           <EmptyState illustration="box" title="Aucune adresse" description="Cette société n'a pas encore renseigné d'adresse de livraison." />

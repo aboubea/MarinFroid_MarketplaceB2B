@@ -4,6 +4,7 @@ import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, organizations, orderItems } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
+import { PageHeader } from "@/components/PageHeader";
 
 const COLUMNS = [
   { status: "submitted" as const, title: "À traiter", accent: "var(--color-warning, #D97706)" },
@@ -47,10 +48,7 @@ export default async function AdminPlanningPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 4 }}>Planning</h1>
-      <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
-        Charge par étape, commandes les plus anciennes en premier.
-      </p>
+      <PageHeader title="Planning" subtitle="Charge par étape, commandes les plus anciennes en premier." />
 
       <div className="planning-board">
         {columnsData.map((col) => (

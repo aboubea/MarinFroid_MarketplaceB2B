@@ -2,6 +2,7 @@ import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { AdminShell } from "@/components/AdminShell";
 import { BrandingForm } from "@/components/BrandingForm";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminBrandingPage() {
   const session = await requireMarinFroidAdminSession();
@@ -10,7 +11,7 @@ export default async function AdminBrandingPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Personnalisation</h1>
+      <PageHeader title="Personnalisation" />
       <div className="card" style={{ padding: 24, maxWidth: 480 }}>
         <BrandingForm
           initialLogoUrl={branding?.logoUrl ?? ""}

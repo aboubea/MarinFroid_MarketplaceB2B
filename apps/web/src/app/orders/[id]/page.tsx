@@ -7,6 +7,7 @@ import { AppShell } from "@/components/AppShell";
 import { ReorderButton } from "@/components/ReorderButton";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { orderStatusLabel } from "@/lib/order-status";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function OrderDetailPage({
   params,
@@ -46,13 +47,11 @@ export default async function OrderDetailPage({
           Commande transmise à l'équipe Marin Froid. Vous recevrez un e-mail de confirmation.
         </div>
       )}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <div>
-          <h1 style={{ fontSize: 24 }}>{order.reference}</h1>
-          <p style={{ color: "var(--color-text-muted)", fontSize: 13 }}>{new Date(order.createdAt).toLocaleString("fr-FR")}</p>
-        </div>
-        <span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>
-      </div>
+      <PageHeader
+        title={order.reference}
+        subtitle={new Date(order.createdAt).toLocaleString("fr-FR")}
+        action={<span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>}
+      />
 
       <div style={{ marginBottom: 20 }}>
         <OrderPreparationTimeline

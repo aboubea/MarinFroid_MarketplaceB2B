@@ -8,6 +8,7 @@ import { getCartWithItems } from "@/lib/cart";
 import { DashboardQuickAdd } from "@/components/DashboardQuickAdd";
 import { orderStatusLabel } from "@/lib/order-status";
 import { getOrderTotals } from "@/lib/order-totals";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function DashboardPage() {
   const { session, organization } = await requireClientSession();
@@ -86,8 +87,7 @@ export default async function DashboardPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role} compact>
-      <h1 style={{ fontSize: 22, marginBottom: 2 }}>Bonjour, {session.fullName.split(" ")[0]} 👋</h1>
-      <p style={{ color: "var(--color-text-muted)", marginBottom: 16, fontSize: 13.5 }}>Voici un aperçu de votre activité.</p>
+      <PageHeader title={`Bonjour, ${session.fullName.split(" ")[0]} 👋`} subtitle="Voici un aperçu de votre activité." compact />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 18 }}>
         {hasPricing && (

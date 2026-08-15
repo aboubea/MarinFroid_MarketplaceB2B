@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db";
 import { products, productImages, productDocuments } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { ProductForm } from "@/components/ProductForm";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,7 +26,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
       <Link href="/admin/catalog" style={{ fontSize: 13, color: "var(--color-text-muted)", display: "inline-block", marginBottom: 16 }}>
         ← Retour au catalogue
       </Link>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>{product.name}</h1>
+      <PageHeader title={product.name} />
       <ProductForm existing={product} images={images} documents={documents} />
     </AdminShell>
   );

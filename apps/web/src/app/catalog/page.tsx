@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { products } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function CatalogPage() {
   const { session, organization } = await requireClientSession();
@@ -14,7 +15,7 @@ export default async function CatalogPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 20 }}>Catalogue</h1>
+      <PageHeader title="Catalogue" />
       <CatalogBrowser
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
         products={allProducts.map((p) => ({

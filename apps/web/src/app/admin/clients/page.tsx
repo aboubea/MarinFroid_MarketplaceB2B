@@ -5,6 +5,7 @@ import { organizations } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { InviteClientForm } from "@/components/InviteClientForm";
 import { AdminClientsBoard } from "@/components/AdminClientsBoard";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminClientsPage() {
   const session = await requireMarinFroidAdminSession();
@@ -13,10 +14,10 @@ export default async function AdminClientsPage() {
 
   return (
     <AdminShell fullName={session.fullName} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Clients</h1>
+      <PageHeader title="Clients" />
 
       <div className="card" style={{ padding: 20, marginBottom: 32 }}>
-        <h2 style={{ fontSize: 15, marginBottom: 12 }}>Inviter une nouvelle société</h2>
+        <h2 className="section-title">Inviter une nouvelle société</h2>
         <InviteClientForm />
       </div>
 

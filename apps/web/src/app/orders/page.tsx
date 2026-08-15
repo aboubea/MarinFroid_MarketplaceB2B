@@ -5,6 +5,7 @@ import { orders } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { OrdersList } from "@/components/OrdersList";
 import { getOrderTotals } from "@/lib/order-totals";
+import { PageHeader } from "@/components/PageHeader";
 
 export default async function OrdersPage() {
   const { session, organization } = await requireClientSession();
@@ -17,7 +18,7 @@ export default async function OrdersPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Vos commandes</h1>
+      <PageHeader title="Vos commandes" />
       <OrdersList
         orders={list.map((o) => ({
           id: o.id,

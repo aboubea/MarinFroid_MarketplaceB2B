@@ -5,6 +5,7 @@ import { deliveryAddresses } from "@marin-froid/db";
 import { AppShell } from "@/components/AppShell";
 import { AddressManager } from "@/components/AddressManager";
 import { Avatar } from "@/components/Avatar";
+import { PageHeader } from "@/components/PageHeader";
 
 const ROLE_LABELS: Record<string, string> = {
   mf_admin: "Admin Marin Froid",
@@ -23,7 +24,7 @@ export default async function AccountPage() {
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
-      <h1 style={{ fontSize: 24, marginBottom: 24 }}>Mon compte</h1>
+      <PageHeader title="Mon compte" />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 520, marginBottom: 40 }}>
         <div className="card" style={{ padding: 24, display: "flex", alignItems: "center", gap: 16 }}>
@@ -58,7 +59,7 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: 16, marginBottom: 12 }}>Adresses de livraison</h2>
+      <h2 className="section-title">Adresses de livraison</h2>
       <div style={{ maxWidth: 520 }}>
         {session.role === "org_admin" ? (
           <AddressManager initialAddresses={addresses} />
