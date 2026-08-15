@@ -309,7 +309,9 @@ a.card:hover, .card.interactive:hover {
 }
 
 .sidebar-logo-short { display: none; }
-.data-table { min-width: 480px; }
+
+.app-shell, .app-shell > div { min-width: 0; }
+.card { min-width: 0; }
 
 @media (max-width: 960px) {
   .app-shell { grid-template-columns: 72px 1fr; }
@@ -327,7 +329,6 @@ a.card:hover, .card.interactive:hover {
 @media (max-width: 640px) {
   .container { padding: 0 var(--space-3); }
   .topbar { padding: 0 var(--space-4); }
-  table.data-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
 }
 
 /* Responsive grid utilities: replace hard-coded inline gridTemplateColumns
@@ -337,6 +338,7 @@ a.card:hover, .card.interactive:hover {
 .grid-split-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; }
 .grid-sidebar-320 { display: grid; grid-template-columns: 1fr 320px; }
 .grid-media-420 { display: grid; grid-template-columns: 420px 1fr; }
+.grid-split-2 > *, .grid-split-3 > *, .grid-sidebar-320 > *, .grid-media-420 > * { min-width: 0; }
 
 @media (max-width: 860px) {
   .grid-sidebar-320, .grid-media-420 { grid-template-columns: 1fr; }
