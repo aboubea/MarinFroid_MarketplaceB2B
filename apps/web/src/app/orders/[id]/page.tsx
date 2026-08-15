@@ -61,9 +61,24 @@ export default async function OrderDetailPage({
         />
       </div>
 
-      {address && (
-        <div className="card" style={{ padding: 16, marginBottom: 20, fontSize: 13, color: "var(--color-text-muted)" }}>
-          <strong style={{ color: "var(--color-text)" }}>Livraison —</strong> {address.label} · {address.line1}, {address.postalCode} {address.city}
+      {(address || order.estimatedDeliveryDate || order.notes) && (
+        <div className="card" style={{ padding: 16, marginBottom: 20, fontSize: 13, color: "var(--color-text-muted)", display: "flex", flexDirection: "column", gap: 6 }}>
+          {address && (
+            <div>
+              <strong style={{ color: "var(--color-text)" }}>Livraison —</strong> {address.label} · {address.line1}, {address.postalCode} {address.city}
+            </div>
+          )}
+          {order.estimatedDeliveryDate && (
+            <div>
+              <strong style={{ color: "var(--color-text)" }}>Livraison estimée —</strong>{" "}
+              {new Date(order.estimatedDeliveryDate).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            </div>
+          )}
+          {order.notes && (
+            <div>
+              <strong style={{ color: "var(--color-text)" }}>Notes —</strong> {order.notes}
+            </div>
+          )}
         </div>
       )}
 
@@ -74,7 +89,12 @@ export default async function OrderDetailPage({
               <div style={{ fontWeight: 600, fontSize: 14 }}>{item.productNameSnapshot}</div>
               <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.skuSnapshot} · {item.unitSnapshot}</div>
             </div>
-            <div style={{ fontWeight: 600 }}>× {item.quantity}</div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontWeight: 600 }}>× {item.preparedQuantity ?? item.quantity}</div>
+              {item.preparedQuantity !== null && item.preparedQuantity !== item.quantity && (
+                <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>commandé × {item.quantity}</div>
+              )}
+            </div>
           </div>
         ))}
       </div>

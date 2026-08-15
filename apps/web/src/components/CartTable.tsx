@@ -22,6 +22,7 @@ export function CartTable({ initialItems, addresses, canSubmit }: { initialItems
   const [items, setItems] = useState(initialItems);
   const [submitting, setSubmitting] = useState(false);
   const [addressId, setAddressId] = useState<string>(addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? "");
+  const [notes, setNotes] = useState("");
 
   async function updateQuantity(productId: string, quantity: number) {
     const previous = items;
@@ -44,7 +45,7 @@ export function CartTable({ initialItems, addresses, canSubmit }: { initialItems
     const result = await safeFetch<{ orderId: string }>("/api/orders/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deliveryAddressId: addressId || null }),
+      body: JSON.stringify({ deliveryAddressId: addressId || null, notes: notes.trim() || null }),
     });
     setSubmitting(false);
     if (!result.ok || !result.data) {
@@ -122,6 +123,20 @@ export function CartTable({ initialItems, addresses, canSubmit }: { initialItems
             </select>
           </div>
         )}
+
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
+            Notes au préparateur (optionnel)
+          </label>
+          <textarea
+            className="input"
+            rows={3}
+            placeholder="Ex. livraison quai arrière, contact sur place..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            style={{ resize: "vertical", minHeight: 60 }}
+          />
+        </div>
 
         {hasPricing && (
           <>

@@ -164,6 +164,7 @@ export const orders = pgTable("orders", {
   deliveryAddressId: uuid("delivery_address_id").references(() => deliveryAddresses.id),
   status: orderStatusEnum("status").notNull().default("submitted"),
   notes: text("notes"),
+  estimatedDeliveryDate: timestamp("estimated_delivery_date", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({
@@ -179,6 +180,7 @@ export const orderItems = pgTable("order_items", {
   skuSnapshot: text("sku_snapshot").notNull(),
   unitSnapshot: text("unit_snapshot").notNull(),
   quantity: integer("quantity").notNull(),
+  preparedQuantity: integer("prepared_quantity"),
 });
 
 export const orderStatusHistory = pgTable("order_status_history", {

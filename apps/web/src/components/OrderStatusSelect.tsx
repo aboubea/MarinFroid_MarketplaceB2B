@@ -23,7 +23,15 @@ const NEXT_ACTION_LABEL: Record<string, string> = {
   shipped: "Marquer comme livrée",
 };
 
-export function OrderStatusSelect({ orderId, currentStatus }: { orderId: string; currentStatus: string }) {
+export function OrderStatusSelect({
+  orderId,
+  currentStatus,
+  hideNextForStatuses = [],
+}: {
+  orderId: string;
+  currentStatus: string;
+  hideNextForStatuses?: string[];
+}) {
   const router = useRouter();
   const toast = useToast();
   const [status, setStatus] = useState(currentStatus);
@@ -53,7 +61,8 @@ export function OrderStatusSelect({ orderId, currentStatus }: { orderId: string;
   }
 
   const currentIndex = STEPS.indexOf(status);
-  const nextStatus = currentIndex >= 0 && currentIndex < STEPS.length - 1 ? STEPS[currentIndex + 1] : null;
+  const nextStatus =
+    currentIndex >= 0 && currentIndex < STEPS.length - 1 && !hideNextForStatuses.includes(status) ? STEPS[currentIndex + 1] : null;
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

@@ -21,6 +21,9 @@ export async function POST(request: Request) {
   if (!session || !session.organizationId) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
   }
+  if (session.role !== "org_admin") {
+    return NextResponse.json({ error: "Seul l'administrateur de la société peut gérer les adresses." }, { status: 403 });
+  }
   const { label, line1, line2, city, postalCode, country, isDefault } = await request.json();
   if (!label || !line1 || !city || !postalCode) {
     return NextResponse.json({ error: "Champs requis manquants." }, { status: 400 });

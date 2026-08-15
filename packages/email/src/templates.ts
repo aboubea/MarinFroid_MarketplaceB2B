@@ -64,12 +64,50 @@ export function orderCreatedEmail(params: { reference: string; organizationName:
   };
 }
 
-export function orderStatusUpdatedEmail(params: { reference: string; status: string; orderUrl: string }) {
+const STATUS_LABELS_FR: Record<string, string> = {
+  submitted: "reçue",
+  acknowledged: "confirmée",
+  processing: "en préparation",
+  shipped: "expédiée",
+  completed: "livrée",
+  cancelled: "annulée",
+};
+
+export function orderStatusUpdatedEmail(params: { reference: string; status: string; orderUrl: string; estimatedDeliveryDate?: string | null }) {
+  const label = STATUS_LABELS_FR[params.status] ?? params.status;
   return {
     subject: `Commande ${params.reference} — statut mis à jour`,
     html: layout(
       "Statut de commande mis à jour",
-      `<p>La commande <strong>${params.reference}</strong> est maintenant : <strong>${params.status}</strong>.</p>
+      `<p>La commande <strong>${params.reference}</strong> est maintenant : <strong>${label}</strong>.</p>
+       ${params.estimatedDeliveryDate ? `<p>Livraison estimée : <strong>${params.estimatedDeliveryDate}</strong></p>` : ""}
+       <p><a href="${params.orderUrl}" style="color:#0F172A;font-weight:600;">Voir la commande</a></p>`
+    ),
+  };
+}
+
+export function volumeAdjustedEmail(params: {
+  reference: string;
+  orderUrl: string;
+  changes: { name: string; ordered: number; prepared: number; unit: string }[];
+}) {
+  const rows = params.changes
+    .map(
+      (c) =>
+        `<tr><td style="padding:6px 0;border-bottom:1px solid #E2E8F0;">${c.name}</td>
+             <td style="padding:6px 0;border-bottom:1px solid #E2E8F0;text-align:right;color:#64748B;">${c.ordered} ${c.unit}</td>
+             <td style="padding:6px 0;border-bottom:1px solid #E2E8F0;text-align:right;font-weight:700;">${c.prepared} ${c.unit}</td></tr>`
+    )
+    .join("");
+  return {
+    subject: `Commande ${params.reference} — volumes ajustés lors de la préparation`,
+    html: layout(
+      "Volumes ajustés",
+      `<p>Lors de la préparation de votre commande <strong>${params.reference}</strong>, certaines quantités ont été ajustées par rapport à votre commande initiale (stock disponible) :</p>
+       <table width="100%" cellpadding="0" cellspacing="0" style="margin:12px 0;font-size:13px;">
+         <tr><th style="text-align:left;color:#64748B;font-weight:600;padding-bottom:6px;">Produit</th><th style="text-align:right;color:#64748B;font-weight:600;padding-bottom:6px;">Commandé</th><th style="text-align:right;color:#64748B;font-weight:600;padding-bottom:6px;">Préparé</th></tr>
+         ${rows}
+       </table>
        <p><a href="${params.orderUrl}" style="color:#0F172A;font-weight:600;">Voir la commande</a></p>`
     ),
   };

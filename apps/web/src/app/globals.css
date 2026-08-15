@@ -47,6 +47,8 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "cv11", "ss01";
   letter-spacing: -0.011em;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 h1, h2, h3 { letter-spacing: -0.02em; line-height: 1.2; }
@@ -299,6 +301,28 @@ a.card:hover, .card.interactive:hover {
 @media (max-width: 860px) {
   .login-split { grid-template-columns: 1fr; }
   .login-split-brand { display: none; }
+}
+
+.sidebar-logo-short { display: none; }
+.data-table { min-width: 480px; }
+
+@media (max-width: 960px) {
+  .app-shell { grid-template-columns: 72px 1fr; }
+  .sidebar { padding: var(--space-5) var(--space-2); align-items: center; }
+  .sidebar-logo { padding: 0; margin-bottom: var(--space-5); text-align: center; }
+  .sidebar-logo-full { display: none; }
+  .sidebar-logo-short { display: inline; }
+  .sidebar-link { justify-content: center; padding: 10px; width: 44px; }
+  .sidebar-link-label { display: none; }
+  .sidebar-footer { width: 100%; }
+  .sidebar-footer .sidebar-link { margin: 0 auto; }
+  .container { padding: 0 var(--space-4); }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 0 var(--space-3); }
+  .topbar { padding: 0 var(--space-4); }
+  table.data-table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
 }
 
 @keyframes toastIn {

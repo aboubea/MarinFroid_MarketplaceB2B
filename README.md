@@ -54,7 +54,7 @@ sinon il ne détecte pas Next.js (erreur "No Next.js version detected").
 1. Dans les réglages du projet Vercel → **Settings → General → Root Directory**, définir `apps/web`.
 2. Vérifier aussi **Environments → Production → Branch Tracking** (ou l'ancien "Production Branch") : doit pointer sur la branche qui contient le code (actuellement `main`, tenu à jour par fast-forward depuis la branche de dev).
 3. Créer un projet Neon, récupérer la chaîne de connexion pooled.
-4. Configurer les variables d'environnement dans Vercel : `DATABASE_URL`, `AUTH_SECRET`, `RESEND_API_KEY`, `RESEND_FROM`, `APP_URL`.
+4. Configurer les variables d'environnement dans Vercel : `DATABASE_URL`, `AUTH_SECRET`, `RESEND_API_KEY`, `RESEND_FROM`, `APP_URL`, et optionnellement `CRON_SECRET` (protège `/api/cron/deliveries`, le job quotidien qui marque automatiquement les commandes expédiées comme livrées une fois la date de livraison estimée atteinte — voir `apps/web/vercel.json` → `crons`).
 5. `apps/web/vercel.json` (lu automatiquement une fois le Root Directory positionné) installe les dépendances depuis la racine du monorepo puis exécute `db:generate` + `db:migrate` avant le build Next.js — la base Neon est donc toujours à jour à chaque déploiement.
 6. Le seed (`pnpm db:seed`) n'est **pas** exécuté automatiquement en continu — il a été lancé une fois manuellement contre la base de prod pour créer le compte admin et les données de référence. Ne pas le remettre dans `buildCommand` en continu : il n'est pas idempotent (recréerait des sociétés/produits en double à chaque déploiement).
 7. Mobile : configurer `apps/mobile/app.json` → `expo.extra.apiUrl` avec l'URL Vercel de production avant un build EAS.

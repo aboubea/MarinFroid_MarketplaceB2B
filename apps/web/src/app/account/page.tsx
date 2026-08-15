@@ -60,7 +60,31 @@ export default async function AccountPage() {
 
       <h2 style={{ fontSize: 16, marginBottom: 12 }}>Adresses de livraison</h2>
       <div style={{ maxWidth: 520 }}>
-        <AddressManager initialAddresses={addresses} />
+        {session.role === "org_admin" ? (
+          <AddressManager initialAddresses={addresses} />
+        ) : (
+          <>
+            <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", marginBottom: 12 }}>
+              Seul l'administrateur de votre société peut ajouter ou modifier les adresses de livraison.
+            </p>
+            {addresses.length === 0 ? (
+              <p style={{ fontSize: 13, color: "var(--color-text-muted)" }}>Aucune adresse enregistrée.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {addresses.map((a) => (
+                  <div key={a.id} className="card" style={{ padding: 14 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13.5 }}>
+                      {a.label} {a.isDefault && <span className="badge badge-completed" style={{ marginLeft: 6 }}>par défaut</span>}
+                    </div>
+                    <div style={{ fontSize: 12.5, color: "var(--color-text-muted)", marginTop: 2 }}>
+                      {a.line1}{a.line2 ? `, ${a.line2}` : ""} · {a.postalCode} {a.city} · {a.country}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </AppShell>
   );

@@ -2,10 +2,11 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, organizations, orderStatusHistory } from "@marin-froid/db";
+import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
+import { OrderItemsPrepPanel } from "@/components/OrderItemsPrepPanel";
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,25 +16,28 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
   if (!order) notFound();
 
-  const [organization, items, history] = await Promise.all([
+  const [organization, items, history, deliveryAddress] = await Promise.all([
     db.query.organizations.findFirst({ where: eq(organizations.id, order.organizationId) }),
     db.query.orderItems.findMany({ where: eq(orderItems.orderId, order.id) }),
     db.query.orderStatusHistory.findMany({
       where: eq(orderStatusHistory.orderId, order.id),
       orderBy: (h, { asc }) => [asc(h.createdAt)],
     }),
+    order.deliveryAddressId
+      ? db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, order.deliveryAddressId) })
+      : Promise.resolve(null),
   ]);
 
   return (
     <AdminShell fullName={session.fullName}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 24 }}>{order.reference}</h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: 13 }}>
             {organization?.name} · {new Date(order.createdAt).toLocaleString("fr-FR")}
           </p>
         </div>
-        <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+        <OrderStatusSelect orderId={order.id} currentStatus={order.status} hideNextForStatuses={["processing"]} />
       </div>
 
       <div style={{ marginBottom: 20 }}>
@@ -43,17 +47,41 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         />
       </div>
 
-      <div className="card" style={{ overflow: "hidden" }}>
-        {items.map((item, idx) => (
-          <div key={item.id} style={{ padding: 16, borderBottom: idx < items.length - 1 ? "1px solid var(--color-border)" : "none", display: "flex", justifyContent: "space-between" }}>
+      {(deliveryAddress || order.notes || order.estimatedDeliveryDate) && (
+        <div className="card" style={{ padding: 16, marginBottom: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          {deliveryAddress && (
             <div>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>{item.productNameSnapshot}</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.skuSnapshot} · {item.unitSnapshot}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: 4 }}>
+                Adresse de livraison
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{deliveryAddress.label}</div>
+              <div style={{ fontSize: 12.5, color: "var(--color-text-muted)" }}>
+                {deliveryAddress.line1}{deliveryAddress.line2 ? `, ${deliveryAddress.line2}` : ""} · {deliveryAddress.postalCode} {deliveryAddress.city}
+              </div>
             </div>
-            <div style={{ fontWeight: 600 }}>× {item.quantity}</div>
-          </div>
-        ))}
-      </div>
+          )}
+          {order.estimatedDeliveryDate && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: 4 }}>
+                Livraison estimée
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>
+                {new Date(order.estimatedDeliveryDate).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+              </div>
+            </div>
+          )}
+          {order.notes && (
+            <div style={{ gridColumn: "1 / -1" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: 4 }}>
+                Notes au préparateur
+              </div>
+              <div style={{ fontSize: 13, color: "var(--color-text)" }}>{order.notes}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <OrderItemsPrepPanel orderId={order.id} orderStatus={order.status} items={items} />
     </AdminShell>
   );
 }
