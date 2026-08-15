@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, organizations } from "@marin-froid/db";
+import { getOrderTotals } from "@/lib/order-totals";
 
 export async function GET() {
   await requireMarinFroidSession();
@@ -19,5 +20,9 @@ export async function GET() {
     .innerJoin(organizations, eq(organizations.id, orders.organizationId))
     .orderBy(desc(orders.createdAt));
 
-  return NextResponse.json({ orders: list });
+  const totals = await getOrderTotals(list.map((o) => o.id));
+
+  return NextResponse.json({
+    orders: list.map((o) => ({ ...o, totalAmount: totals.get(o.id) ?? 0 })),
+  });
 }

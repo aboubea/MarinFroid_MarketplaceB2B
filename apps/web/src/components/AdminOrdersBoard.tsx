@@ -14,14 +14,20 @@ interface OrderRow {
   status: string;
   createdAt: string;
   organizationName: string;
+  totalAmount: number;
+}
+
+function formatAmount(value: number) {
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 }
 
 interface OrderDetail {
   order: { id: string; reference: string; status: string; createdAt: string };
   organizationName: string;
-  items: { id: string; productNameSnapshot: string; skuSnapshot: string; unitSnapshot: string; quantity: number }[];
+  items: { id: string; productNameSnapshot: string; skuSnapshot: string; unitSnapshot: string; quantity: number; indicativePrice: string | null }[];
   address: { label: string; line1: string; line2: string | null; city: string; postalCode: string; country: string } | null;
   history: { id: string; status: string; createdAt: string }[];
+  totalAmount: number;
 }
 
 const TABS = [
@@ -146,7 +152,10 @@ export function AdminOrdersBoard() {
                   <div style={{ fontWeight: 600, fontSize: 13.5 }}>{o.reference} — {o.organizationName}</div>
                   <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleString("fr-FR")}</div>
                 </div>
-                <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  {o.totalAmount > 0 && <span style={{ fontWeight: 700, fontSize: 13.5 }}>{formatAmount(o.totalAmount)}</span>}
+                  <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
+                </div>
               </button>
             ))
           )}
@@ -178,6 +187,13 @@ export function AdminOrdersBoard() {
                 </div>
               ))}
             </div>
+
+            {detail.totalAmount > 0 && (
+              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: 14, paddingTop: 10, marginBottom: 14, borderTop: "1px solid var(--color-border)" }}>
+                <span>Total indicatif</span>
+                <span>{formatAmount(detail.totalAmount)}</span>
+              </div>
+            )}
 
             {detail.history.length > 0 && (
               <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: 14 }}>
