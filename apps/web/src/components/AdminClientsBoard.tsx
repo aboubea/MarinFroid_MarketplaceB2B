@@ -9,7 +9,7 @@ import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
 import { orderStatusLabel } from "@/lib/order-status";
 
-interface OrgRow {
+export interface OrgRow {
   id: string;
   name: string;
   status: string;
