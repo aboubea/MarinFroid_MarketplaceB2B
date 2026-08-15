@@ -110,7 +110,7 @@ export default async function AdminOverviewPage() {
 
       {lateOrdersWithOrg.length > 0 && (
         <section style={{ marginBottom: 16 }}>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Commandes en retard</h2>
+          <h2 className="section-title">Commandes en retard</h2>
           <div className="card" style={{ overflow: "hidden" }}>
             <table className="data-table">
               <thead>
@@ -141,7 +141,7 @@ export default async function AdminOverviewPage() {
       <div className="grid-split-2" style={{ gap: 16, marginBottom: 16, alignItems: "start" }}>
         <section>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h2 style={{ fontSize: 15 }}>Dernières commandes</h2>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Dernières commandes</h2>
             <Link href="/admin/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir toutes les commandes →</Link>
           </div>
           <div className="card" style={{ overflow: "hidden" }}>
@@ -178,7 +178,10 @@ export default async function AdminOverviewPage() {
         </section>
 
         <section>
-          <h2 style={{ fontSize: 15, marginBottom: 10 }}>Sociétés clientes à suivre</h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Sociétés clientes à suivre</h2>
+            <Link href="/admin/clients" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir toutes les sociétés →</Link>
+          </div>
           <div className="card" style={{ overflow: "hidden" }}>
             {orgsToWatch.length === 0 ? (
               <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucune société en attente ou suspendue.</div>
@@ -200,7 +203,6 @@ export default async function AdminOverviewPage() {
               ))
             )}
           </div>
-          <Link href="/admin/clients" style={{ fontSize: 12.5, fontWeight: 600, display: "inline-block", marginTop: 8 }}>Voir toutes les sociétés →</Link>
         </section>
       </div>
     </AdminShell>

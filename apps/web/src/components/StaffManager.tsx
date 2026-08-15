@@ -67,6 +67,22 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
     }
   }
 
+  async function changeRole(id: string, role: "mf_admin" | "mf_ops") {
+    const previous = members;
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role } : m)));
+    const result = await safeFetch(`/api/admin/staff/${id}/role`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role }),
+    });
+    if (!result.ok) {
+      setMembers(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour le rôle.", "error");
+    } else {
+      toast.show("Rôle mis à jour.", "success");
+    }
+  }
+
   async function toggleActive(id: string, active: boolean) {
     const previous = members;
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, active } : m)));
@@ -134,7 +150,21 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
                       </div>
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{m.email}</td>
-                    <td>{ROLE_LABELS[m.role] ?? m.role}</td>
+                    <td>
+                      {m.id === currentUserId ? (
+                        ROLE_LABELS[m.role] ?? m.role
+                      ) : (
+                        <select
+                          className="input"
+                          style={{ width: "auto", fontSize: 12.5, padding: "6px 10px" }}
+                          value={m.role}
+                          onChange={(e) => changeRole(m.id, e.target.value as "mf_admin" | "mf_ops")}
+                        >
+                          <option value="mf_ops">Équipe préparation</option>
+                          <option value="mf_admin">Administrateur</option>
+                        </select>
+                      )}
+                    </td>
                     <td>
                       <span className={`status-dot ${m.active ? "on" : "off"}`}>{m.active ? "Actif" : "Désactivé"}</span>
                     </td>
