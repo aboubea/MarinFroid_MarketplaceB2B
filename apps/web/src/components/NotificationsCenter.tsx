@@ -23,6 +23,17 @@ const FILTERS = [
   { key: "system", label: "Système" },
 ];
 
+function accentColor(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("annul")) return "var(--color-danger, #DC2626)";
+  if (t.includes("livr")) return "var(--color-success)";
+  if (t.includes("expédi")) return "var(--color-success)";
+  if (t.includes("préparation")) return "var(--color-warning, #D97706)";
+  if (t.includes("confirm")) return "var(--color-accent, #2563EB)";
+  if (t.includes("reçue") || t.includes("créée")) return "var(--color-secondary)";
+  return "var(--color-border-strong)";
+}
+
 export function NotificationsCenter() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,22 +86,32 @@ export function NotificationsCenter() {
         )}
       </div>
 
-      <div className="card" style={{ overflow: "hidden" }}>
-        {loading ? (
-          <div style={{ padding: 20 }}><ListSkeleton rows={4} /></div>
-        ) : filtered.length === 0 ? (
+      {loading ? (
+        <div className="card" style={{ padding: 20 }}><ListSkeleton rows={4} /></div>
+      ) : filtered.length === 0 ? (
+        <div className="card" style={{ overflow: "hidden" }}>
           <EmptyState illustration="inbox" title="Aucune notification" description="Vous serez informé ici des mises à jour de vos commandes." />
-        ) : (
-          filtered.map((n, idx) => {
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {filtered.map((n, idx) => {
+            const accent = accentColor(n.title);
             const content = (
               <div
+                className="card"
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
                   gap: 12,
                   padding: "16px 20px",
-                  borderBottom: idx < filtered.length - 1 ? "1px solid var(--color-border)" : "none",
-                  background: n.readAt ? "transparent" : "rgba(56, 189, 248, 0.05)",
+                  marginTop: idx === 0 ? 0 : -14,
+                  marginLeft: Math.min(idx, 3) * 6,
+                  marginRight: Math.min(idx, 3) * 6,
+                  position: "relative",
+                  zIndex: filtered.length - idx,
+                  borderLeft: `4px solid ${accent}`,
+                  background: n.readAt ? "var(--color-surface)" : "rgba(56, 189, 248, 0.06)",
+                  boxShadow: idx === 0 ? "var(--shadow-md, 0 4px 16px rgba(15,23,42,0.08))" : "var(--shadow-sm, 0 2px 6px rgba(15,23,42,0.06))",
                 }}
               >
                 <span
@@ -121,9 +142,9 @@ export function NotificationsCenter() {
                 {content}
               </div>
             );
-          })
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }
