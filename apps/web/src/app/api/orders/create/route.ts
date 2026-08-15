@@ -15,6 +15,7 @@ export async function POST(request: Request) {
   }
   const body = await request.json().catch(() => ({}));
   const deliveryAddressId: string | null = body?.deliveryAddressId ?? null;
+  const notes: string | null = typeof body?.notes === "string" ? body.notes.trim().slice(0, 1000) || null : null;
 
   const db = getDb();
   const [org, user] = await Promise.all([
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
       userEmail: user.email,
       userFullName: user.fullName,
       deliveryAddressId,
+      notes,
     });
     return NextResponse.json({ orderId: order.id, reference: order.reference });
   } catch (err) {

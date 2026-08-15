@@ -10,6 +10,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   if (!session || !session.organizationId) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
   }
+  if (session.role !== "org_admin") {
+    return NextResponse.json({ error: "Seul l'administrateur de la société peut gérer les adresses." }, { status: 403 });
+  }
   const db = getDb();
   await db
     .delete(deliveryAddresses)

@@ -43,6 +43,13 @@
       "when": 1786745004858,
       "tag": "0005_smiling_mole_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786757980833,
+      "tag": "0006_add_delivery_and_prepared_qty",
+      "breakpoints": true
     }
   ]
 }

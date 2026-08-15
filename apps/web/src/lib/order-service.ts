@@ -8,6 +8,16 @@ import { logActivity, notifyUser } from "./activity";
 import { getOrgBroadcastUsers } from "./org-recipients";
 import { sendTrackedEmail } from "./email-log";
 
+function nextThursday(from: Date): Date {
+  const d = new Date(from);
+  const day = d.getDay();
+  let diff = (4 - day + 7) % 7;
+  if (diff === 0) diff = 7;
+  d.setDate(d.getDate() + diff);
+  d.setHours(9, 0, 0, 0);
+  return d;
+}
+
 function generateReference() {
   const now = new Date();
   const y = now.getFullYear();
@@ -24,6 +34,7 @@ export async function submitOrderFromCart(params: {
   userEmail: string;
   userFullName?: string;
   deliveryAddressId?: string | null;
+  notes?: string | null;
 }) {
   const db = getDb();
   const { cart, items } = await getCartWithItems(params.organizationId, params.userId);
@@ -32,6 +43,7 @@ export async function submitOrderFromCart(params: {
   }
 
   const reference = generateReference();
+  const estimatedDeliveryDate = nextThursday(new Date());
   const [order] = await db
     .insert(orders)
     .values({
@@ -39,6 +51,8 @@ export async function submitOrderFromCart(params: {
       organizationId: params.organizationId,
       placedByUserId: params.userId,
       deliveryAddressId: params.deliveryAddressId ?? null,
+      notes: params.notes ?? null,
+      estimatedDeliveryDate,
       status: "submitted",
     })
     .returning();
