@@ -29,7 +29,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   ]);
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 24 }}>{order.reference}</h1>

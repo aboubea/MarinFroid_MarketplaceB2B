@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { eq, desc, gte, lte, and, or, inArray } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
+import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations, users, orders, orderItems, products } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
@@ -9,7 +9,7 @@ import { orderStatusLabel } from "@/lib/order-status";
 import { getOrderTotals } from "@/lib/order-totals";
 
 export default async function AdminOverviewPage() {
-  const session = await requireMarinFroidSession();
+  const session = await requireMarinFroidAdminSession();
   const db = getDb();
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -73,7 +73,7 @@ export default async function AdminOverviewPage() {
   const hasPricing = items30d.some((i) => i.indicativePrice);
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Administration</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>Vue globale et configuration.</p>
 

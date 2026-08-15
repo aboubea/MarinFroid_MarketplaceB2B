@@ -1,5 +1,5 @@
 import { desc, eq } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
+import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { emailLogs, orders } from "@marin-froid/db";
 import { AdminShell } from "@/components/AdminShell";
@@ -14,7 +14,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
 };
 
 export default async function AdminNotificationsPage() {
-  const session = await requireMarinFroidSession();
+  const session = await requireMarinFroidAdminSession();
   const db = getDb();
 
   const logs = await db.query.emailLogs.findMany({
@@ -33,7 +33,7 @@ export default async function AdminNotificationsPage() {
   const apiKeyConfigured = !!process.env.RESEND_API_KEY;
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Emails & notifications</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
         Choisissez qui reçoit un email pour chaque événement métier.

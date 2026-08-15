@@ -21,7 +21,7 @@ export default async function AdminPreparationPage() {
   ]);
 
   return (
-    <AdminShell fullName={session.fullName}>
+    <AdminShell fullName={session.fullName} role={session.role}>
       <h1 style={{ fontSize: 24, marginBottom: 4 }}>Préparation des commandes</h1>
       <p style={{ color: "var(--color-text-muted)", fontSize: 13.5, marginBottom: 24 }}>
         Ce qu'il faut traiter maintenant.
