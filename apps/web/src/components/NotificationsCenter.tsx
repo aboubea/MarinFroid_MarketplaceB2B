@@ -55,6 +55,16 @@ export function NotificationsCenter() {
     return notifications.filter((n) => n.category === filter);
   }, [notifications, filter]);
 
+  const groups = useMemo(() => {
+    const map = new Map<string, Notification[]>();
+    for (const n of filtered) {
+      const key = n.orderId ?? `single-${n.id}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(n);
+    }
+    return Array.from(map.values());
+  }, [filtered]);
+
   const unreadCount = notifications.filter((n) => !n.readAt).length;
 
   async function markRead(id: string) {
@@ -93,56 +103,60 @@ export function NotificationsCenter() {
           <EmptyState illustration="inbox" title="Aucune notification" description="Vous serez informé ici des mises à jour de vos commandes." />
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {filtered.map((n, idx) => {
-            const accent = accentColor(n.title);
-            const content = (
-              <div
-                className="card"
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 12,
-                  padding: "16px 20px",
-                  marginTop: idx === 0 ? 0 : -14,
-                  marginLeft: Math.min(idx, 3) * 6,
-                  marginRight: Math.min(idx, 3) * 6,
-                  position: "relative",
-                  zIndex: filtered.length - idx,
-                  borderLeft: `4px solid ${accent}`,
-                  background: n.readAt ? "var(--color-surface)" : "rgba(56, 189, 248, 0.06)",
-                  boxShadow: idx === 0 ? "var(--shadow-md, 0 4px 16px rgba(15,23,42,0.08))" : "var(--shadow-sm, 0 2px 6px rgba(15,23,42,0.06))",
-                }}
-              >
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: n.readAt ? "transparent" : "var(--color-secondary)",
-                    marginTop: 6,
-                    flexShrink: 0,
-                  }}
-                />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: 13.5 }}>{n.title}</div>
-                  {n.body && <div style={{ fontSize: 12.5, color: "var(--color-text-muted)", marginTop: 2 }}>{n.body}</div>}
-                  <div style={{ fontSize: 11.5, color: "var(--color-text-faint)", marginTop: 4 }}>
-                    {new Date(n.createdAt).toLocaleString("fr-FR")}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {groups.map((group) => (
+            <div key={group[0].orderId ?? group[0].id} style={{ display: "flex", flexDirection: "column" }}>
+              {group.map((n, idx) => {
+                const accent = accentColor(n.title);
+                const content = (
+                  <div
+                    className="card"
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      padding: "16px 20px",
+                      marginTop: idx === 0 ? 0 : -14,
+                      marginLeft: Math.min(idx, 3) * 6,
+                      marginRight: Math.min(idx, 3) * 6,
+                      position: "relative",
+                      zIndex: group.length - idx,
+                      borderLeft: `4px solid ${accent}`,
+                      background: n.readAt ? "var(--color-surface)" : "rgba(56, 189, 248, 0.06)",
+                      boxShadow: idx === 0 ? "var(--shadow-md, 0 4px 16px rgba(15,23,42,0.08))" : "var(--shadow-sm, 0 2px 6px rgba(15,23,42,0.06))",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        background: n.readAt ? "transparent" : "var(--color-secondary)",
+                        marginTop: 6,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 13.5 }}>{n.title}</div>
+                      {n.body && <div style={{ fontSize: 12.5, color: "var(--color-text-muted)", marginTop: 2 }}>{n.body}</div>}
+                      <div style={{ fontSize: 11.5, color: "var(--color-text-faint)", marginTop: 4 }}>
+                        {new Date(n.createdAt).toLocaleString("fr-FR")}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-            return n.orderId ? (
-              <Link key={n.id} href={`/orders/${n.orderId}`} onClick={() => markRead(n.id)} style={{ display: "block" }}>
-                {content}
-              </Link>
-            ) : (
-              <div key={n.id} onClick={() => markRead(n.id)} style={{ cursor: "pointer" }}>
-                {content}
-              </div>
-            );
-          })}
+                );
+                return n.orderId ? (
+                  <Link key={n.id} href={`/orders/${n.orderId}`} onClick={() => markRead(n.id)} style={{ display: "block" }}>
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={n.id} onClick={() => markRead(n.id)} style={{ cursor: "pointer" }}>
+                    {content}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
     </div>
