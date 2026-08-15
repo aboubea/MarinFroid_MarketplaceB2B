@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div
         className="login-split-brand"
         style={{
-          background: "linear-gradient(160deg, #0B1220 0%, #0F172A 55%, #14213A 100%)",
+          background: "linear-gradient(160deg, #0D1620 0%, #101720 55%, #12222A 100%)",
           color: "#fff",
           padding: "64px 56px",
           display: "flex",
@@ -56,7 +56,7 @@ export default function LoginPage() {
           style={{
             position: "absolute",
             inset: 0,
-            background: "radial-gradient(circle at 80% 20%, rgba(56,189,248,0.16), transparent 55%), radial-gradient(circle at 10% 90%, rgba(56,189,248,0.10), transparent 45%)",
+            background: "radial-gradient(circle at 78% 18%, rgba(20,190,180,0.22), transparent 55%), radial-gradient(circle at 8% 88%, rgba(255,90,78,0.14), transparent 48%)",
           }}
         />
         <div style={{ position: "relative" }}>
@@ -65,13 +65,28 @@ export default function LoginPage() {
         </div>
 
         <div style={{ position: "relative" }}>
-          <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 24, maxWidth: 380 }}>
+          <h1 style={{ fontSize: 38, fontWeight: 750, letterSpacing: "-0.035em", lineHeight: 1.12, marginBottom: 28, maxWidth: 420 }}>
             Vos commandes professionnelles Marin Froid, en moins d'une minute.
           </h1>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 13 }}>
             {BENEFITS.map((b) => (
-              <li key={b} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "#CBD5E1" }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--color-secondary)" }} />
+              <li key={b} style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14.5, color: "#C7CDD6" }}>
+                <span
+                  style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    background: "rgba(20,190,180,0.18)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3FD8CB" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                </span>
                 {b}
               </li>
             ))}
@@ -85,8 +100,8 @@ export default function LoginPage() {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
         <div style={{ width: "100%", maxWidth: 380 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 4 }}>Bienvenue</h2>
-          <p style={{ color: "var(--color-text-muted)", fontSize: 14, marginBottom: 28 }}>
+          <h2 style={{ fontSize: 28, fontWeight: 750, letterSpacing: "-0.03em", marginBottom: 6 }}>Bienvenue</h2>
+          <p style={{ color: "var(--color-text-muted)", fontSize: 14.5, marginBottom: 30 }}>
             Connectez-vous à votre espace professionnel.
           </p>
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -113,8 +128,12 @@ export default function LoginPage() {
               </label>
               <a href="/forgot-password" style={{ fontSize: 13, color: "var(--color-text-muted)" }}>Mot de passe oublié ?</a>
             </div>
-            {error && <p style={{ color: "var(--color-danger)", fontSize: 13 }}>{error}</p>}
-            <button className="btn-primary" type="submit" disabled={loading}>
+            {error && (
+              <p style={{ color: "var(--color-danger)", fontSize: 13, background: "var(--color-danger-soft)", padding: "10px 14px", borderRadius: "var(--radius-md)", margin: 0 }}>
+                {error}
+              </p>
+            )}
+            <button className="btn-primary" type="submit" disabled={loading} style={{ padding: "14px 22px", fontSize: 15, marginTop: 4 }}>
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>

@@ -42,7 +42,7 @@ export function CatalogSkeleton() {
     <div>
       <SkeletonBlock width={360} height={40} style={{ borderRadius: "var(--radius-md)", marginBottom: 20 }} />
       <SkeletonBlock width="100%" height={16} style={{ maxWidth: 220, marginBottom: 12 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+      <div className="catalog-grid">
         {Array.from({ length: 8 }).map((_, i) => <SkeletonProductTile key={i} />)}
       </div>
     </div>
@@ -66,7 +66,7 @@ export function DashboardSkeleton() {
         <SkeletonStatCard /><SkeletonStatCard /><SkeletonStatCard />
       </div>
       <SkeletonBlock width={180} height={16} style={{ marginBottom: 12 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+      <div className="catalog-grid">
         {Array.from({ length: 4 }).map((_, i) => <SkeletonProductTile key={i} />)}
       </div>
     </div>

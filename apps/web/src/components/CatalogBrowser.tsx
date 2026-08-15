@@ -79,7 +79,7 @@ export function CatalogBrowser({ categories, products }: { categories: Category[
         grouped.map((cat) => (
           <section key={cat.id} className="fade-up" style={{ marginBottom: 32 }}>
             <h2 className="section-title">{cat.name}</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+            <div className="catalog-grid">
               {cat.items.map((p) => (
                 <ProductTile
                   key={p.id}
