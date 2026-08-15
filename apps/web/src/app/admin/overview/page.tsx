@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
 import { RecentActivityFeed } from "@/components/RecentActivityFeed";
+import { getOrderTotals } from "@/lib/order-totals";
 
 export default async function AdminOverviewPage() {
   const session = await requireMarinFroidSession();
@@ -68,6 +69,8 @@ export default async function AdminOverviewPage() {
       organization: await db.query.organizations.findFirst({ where: eq(organizations.id, o.organizationId) }),
     })),
   );
+
+  const recentOrdersTotals = await getOrderTotals(recentOrders.map((o) => o.id));
 
   const indicativeRevenue30d = items30d.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
   const hasPricing = items30d.some((i) => i.indicativePrice);
@@ -191,19 +194,24 @@ export default async function AdminOverviewPage() {
                 <tr>
                   <th>N° Commande</th>
                   <th>Client</th>
+                  <th>Montant</th>
                   <th>Statut</th>
                   <th>Date</th>
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((o) => (
-                  <tr key={o.id}>
-                    <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
-                    <td style={{ color: "var(--color-text-muted)" }}>{o.organizationName}</td>
-                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
-                    <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
-                  </tr>
-                ))}
+                {recentOrders.map((o) => {
+                  const total = recentOrdersTotals.get(o.id) ?? 0;
+                  return (
+                    <tr key={o.id}>
+                      <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                      <td style={{ color: "var(--color-text-muted)" }}>{o.organizationName}</td>
+                      <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
+                      <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                      <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}

@@ -7,6 +7,7 @@ import { AppShell } from "@/components/AppShell";
 import { getCartWithItems } from "@/lib/cart";
 import { DashboardQuickAdd } from "@/components/DashboardQuickAdd";
 import { orderStatusLabel } from "@/lib/order-status";
+import { getOrderTotals } from "@/lib/order-totals";
 
 export default async function DashboardPage() {
   const { session, organization } = await requireClientSession();
@@ -80,6 +81,8 @@ export default async function DashboardPage() {
   const lastOrderItems = recentOrders.length
     ? await db.query.orderItems.findMany({ where: eq(orderItems.orderId, recentOrders[0].id) })
     : [];
+
+  const recentOrdersTotals = await getOrderTotals(recentOrders.map((o) => o.id));
 
   return (
     <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role} compact>
@@ -156,18 +159,23 @@ export default async function DashboardPage() {
               <thead>
                 <tr>
                   <th>N° Commande</th>
+                  <th>Montant</th>
                   <th>Date</th>
                   <th>Statut</th>
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((o) => (
-                  <tr key={o.id}>
-                    <td><Link href={`/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
-                    <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
-                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
-                  </tr>
-                ))}
+                {recentOrders.map((o) => {
+                  const total = recentOrdersTotals.get(o.id) ?? 0;
+                  return (
+                    <tr key={o.id}>
+                      <td><Link href={`/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                      <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
+                      <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
+                      <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

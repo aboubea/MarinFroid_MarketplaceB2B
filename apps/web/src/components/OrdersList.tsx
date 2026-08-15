@@ -13,6 +13,11 @@ interface Order {
   reference: string;
   status: string;
   createdAt: string;
+  totalAmount: number;
+}
+
+function formatAmount(value: number) {
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 }
 
 export function OrdersList({ orders }: { orders: Order[] }) {
@@ -55,6 +60,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
             <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {o.totalAmount > 0 && <span style={{ fontWeight: 700, fontSize: 14 }}>{formatAmount(o.totalAmount)}</span>}
             <span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span>
             <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }} onClick={(e) => handleReorder(e, o.id)} disabled={reorderingId === o.id}>
               {reorderingId === o.id ? "..." : "Recommander"}
