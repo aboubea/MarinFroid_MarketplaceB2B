@@ -102,7 +102,7 @@ export function AdminClientsBoard({ initialOrganizations }: { initialOrganizatio
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: detail || detailLoading ? "1fr 380px" : "1fr", gap: 16, alignItems: "start" }}>
+      <div className={detail || detailLoading ? "grid-sidebar-380" : undefined} style={{ display: detail || detailLoading ? undefined : "grid", gridTemplateColumns: detail || detailLoading ? undefined : "1fr", gap: 16, alignItems: "start" }}>
         <div className={filtered.length === 0 ? "" : "card"} style={filtered.length === 0 ? {} : { overflow: "hidden" }}>
           {filtered.length === 0 ? (
             <EmptyState illustration="search" title="Aucune société" description="Aucune société ne correspond à ces filtres." />
