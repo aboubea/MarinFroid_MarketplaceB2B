@@ -107,10 +107,6 @@ export default async function AdminOverviewPage() {
           <div className="stat-value">{ordersInProgress.length}</div>
           <div className="stat-label">Commandes en cours</div>
         </div>
-        <div className="stat-card" style={lateOrders.length > 0 ? { borderColor: "var(--color-danger, #DC2626)" } : undefined}>
-          <div className="stat-value" style={lateOrders.length > 0 ? { color: "var(--color-danger, #DC2626)" } : undefined}>{lateOrders.length}</div>
-          <div className="stat-label">Commandes en retard (+3j)</div>
-        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
