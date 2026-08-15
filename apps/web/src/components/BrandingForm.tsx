@@ -31,6 +31,24 @@ export function BrandingForm({
   const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor);
   const [secondaryColor, setSecondaryColor] = useState(initialSecondaryColor);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    const result = await safeFetch<{ url: string }>("/api/admin/upload", { method: "POST", body: formData });
+    setUploading(false);
+    if (result.ok && result.data) {
+      setLogoUrl(result.data.url);
+      toast.show("Logo téléversé.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible de téléverser le logo.", "error");
+    }
+  }
 
   const contrast = contrastRatio(primaryColor, "#FFFFFF");
   const lowContrast = contrast < 3;
@@ -54,7 +72,17 @@ export function BrandingForm({
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
-        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>URL du logo</label>
+        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 6 }}>Logo</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+          {logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt="Logo" style={{ height: 40, maxWidth: 120, objectFit: "contain", borderRadius: "var(--radius-sm)", background: "var(--color-bg)", padding: 4 }} />
+          )}
+          <label className="btn-secondary" style={{ fontSize: 12.5, cursor: "pointer" }}>
+            {uploading ? "Envoi..." : "Téléverser un fichier"}
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={handleFileChange} disabled={uploading} style={{ display: "none" }} />
+          </label>
+        </div>
         <input className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." />
       </div>
       <div>
@@ -76,7 +104,11 @@ export function BrandingForm({
           Attention : le contraste de la couleur principale sur fond clair est faible, cela peut nuire à la lisibilité.
         </p>
       )}
-      <div className="card" style={{ padding: 16, background: primaryColor }}>
+      <div className="card" style={{ padding: 16, background: primaryColor, display: "flex", alignItems: "center", gap: 10 }}>
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} alt="Logo" style={{ height: 24, maxWidth: 80, objectFit: "contain" }} />
+        )}
         <span style={{ color: "#fff", fontWeight: 700 }}>Aperçu — Marin Froid</span>
       </div>
       <button className="btn-primary" type="submit" disabled={saving}>
