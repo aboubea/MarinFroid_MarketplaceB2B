@@ -240,10 +240,12 @@ a.card:hover, .card.interactive:hover {
   display: grid;
   grid-template-columns: 260px 1fr;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 .app-shell-content {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -252,6 +254,7 @@ a.card:hover, .card.interactive:hover {
 .app-shell-scroll {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .sidebar {
   background: linear-gradient(180deg, var(--color-ink-soft) 0%, var(--color-ink) 100%);
@@ -262,6 +265,7 @@ a.card:hover, .card.interactive:hover {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
 }
 .sidebar-logo {
   color: #fff;
@@ -270,6 +274,35 @@ a.card:hover, .card.interactive:hover {
   letter-spacing: -0.025em;
   margin-bottom: var(--space-5);
   padding: 6px var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-close, .hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  flex-shrink: 0;
+}
+.hamburger-btn { color: var(--color-text); }
+.hamburger-btn:hover { background: var(--color-bg); }
+.sidebar-close:hover { background: rgba(255,255,255,0.1); }
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 30, 0.5);
+  z-index: 45;
+  animation: fadeInBackdrop 0.18s var(--ease);
+}
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .sidebar-nav {
   display: flex;
@@ -539,6 +572,33 @@ a.card:hover, .card.interactive:hover {
   .topbar-org { display: none; }
   .page-title { font-size: 24px; }
   .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
+
+  /* Below phone width the icon-only rail becomes an off-canvas drawer:
+     the sidebar is hidden off-screen and opened via the topbar hamburger. */
+  .app-shell { grid-template-columns: 1fr; }
+  .hamburger-btn { display: inline-flex; }
+  .sidebar-close { display: inline-flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    width: 280px;
+    max-width: 82vw;
+    padding: var(--space-5) var(--space-3);
+    align-items: stretch;
+    transform: translateX(-100%);
+    transition: transform 0.26s var(--ease-spring);
+    box-shadow: var(--shadow-elevated);
+  }
+  .sidebar.sidebar-open { transform: translateX(0); }
+  .sidebar-logo { padding: 6px var(--space-2) var(--space-4); text-align: left; }
+  .sidebar-logo-full { display: inline; }
+  .sidebar-logo-short { display: none; }
+  .sidebar-link { justify-content: flex-start; width: auto; padding: 11px 14px; }
+  .sidebar-link-label { display: inline; }
+  .sidebar-footer { width: auto; }
+  .sidebar-footer .sidebar-link { margin: 0; }
 }
 
 /* Responsive grid utilities: replace hard-coded inline gridTemplateColumns

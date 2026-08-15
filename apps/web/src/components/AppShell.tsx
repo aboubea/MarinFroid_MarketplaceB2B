@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { CartIcon } from "./CartIcon";
 import { NotificationBell } from "./NotificationBell";
@@ -27,15 +28,25 @@ export function AppShell({
     ...(role === "org_admin" ? [{ href: "/team", label: "Équipe", icon: <IconUsers /> }] : []),
     { href: "/account", label: "Compte", icon: <IconUser /> },
   ];
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="app-shell">
-      <Sidebar links={links} footerLabel={organizationName} />
+      <Sidebar links={links} footerLabel={organizationName} mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
       <div className="app-shell-content">
         <header className="topbar">
-          <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
-            Bonjour, {fullName.split(" ")[0]}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button type="button" aria-label="Ouvrir le menu" className="hamburger-btn" onClick={() => setMobileOpen(true)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 6h16" />
+                <path d="M4 12h16" />
+                <path d="M4 18h16" />
+              </svg>
+            </button>
+            <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
+              Bonjour, {fullName.split(" ")[0]}
+            </span>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span className="topbar-org" style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginRight: 8 }}>
               {organizationName}
