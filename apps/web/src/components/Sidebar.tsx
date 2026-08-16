@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { useBranding } from "./BrandingContext";
 
 export interface SidebarLink {
   href: string;
@@ -26,6 +27,8 @@ export function Sidebar({
   const matches = links.filter((link) => pathname === link.href || pathname.startsWith(`${link.href}/`));
   const bestMatch = matches.sort((a, b) => b.href.length - a.href.length)[0];
 
+  const { logoUrl } = useBranding();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { onCloseMobile?.(); }, [pathname]);
 
@@ -34,8 +37,15 @@ export function Sidebar({
       {mobileOpen ? <div className="sidebar-backdrop" onClick={onCloseMobile} /> : null}
       <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-logo">
-          <span className="sidebar-logo-full">Marin Froid</span>
-          <span className="sidebar-logo-short">MF</span>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt="Marin Froid" className="sidebar-logo-img" />
+          ) : (
+            <>
+              <span className="sidebar-logo-full">Marin Froid</span>
+              <span className="sidebar-logo-short">MF</span>
+            </>
+          )}
           <button
             type="button"
             aria-label="Fermer le menu"
