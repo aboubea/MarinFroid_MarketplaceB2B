@@ -554,6 +554,7 @@ a.card:hover, .card.interactive:hover {
 }
 
 .sidebar-logo-short { display: none; }
+.sidebar-logo-img { max-height: 28px; max-width: 100%; object-fit: contain; }
 
 .app-shell, .app-shell > div { min-width: 0; }
 .card { min-width: 0; }
