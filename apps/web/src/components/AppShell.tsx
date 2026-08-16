@@ -50,13 +50,10 @@ export function AppShell({
               <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
             )}
             <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
-              Bonjour, {fullName.split(" ")[0]}
+              {organizationName}
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="topbar-org" style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginRight: 8 }}>
-              {organizationName}
-            </span>
             <NotificationPopover />
             <CartPopover />
           </div>

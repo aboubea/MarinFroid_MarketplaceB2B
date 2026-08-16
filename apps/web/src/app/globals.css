@@ -265,7 +265,7 @@ a.card:hover, .card.interactive:hover {
 .sidebar {
   background: linear-gradient(180deg, var(--color-ink-soft) 0%, var(--color-ink) 100%);
   color: #E4E7EC;
-  padding: var(--space-5) var(--space-3);
+  padding: 0;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -273,11 +273,22 @@ a.card:hover, .card.interactive:hover {
   height: 100vh;
   height: 100dvh;
 }
+/* Holds nav + footer with the sidebar's inner padding. The logo lives
+   outside this wrapper (a direct child of .sidebar) so an uploaded image
+   can span the sidebar's full, unpadded width with no margin math. */
+.sidebar-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--space-3) var(--space-5);
+}
 .sidebar-logo {
   color: #fff;
   font-weight: 750;
   font-size: 17px;
   letter-spacing: -0.025em;
+  margin-top: var(--space-5);
   margin-bottom: var(--space-5);
   padding: 6px var(--space-3) var(--space-4);
   display: flex;
@@ -285,12 +296,8 @@ a.card:hover, .card.interactive:hover {
 }
 /* An uploaded logo image goes edge-to-edge (no padding/margin, full sidebar
    width) instead of sitting inside the text logo's padded box. */
-.sidebar-logo.sidebar-logo-image-mode { padding: 0; }
-.sidebar-logo-img-wrap {
-  display: block;
-  width: 100%;
-  margin: calc(var(--space-5) * -1) calc(var(--space-3) * -1) 0;
-}
+.sidebar-logo.sidebar-logo-image-mode { margin-top: 0; padding: 0; }
+.sidebar-logo-img-wrap { display: block; width: 100%; }
 .sidebar-logo-img { display: block; width: 100%; height: auto; object-fit: contain; }
 .sidebar-close, .hamburger-btn {
   display: none;
@@ -576,11 +583,10 @@ a.card:hover, .card.interactive:hover {
 
 @media (max-width: 960px) {
   .app-shell { grid-template-columns: 72px 1fr; }
-  .sidebar { padding: var(--space-5) var(--space-2); align-items: center; }
-  .sidebar-logo { padding: 0; margin-bottom: var(--space-5); text-align: center; }
+  .sidebar-body { padding: 0 var(--space-2) var(--space-5); align-items: center; }
+  .sidebar-logo { padding: 0; text-align: center; }
   .sidebar-logo-full { display: none; }
   .sidebar-logo-short { display: inline; }
-  .sidebar-logo-img-wrap { margin: calc(var(--space-5) * -1) calc(var(--space-2) * -1) 0; }
   .sidebar-link { justify-content: center; padding: 10px; width: 44px; }
   .sidebar-link-label { display: none; }
   .sidebar-footer { width: 100%; }
@@ -625,13 +631,12 @@ a.card:hover, .card.interactive:hover {
     z-index: 50;
     width: 280px;
     max-width: 82vw;
-    padding: var(--space-5) var(--space-3);
-    align-items: stretch;
     transform: translateX(-100%);
     transition: transform 0.26s var(--ease-spring);
     box-shadow: var(--shadow-elevated);
   }
   .sidebar.sidebar-open { transform: translateX(0); }
+  .sidebar-body { padding: 0 var(--space-3) var(--space-5); align-items: stretch; }
   .sidebar-logo { padding: 6px var(--space-2) var(--space-4); text-align: left; }
   .sidebar-logo-full { display: inline; }
   .sidebar-logo-short { display: none; }

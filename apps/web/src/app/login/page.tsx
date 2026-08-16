@@ -69,7 +69,7 @@ export default function LoginPage() {
           padding: "64px 56px",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
+          justifyContent: "center",
           position: "relative",
           overflow: "hidden",
         }}
@@ -112,7 +112,7 @@ export default function LoginPage() {
           </ul>
         </div>
 
-        <div style={{ position: "relative", fontSize: 12, color: "#64748B" }}>
+        <div style={{ position: "absolute", left: 56, right: 56, bottom: 28, fontSize: 12, color: "#64748B" }}>
           Accès réservé aux sociétés autorisées.
         </div>
       </div>
