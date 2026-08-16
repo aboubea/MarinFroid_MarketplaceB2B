@@ -2,12 +2,11 @@ import { eq } from "drizzle-orm";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, products } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { ReachatBrowser } from "@/components/ReachatBrowser";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function ReachatPage() {
-  const { session, organization } = await requireClientSession();
+  const { organization } = await requireClientSession();
   const db = getDb();
 
   const rows = await db
@@ -72,9 +71,9 @@ export default async function ReachatPage() {
   const items = Array.from(byProduct.values()).filter((i) => i.active);
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <PageHeader title="Mes produits habituels" subtitle="Retrouvez vos références récurrentes et lancez une commande express." />
       <ReachatBrowser items={items} />
-    </AppShell>
+    </>
   );
 }

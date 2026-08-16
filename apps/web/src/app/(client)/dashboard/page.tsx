@@ -3,7 +3,6 @@ import { eq, desc, ne, and, gte } from "drizzle-orm";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, products } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { getCartWithItems } from "@/lib/cart";
 import { DashboardQuickAdd } from "@/components/DashboardQuickAdd";
 import { orderStatusLabel } from "@/lib/order-status";
@@ -82,7 +81,7 @@ export default async function DashboardPage() {
   const recentOrdersTotals = await getOrderTotals(recentOrders.map((o) => o.id));
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <PageHeader
         title={`Bonjour, ${session.fullName.split(" ")[0]} 👋`}
         subtitle="Voici un aperçu de votre activité."
@@ -171,6 +170,6 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
-    </AppShell>
+    </>
   );
 }

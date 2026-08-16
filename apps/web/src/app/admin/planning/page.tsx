@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { eq, asc } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, organizations, orderItems } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { PageHeader } from "@/components/PageHeader";
 
 const COLUMNS = [
@@ -18,7 +16,6 @@ function ageInDays(date: Date) {
 }
 
 export default async function AdminPlanningPage() {
-  const session = await requireMarinFroidSession();
   const db = getDb();
 
   const columnsData = await Promise.all(
@@ -47,7 +44,7 @@ export default async function AdminPlanningPage() {
   );
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader title="Planning" subtitle="Charge par étape, commandes les plus anciennes en premier." />
 
       <div className="planning-board">
@@ -104,6 +101,6 @@ export default async function AdminPlanningPage() {
           </div>
         ))}
       </div>
-    </AdminShell>
+    </>
   );
 }

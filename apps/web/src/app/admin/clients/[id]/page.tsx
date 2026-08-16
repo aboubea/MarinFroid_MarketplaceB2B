@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations, users, deliveryAddresses } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { OrgStatusToggle } from "@/components/OrgStatusToggle";
 import { Avatar } from "@/components/Avatar";
 import { EmptyState } from "@/components/EmptyState";
@@ -19,7 +18,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await requireMarinFroidAdminSession();
+  await requireMarinFroidAdminSession();
   const db = getDb();
 
   const organization = await db.query.organizations.findFirst({ where: eq(organizations.id, id) });
@@ -28,7 +27,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
   const addresses = await db.query.deliveryAddresses.findMany({ where: eq(deliveryAddresses.organizationId, id) });
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader title={organization.name} action={<OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />} />
 
       <h2 className="section-title">Utilisateurs</h2>
@@ -98,6 +97,6 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
           </div>
         )}
       </div>
-    </AdminShell>
+    </>
   );
 }

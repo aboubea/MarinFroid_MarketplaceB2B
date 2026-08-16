@@ -2,7 +2,6 @@ import { desc, eq } from "drizzle-orm";
 import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { emailLogs, orders } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { NotificationSettings } from "@/components/NotificationSettings";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -15,7 +14,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
 };
 
 export default async function AdminNotificationsPage() {
-  const session = await requireMarinFroidAdminSession();
+  await requireMarinFroidAdminSession();
   const db = getDb();
 
   const logs = await db.query.emailLogs.findMany({
@@ -34,7 +33,7 @@ export default async function AdminNotificationsPage() {
   const apiKeyConfigured = !!process.env.RESEND_API_KEY;
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader title="Emails & notifications" subtitle="Choisissez qui reçoit un email pour chaque événement métier." />
       <NotificationSettings />
 
@@ -91,6 +90,6 @@ export default async function AdminNotificationsPage() {
           </table>
         )}
       </div>
-    </AdminShell>
+    </>
   );
 }

@@ -1,9 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { OrderItemsPrepPanel } from "@/components/OrderItemsPrepPanel";
@@ -11,7 +9,6 @@ import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await requireMarinFroidSession();
   const db = getDb();
 
   const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
@@ -30,7 +27,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   ]);
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader
         title={order.reference}
         subtitle={`${organization?.name} · ${new Date(order.createdAt).toLocaleString("fr-FR")}`}
@@ -79,6 +76,6 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       )}
 
       <OrderItemsPrepPanel orderId={order.id} orderStatus={order.status} items={items} />
-    </AdminShell>
+    </>
   );
 }

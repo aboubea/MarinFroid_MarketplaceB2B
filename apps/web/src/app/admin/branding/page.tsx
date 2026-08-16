@@ -1,16 +1,15 @@
 import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { AdminShell } from "@/components/AdminShell";
 import { BrandingForm } from "@/components/BrandingForm";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminBrandingPage() {
-  const session = await requireMarinFroidAdminSession();
+  await requireMarinFroidAdminSession();
   const db = getDb();
   const branding = await db.query.brandingSettings.findFirst();
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader title="Personnalisation" subtitle="Logo et couleurs appliqués à l'ensemble de la plateforme." />
       <div className="grid-aside-360">
         <div className="card" style={{ padding: 24 }}>
@@ -36,6 +35,6 @@ export default async function AdminBrandingPage() {
           </ul>
         </div>
       </div>
-    </AdminShell>
+    </>
   );
 }

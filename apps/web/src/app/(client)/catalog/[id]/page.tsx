@@ -1,15 +1,12 @@
 import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { products, productImages, productDocuments } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { ProductDetailAdd } from "@/components/ProductDetailAdd";
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { session, organization } = await requireClientSession();
   const db = getDb();
 
   const product = await db.query.products.findFirst({ where: eq(products.id, id) });
@@ -21,7 +18,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   ]);
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <Link href="/catalog" style={{ fontSize: 13, color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20 }}>
         ← Retour au catalogue
       </Link>
@@ -141,6 +138,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

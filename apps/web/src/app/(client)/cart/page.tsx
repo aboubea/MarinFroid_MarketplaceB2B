@@ -3,7 +3,6 @@ import { requireClientSession } from "@/lib/session-guard";
 import { getCartWithItems } from "@/lib/cart";
 import { getDb } from "@/lib/db";
 import { deliveryAddresses, users } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { CartTable } from "@/components/CartTable";
 import { getEffectivePermissions } from "@/lib/permissions";
 import { PageHeader } from "@/components/PageHeader";
@@ -18,7 +17,7 @@ export default async function CartPage() {
   ]);
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <PageHeader title="Panier" />
       <CartTable
         initialItems={items}
@@ -26,6 +25,6 @@ export default async function CartPage() {
         canSubmit={!!user && getEffectivePermissions(user).canOrder}
         isOrgAdmin={session.role === "org_admin"}
       />
-    </AppShell>
+    </>
   );
 }

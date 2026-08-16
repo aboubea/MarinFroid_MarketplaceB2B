@@ -1,13 +1,10 @@
 import { eq, and, gte, lte } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { AdminOrdersBoard } from "@/components/AdminOrdersBoard";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminPreparationPage() {
-  const session = await requireMarinFroidSession();
   const db = getDb();
 
   const startOfDay = new Date();
@@ -22,7 +19,7 @@ export default async function AdminPreparationPage() {
   ]);
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader title="Préparation des commandes" subtitle="Ce qu'il faut traiter maintenant." />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
@@ -47,6 +44,6 @@ export default async function AdminPreparationPage() {
       </div>
 
       <AdminOrdersBoard />
-    </AdminShell>
+    </>
   );
 }
