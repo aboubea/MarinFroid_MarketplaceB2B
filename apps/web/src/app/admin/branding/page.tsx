@@ -16,6 +16,7 @@ export default async function AdminBrandingPage() {
         <div className="card" style={{ padding: 24 }}>
           <BrandingForm
             initialLogoUrl={branding?.logoUrl ?? ""}
+            initialAuthImageUrl={branding?.authImageUrl ?? ""}
             initialPrimaryColor={branding?.primaryColor ?? "#0E7C7B"}
             initialSecondaryColor={branding?.secondaryColor ?? "#FF5A4E"}
           />
@@ -28,6 +29,7 @@ export default async function AdminBrandingPage() {
             <li>La couleur d&apos;action habille les boutons principaux, les liens et les champs actifs sur tout le portail.</li>
             <li>La couleur d&apos;accent marque la validation de commande et le repère de navigation active dans la sidebar.</li>
             <li>Le logo apparaît dans l&apos;en-tête de connexion et les emails envoyés aux clients.</li>
+            <li>L&apos;image de connexion habille le panneau gauche des pages de connexion et d&apos;activation de compte.</li>
           </ul>
         </div>
       </div>

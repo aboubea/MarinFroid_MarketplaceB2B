@@ -19,19 +19,23 @@ function contrastRatio(a: string, b: string): number {
 
 export function BrandingForm({
   initialLogoUrl,
+  initialAuthImageUrl,
   initialPrimaryColor,
   initialSecondaryColor,
 }: {
   initialLogoUrl: string;
+  initialAuthImageUrl: string;
   initialPrimaryColor: string;
   initialSecondaryColor: string;
 }) {
   const toast = useToast();
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
+  const [authImageUrl, setAuthImageUrl] = useState(initialAuthImageUrl);
   const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor);
   const [secondaryColor, setSecondaryColor] = useState(initialSecondaryColor);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingAuthImage, setUploadingAuthImage] = useState(false);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -50,6 +54,24 @@ export function BrandingForm({
     }
   }
 
+  async function handleAuthImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploadingAuthImage(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "auth");
+    const result = await safeFetch<{ url: string }>("/api/admin/upload", { method: "POST", body: formData });
+    setUploadingAuthImage(false);
+    if (result.ok && result.data) {
+      setAuthImageUrl(result.data.url);
+      toast.show("Image téléversée.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible de téléverser l'image.", "error");
+    }
+  }
+
   const contrast = contrastRatio(primaryColor, "#FFFFFF");
   const lowContrast = contrast < 3;
 
@@ -59,7 +81,7 @@ export function BrandingForm({
     const result = await safeFetch("/api/admin/branding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ logoUrl, primaryColor, secondaryColor }),
+      body: JSON.stringify({ logoUrl, authImageUrl, primaryColor, secondaryColor }),
     });
     setSaving(false);
     if (result.ok) {
@@ -84,6 +106,28 @@ export function BrandingForm({
           </label>
         </div>
         <input className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://..." />
+      </div>
+      <div>
+        <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Image de connexion</label>
+        <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "0 0 8px" }}>
+          Illustration affichée à gauche des pages de connexion et d&apos;activation de compte. Laissez vide pour garder le dégradé par défaut.
+        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+          {authImageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={authImageUrl} alt="Image de connexion" style={{ height: 56, width: 90, objectFit: "cover", borderRadius: "var(--radius-sm)", background: "var(--color-bg)" }} />
+          )}
+          <label className="btn-secondary" style={{ fontSize: 12.5, cursor: "pointer" }}>
+            {uploadingAuthImage ? "Envoi..." : "Téléverser une image"}
+            <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleAuthImageChange} disabled={uploadingAuthImage} style={{ display: "none" }} />
+          </label>
+          {authImageUrl && (
+            <button type="button" className="btn-secondary" style={{ fontSize: 12.5 }} onClick={() => setAuthImageUrl("")}>
+              Retirer
+            </button>
+          )}
+        </div>
+        <input className="input" value={authImageUrl} onChange={(e) => setAuthImageUrl(e.target.value)} placeholder="https://..." />
       </div>
       <div>
         <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Couleur d&apos;action</label>

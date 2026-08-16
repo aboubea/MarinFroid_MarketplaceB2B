@@ -6,7 +6,7 @@ import { brandingSettings } from "@marin-froid/db";
 
 export async function POST(request: Request) {
   await requireMarinFroidSession();
-  const { logoUrl, primaryColor, secondaryColor } = await request.json();
+  const { logoUrl, authImageUrl, primaryColor, secondaryColor } = await request.json();
 
   const db = getDb();
   const existing = await db.query.brandingSettings.findFirst();
@@ -14,10 +14,10 @@ export async function POST(request: Request) {
   if (existing) {
     await db
       .update(brandingSettings)
-      .set({ logoUrl: logoUrl || null, primaryColor, secondaryColor, updatedAt: new Date() })
+      .set({ logoUrl: logoUrl || null, authImageUrl: authImageUrl || null, primaryColor, secondaryColor, updatedAt: new Date() })
       .where(eq(brandingSettings.id, existing.id));
   } else {
-    await db.insert(brandingSettings).values({ logoUrl: logoUrl || null, primaryColor, secondaryColor });
+    await db.insert(brandingSettings).values({ logoUrl: logoUrl || null, authImageUrl: authImageUrl || null, primaryColor, secondaryColor });
   }
 
   return NextResponse.json({ ok: true });
