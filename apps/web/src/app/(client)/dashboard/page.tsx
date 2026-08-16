@@ -144,29 +144,31 @@ export default async function DashboardPage() {
           <div className="card" style={{ padding: 16, color: "var(--color-text-muted)" }}>Aucune commande passée.</div>
         ) : (
           <div className="card" style={{ overflow: "hidden" }}>
-            <table className="data-table data-table-compact">
-              <thead>
-                <tr>
-                  <th>N° Commande</th>
-                  <th>Montant</th>
-                  <th>Date</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((o) => {
-                  const total = recentOrdersTotals.get(o.id) ?? 0;
-                  return (
-                    <tr key={o.id}>
-                      <td><Link href={`/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
-                      <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
-                      <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
-                      <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div style={{ overflowX: "auto" }}>
+              <table className="data-table data-table-compact">
+                <thead>
+                  <tr>
+                    <th>N° Commande</th>
+                    <th>Montant</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentOrders.map((o) => {
+                    const total = recentOrdersTotals.get(o.id) ?? 0;
+                    return (
+                      <tr key={o.id}>
+                        <td><Link href={`/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                        <td style={{ fontWeight: 600 }}>{total > 0 ? total.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) : "—"}</td>
+                        <td style={{ color: "var(--color-text-muted)" }}>{new Date(o.createdAt).toLocaleDateString("fr-FR")}</td>
+                        <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>

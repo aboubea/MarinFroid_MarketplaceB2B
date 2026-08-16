@@ -882,3 +882,11 @@ a.card:hover, .card.interactive:hover {
   .product-tile-actions .stepper { align-self: center; }
   .product-tile-actions .btn-primary { width: 100%; }
 }
+
+.notif-events-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 140px;
+}
+@media (max-width: 560px) {
+  .notif-events-row { grid-template-columns: 1fr auto auto; gap: 8px 10px; }
+}
