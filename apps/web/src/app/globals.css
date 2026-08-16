@@ -297,8 +297,10 @@ a.card:hover, .card.interactive:hover {
 /* An uploaded logo image goes edge-to-edge (no padding/margin, full sidebar
    width) instead of sitting inside the text logo's padded box. */
 .sidebar-logo.sidebar-logo-image-mode { margin-top: 0; padding: 0; }
-.sidebar-logo-img-wrap { display: block; width: 100%; }
-.sidebar-logo-img { display: block; width: 100%; height: auto; object-fit: contain; }
+/* The wrap keeps the sidebar's own width untouched; the scaled-up image
+   is cropped to it so the logo reads bigger without resizing the sidebar. */
+.sidebar-logo-img-wrap { display: block; width: 100%; overflow: hidden; }
+.sidebar-logo-img { display: block; width: 100%; height: auto; object-fit: contain; transform: scale(1.45); transform-origin: center; }
 .sidebar-close, .hamburger-btn {
   display: none;
   align-items: center;
