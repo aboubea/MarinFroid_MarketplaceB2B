@@ -612,11 +612,12 @@ a.card:hover, .card.interactive:hover {
 .grid-sidebar-340 { display: grid; grid-template-columns: 1fr 340px; }
 .grid-sidebar-380 { display: grid; grid-template-columns: 1fr 380px; }
 .grid-media-420 { display: grid; grid-template-columns: 420px 1fr; }
+.grid-aside-360 { display: grid; grid-template-columns: 360px 1fr; gap: 24px; align-items: start; }
 .grid-split-2 > *, .grid-split-3 > *,
-.grid-sidebar-320 > *, .grid-sidebar-340 > *, .grid-sidebar-380 > *, .grid-media-420 > * { min-width: 0; }
+.grid-sidebar-320 > *, .grid-sidebar-340 > *, .grid-sidebar-380 > *, .grid-media-420 > *, .grid-aside-360 > * { min-width: 0; }
 
 @media (max-width: 860px) {
-  .grid-sidebar-320, .grid-sidebar-340, .grid-sidebar-380, .grid-media-420 { grid-template-columns: 1fr; }
+  .grid-sidebar-320, .grid-sidebar-340, .grid-sidebar-380, .grid-media-420, .grid-aside-360 { grid-template-columns: 1fr; }
   .grid-sidebar-320 > *:last-child, .grid-sidebar-340 > *:last-child, .grid-sidebar-380 > *:last-child { position: static !important; }
 }
 
