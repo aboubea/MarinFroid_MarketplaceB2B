@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
+import { useBranding } from "./BrandingContext";
 import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconActivity, IconGrid, IconColumns, IconTruck, IconShield } from "./icons";
 
 const ADMIN_ONLY_LINKS = [
@@ -30,6 +31,7 @@ export function AdminShell({ children, fullName, role }: { children: React.React
     ? [...ADMIN_ONLY_LINKS, ...SHARED_LINKS, ...ADMIN_ONLY_TAIL_LINKS]
     : SHARED_LINKS;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { logoUrl } = useBranding();
 
   return (
     <div className="app-shell">
@@ -44,6 +46,10 @@ export function AdminShell({ children, fullName, role }: { children: React.React
                 <path d="M4 18h16" />
               </svg>
             </button>
+            {logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+            )}
             <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>
           </div>
           <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>{fullName}</span>
