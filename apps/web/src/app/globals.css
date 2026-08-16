@@ -572,6 +572,8 @@ a.card:hover, .card.interactive:hover {
   .topbar-org { display: none; }
   .page-title { font-size: 24px; }
   .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
+  .data-table thead th, .data-table tbody td { padding: 11px 14px; font-size: 13px; }
+  .planning-board { grid-auto-columns: 84vw; }
 
   /* Below phone width the icon-only rail becomes an off-canvas drawer:
      the sidebar is hidden off-screen and opened via the topbar hamburger. */
@@ -623,6 +625,22 @@ a.card:hover, .card.interactive:hover {
 }
 
 .planning-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 960px) {
+  .planning-board {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(78vw, 320px);
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin: 0 calc(var(--space-4) * -1);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .planning-board > div { scroll-snap-align: start; }
+}
 
 .invite-client-form { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 8px; align-items: start; }
 
@@ -726,7 +744,7 @@ a.card:hover, .card.interactive:hover {
 .empty-state .empty-title { font-size: 16px; font-weight: 700; color: var(--color-text); margin-bottom: 6px; letter-spacing: -0.02em; }
 .empty-state .empty-desc { font-size: 13.5px; max-width: 340px; line-height: 1.6; }
 
-.data-table { width: 100%; border-collapse: collapse; }
+.data-table { width: 100%; min-width: 560px; border-collapse: collapse; }
 .data-table thead th {
   text-align: left;
   font-size: 11.5px;
