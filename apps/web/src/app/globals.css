@@ -890,3 +890,16 @@ a.card:hover, .card.interactive:hover {
 @media (max-width: 560px) {
   .notif-events-row { grid-template-columns: 1fr auto auto; gap: 8px 10px; }
 }
+
+/* Order status timeline (5 fixed-width steps) is wider than a phone
+   viewport — scope the scroll to the card itself instead of letting it
+   push the whole page/topbar off-center. */
+.order-timeline-scroll { -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .order-timeline-row { min-width: 480px; }
+  .order-timeline-step { width: 80px !important; }
+}
+@media (max-width: 420px) {
+  .order-timeline-row { min-width: 400px; }
+  .order-timeline-step { width: 68px !important; }
+}
