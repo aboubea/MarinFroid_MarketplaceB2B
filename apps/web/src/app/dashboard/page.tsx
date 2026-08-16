@@ -86,11 +86,10 @@ export default async function DashboardPage() {
   const recentOrdersTotals = await getOrderTotals(recentOrders.map((o) => o.id));
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role} compact>
+    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
       <PageHeader
         title={`Bonjour, ${session.fullName.split(" ")[0]} 👋`}
         subtitle="Voici un aperçu de votre activité."
-        compact
         action={
           <Link href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>
             Commander
@@ -98,33 +97,37 @@ export default async function DashboardPage() {
         }
       />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 18 }}>
+      <h2 className="eyebrow">Performance</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         {hasPricing && (
-          <div className="stat-card stat-card-sm stat-card-accent">
+          <div className="stat-card stat-card-accent">
             <div className="stat-value">{spend30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
             <div className="stat-label">Dépenses indicatives (30j)</div>
           </div>
         )}
-        <div className="stat-card stat-card-sm">
+        <div className="stat-card">
           <div className="stat-value">{orders30d.length}</div>
           <div className="stat-label">Commandes (30j)</div>
         </div>
-        <div className="stat-card stat-card-sm">
+        <div className="stat-card">
           <div className="stat-value">{inProgressOrders.length}</div>
           <div className="stat-label">Commandes en cours</div>
         </div>
-        <div className="stat-card stat-card-sm">
+        <div className="stat-card">
           <div className="stat-value">{cart.items.reduce((s, i) => s + i.quantity, 0)}</div>
           <div className="stat-label">Articles dans le panier</div>
         </div>
       </div>
 
-      <div className="grid-split-2" style={{ gap: 14, marginBottom: 18, alignItems: "start" }}>
+      <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
         <section>
-          <h2 style={{ fontSize: 13.5, marginBottom: 6 }}>Derniers achats</h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Derniers achats</h2>
+            <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir tout l&apos;historique →</Link>
+          </div>
           <div className="card" style={{ overflow: "hidden" }}>
             {lastOrderItems.length === 0 ? (
-              <div style={{ padding: 14, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun achat pour le moment.</div>
+              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun achat pour le moment.</div>
             ) : (
               <div style={{ maxHeight: 5 * 48, overflowY: "auto" }}>
                 {lastOrderItems.map((item, idx) => (
@@ -136,14 +139,16 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
-          <Link href="/orders" style={{ fontSize: 12, fontWeight: 600, display: "inline-block", marginTop: 6 }}>Voir tout l'historique →</Link>
         </section>
 
         <section>
-          <h2 style={{ fontSize: 13.5, marginBottom: 6 }}>Réachat express</h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Réachat express</h2>
+            <Link href="/reachat" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir plus de produits →</Link>
+          </div>
           <div className="card" style={{ overflow: "hidden" }}>
             {frequent.length === 0 ? (
-              <div style={{ padding: 14, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d'historique.</div>
+              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d&apos;historique.</div>
             ) : (
               <div style={{ maxHeight: 5 * 42, overflowY: "auto" }}>
                 {frequent.map((item, idx) => (
@@ -155,13 +160,12 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
-          <Link href="/reachat" style={{ fontSize: 12, fontWeight: 600, display: "inline-block", marginTop: 6 }}>Voir plus de produits →</Link>
         </section>
       </div>
 
       <section>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-          <h2 style={{ fontSize: 14 }}>Commandes récentes</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <h2 className="section-title" style={{ marginBottom: 0 }}>Commandes récentes</h2>
           <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Tout voir</Link>
         </div>
         {recentOrders.length === 0 ? (

@@ -78,7 +78,7 @@ export default async function AdminOverviewPage() {
       <PageHeader title="Administration" subtitle="Vue globale et configuration." />
 
       <h2 className="eyebrow">Performance</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         {hasPricing && (
           <div className="stat-card stat-card-accent">
             <div className="stat-value">{indicativeRevenue30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
@@ -93,9 +93,6 @@ export default async function AdminOverviewPage() {
           <div className="stat-value">{ordersInProgress.length}</div>
           <div className="stat-label">Commandes en cours</div>
         </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         <div className="stat-card">
           <div className="stat-value">{activeOrgs.length}</div>
           <div className="stat-label">Sociétés actives</div>
@@ -136,7 +133,7 @@ export default async function AdminOverviewPage() {
         </section>
       )}
 
-      <div className="grid-split-2" style={{ gap: 16, marginBottom: 16, alignItems: "start" }}>
+      <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
         <section>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>Dernières commandes</h2>

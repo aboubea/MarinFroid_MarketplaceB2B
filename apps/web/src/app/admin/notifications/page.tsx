@@ -38,8 +38,8 @@ export default async function AdminNotificationsPage() {
       <PageHeader title="Emails & notifications" subtitle="Choisissez qui reçoit un email pour chaque événement métier." />
       <NotificationSettings />
 
-      <h2 style={{ fontSize: 15, marginTop: 32, marginBottom: 10 }}>Statut d'envoi</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 16 }}>
+      <h2 className="section-title" style={{ marginTop: 32 }}>Statut d&apos;envoi</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         <div className="stat-card">
           <div className="stat-value" style={{ color: apiKeyConfigured ? "var(--color-success)" : "var(--color-danger, #DC2626)" }}>
             {apiKeyConfigured ? "Actif" : "Non configuré"}
@@ -56,7 +56,7 @@ export default async function AdminNotificationsPage() {
         </div>
       </div>
 
-      <h2 style={{ fontSize: 15, marginBottom: 10 }}>Historique des envois</h2>
+      <h2 className="section-title">Historique des envois</h2>
       <div className="card" style={{ overflow: "hidden" }}>
         {logs.length === 0 ? (
           <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun email envoyé pour l'instant.</div>
