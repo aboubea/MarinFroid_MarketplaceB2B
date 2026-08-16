@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useBranding } from "./BrandingContext";
 
 export function AuthSplitShell({
   headline,
@@ -11,22 +11,7 @@ export function AuthSplitShell({
   description: string;
   children: React.ReactNode;
 }) {
-  const [authImageUrl, setAuthImageUrl] = useState<string | null>(null);
-  const [authImageZoom, setAuthImageZoom] = useState(100);
-  const [authImagePositionX, setAuthImagePositionX] = useState(50);
-  const [authImagePositionY, setAuthImagePositionY] = useState(50);
-
-  useEffect(() => {
-    fetch("/api/branding")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.authImageUrl) setAuthImageUrl(data.authImageUrl);
-        if (data?.authImageZoom) setAuthImageZoom(data.authImageZoom);
-        if (data?.authImagePositionX !== undefined) setAuthImagePositionX(data.authImagePositionX);
-        if (data?.authImagePositionY !== undefined) setAuthImagePositionY(data.authImagePositionY);
-      })
-      .catch(() => {});
-  }, []);
+  const { authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
 
   return (
     <main className="login-split">
@@ -58,14 +43,14 @@ export function AuthSplitShell({
             }}
           />
         )}
-        <div style={{ position: "relative" }}>
+        <div className="login-split-copy" style={{ position: "relative" }}>
           <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 12, maxWidth: 380 }}>
             {headline}
           </h1>
           <p style={{ fontSize: 14, color: "#94A3B8", maxWidth: 340, lineHeight: 1.6 }}>{description}</p>
         </div>
 
-        <div style={{ position: "absolute", left: 56, right: 56, bottom: 28, fontSize: 12, color: "#64748B" }}>
+        <div className="login-split-footnote" style={{ position: "absolute", left: 56, right: 56, bottom: 28, fontSize: 12, color: "#64748B" }}>
           Accès réservé aux sociétés autorisées.
         </div>
       </div>

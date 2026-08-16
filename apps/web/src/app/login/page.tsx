@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { safeFetch } from "@/lib/safe-fetch";
+import { useBranding } from "@/components/BrandingContext";
 
 const BENEFITS = [
   "Catalogue professionnel dédié",
@@ -18,22 +19,7 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [authImageUrl, setAuthImageUrl] = useState<string | null>(null);
-  const [authImageZoom, setAuthImageZoom] = useState(100);
-  const [authImagePositionX, setAuthImagePositionX] = useState(50);
-  const [authImagePositionY, setAuthImagePositionY] = useState(50);
-
-  useEffect(() => {
-    fetch("/api/branding")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.authImageUrl) setAuthImageUrl(data.authImageUrl);
-        if (data?.authImageZoom) setAuthImageZoom(data.authImageZoom);
-        if (data?.authImagePositionX !== undefined) setAuthImagePositionX(data.authImagePositionX);
-        if (data?.authImagePositionY !== undefined) setAuthImagePositionY(data.authImagePositionY);
-      })
-      .catch(() => {});
-  }, []);
+  const { authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,7 +69,7 @@ export default function LoginPage() {
             }}
           />
         )}
-        <div style={{ position: "relative" }}>
+        <div className="login-split-copy" style={{ position: "relative" }}>
           <h1 style={{ fontSize: 38, fontWeight: 750, letterSpacing: "-0.035em", lineHeight: 1.12, marginBottom: 28, maxWidth: 420 }}>
             Vos commandes professionnelles Marin Froid, en moins d'une minute.
           </h1>
@@ -112,7 +98,7 @@ export default function LoginPage() {
           </ul>
         </div>
 
-        <div style={{ position: "absolute", left: 56, right: 56, bottom: 28, fontSize: 12, color: "#64748B" }}>
+        <div className="login-split-footnote" style={{ position: "absolute", left: 56, right: 56, bottom: 28, fontSize: 12, color: "#64748B" }}>
           Accès réservé aux sociétés autorisées.
         </div>
       </div>

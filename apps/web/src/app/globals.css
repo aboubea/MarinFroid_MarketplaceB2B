@@ -573,7 +573,10 @@ a.card:hover, .card.interactive:hover {
 .login-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
 @media (max-width: 860px) {
   .login-split { grid-template-columns: 1fr; }
-  .login-split-brand { display: none; }
+  /* Keep the branding panel visible as a short banner instead of hiding it
+     entirely — the headline/benefits copy is dropped since there's no room. */
+  .login-split-brand { min-height: 200px; padding: 28px 24px !important; }
+  .login-split-copy, .login-split-footnote { display: none; }
 }
 
 .sidebar-logo-short { display: none; }

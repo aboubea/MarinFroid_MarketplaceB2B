@@ -2,10 +2,26 @@
 
 import { createContext, useContext } from "react";
 
-const BrandingContext = createContext<{ logoUrl: string | null }>({ logoUrl: null });
+interface Branding {
+  logoUrl: string | null;
+  authImageUrl: string | null;
+  authImageZoom: number;
+  authImagePositionX: number;
+  authImagePositionY: number;
+}
 
-export function BrandingProvider({ logoUrl, children }: { logoUrl: string | null; children: React.ReactNode }) {
-  return <BrandingContext.Provider value={{ logoUrl }}>{children}</BrandingContext.Provider>;
+const defaultBranding: Branding = {
+  logoUrl: null,
+  authImageUrl: null,
+  authImageZoom: 100,
+  authImagePositionX: 50,
+  authImagePositionY: 50,
+};
+
+const BrandingContext = createContext<Branding>(defaultBranding);
+
+export function BrandingProvider({ branding, children }: { branding: Partial<Branding>; children: React.ReactNode }) {
+  return <BrandingContext.Provider value={{ ...defaultBranding, ...branding }}>{children}</BrandingContext.Provider>;
 }
 
 export function useBranding() {

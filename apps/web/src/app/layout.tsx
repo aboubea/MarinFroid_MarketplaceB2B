@@ -22,19 +22,26 @@ async function getBranding() {
   try {
     const db = getDb();
     const branding = await db.query.brandingSettings.findFirst();
-    if (!branding) return { style: undefined, logoUrl: null };
-    return { style: buildBrandStyle(branding.primaryColor, branding.secondaryColor), logoUrl: branding.logoUrl ?? null };
+    if (!branding) return { style: undefined, logoUrl: null, authImageUrl: null, authImageZoom: 100, authImagePositionX: 50, authImagePositionY: 50 };
+    return {
+      style: buildBrandStyle(branding.primaryColor, branding.secondaryColor),
+      logoUrl: branding.logoUrl ?? null,
+      authImageUrl: branding.authImageUrl ?? null,
+      authImageZoom: branding.authImageZoom ?? 100,
+      authImagePositionX: branding.authImagePositionX ?? 50,
+      authImagePositionY: branding.authImagePositionY ?? 50,
+    };
   } catch {
-    return { style: undefined, logoUrl: null };
+    return { style: undefined, logoUrl: null, authImageUrl: null, authImageZoom: 100, authImagePositionX: 50, authImagePositionY: 50 };
   }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { style: brandingStyle, logoUrl } = await getBranding();
+  const { style: brandingStyle, ...branding } = await getBranding();
   return (
     <html lang="fr" className={inter.variable}>
       <body style={brandingStyle}>
-        <BrandingProvider logoUrl={logoUrl}>
+        <BrandingProvider branding={branding}>
           <ToastProvider>{children}</ToastProvider>
         </BrandingProvider>
       </body>
