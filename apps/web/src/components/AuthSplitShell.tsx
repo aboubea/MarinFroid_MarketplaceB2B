@@ -11,7 +11,7 @@ export function AuthSplitShell({
   description: string;
   children: React.ReactNode;
 }) {
-  const { authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
+  const { logoUrl, authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
 
   return (
     <main className="login-split">
@@ -41,6 +41,14 @@ export function AuthSplitShell({
               inset: 0,
               background: "radial-gradient(circle at 80% 20%, rgba(56,189,248,0.16), transparent 55%), radial-gradient(circle at 10% 90%, rgba(56,189,248,0.10), transparent 45%)",
             }}
+          />
+        )}
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logoUrl}
+            alt="Marin Froid"
+            style={{ position: "absolute", top: 28, left: 32, height: 32, width: "auto", maxWidth: 160, objectFit: "contain", zIndex: 1 }}
           />
         )}
         <div className="login-split-copy" style={{ position: "relative" }}>

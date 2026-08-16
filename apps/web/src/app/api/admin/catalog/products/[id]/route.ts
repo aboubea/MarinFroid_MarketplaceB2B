@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq, ne, and } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
+import { requireMarinFroidSession, requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { products, productImages, productDocuments } from "@marin-froid/db";
 import { logActivity } from "@/lib/activity";
@@ -62,6 +62,35 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     entityType: "product",
     entityId: id,
     summary: `Produit « ${name} » (${sku}) modifié`,
+  });
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await requireMarinFroidAdminSession();
+
+  const db = getDb();
+  const product = await db.query.products.findFirst({ where: eq(products.id, id) });
+  if (!product) return NextResponse.json({ error: "Produit introuvable." }, { status: 404 });
+
+  try {
+    await db.delete(products).where(eq(products.id, id));
+  } catch {
+    return NextResponse.json(
+      { error: "Impossible de supprimer : ce produit apparaît dans des commandes existantes. Désactivez-le plutôt." },
+      { status: 409 },
+    );
+  }
+
+  await logActivity({
+    actorUserId: session.userId,
+    actorLabel: session.fullName,
+    action: "product_deleted",
+    entityType: "product",
+    entityId: id,
+    summary: `Produit « ${product.name} » (${product.sku}) supprimé`,
   });
 
   return NextResponse.json({ ok: true });

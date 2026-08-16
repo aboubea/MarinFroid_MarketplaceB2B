@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
+  const { logoUrl, authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,6 +67,14 @@ export default function LoginPage() {
               inset: 0,
               background: "radial-gradient(circle at 78% 18%, rgba(20,190,180,0.22), transparent 55%), radial-gradient(circle at 8% 88%, rgba(255,90,78,0.14), transparent 48%)",
             }}
+          />
+        )}
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logoUrl}
+            alt="Marin Froid"
+            style={{ position: "absolute", top: 28, left: 32, height: 32, width: "auto", maxWidth: 160, objectFit: "contain", zIndex: 1 }}
           />
         )}
         <div className="login-split-copy" style={{ position: "relative" }}>
