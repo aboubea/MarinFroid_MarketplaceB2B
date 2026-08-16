@@ -11,5 +11,8 @@ export async function GET() {
   return NextResponse.json({
     logoUrl: branding?.logoUrl ?? null,
     authImageUrl: branding?.authImageUrl ?? null,
+    authImageZoom: branding?.authImageZoom ?? 100,
+    authImagePositionX: branding?.authImagePositionX ?? 50,
+    authImagePositionY: branding?.authImagePositionY ?? 50,
   });
 }

@@ -12,12 +12,18 @@ export function AuthSplitShell({
   children: React.ReactNode;
 }) {
   const [authImageUrl, setAuthImageUrl] = useState<string | null>(null);
+  const [authImageZoom, setAuthImageZoom] = useState(100);
+  const [authImagePositionX, setAuthImagePositionX] = useState(50);
+  const [authImagePositionY, setAuthImagePositionY] = useState(50);
 
   useEffect(() => {
     fetch("/api/branding")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.authImageUrl) setAuthImageUrl(data.authImageUrl);
+        if (data?.authImageZoom) setAuthImageZoom(data.authImageZoom);
+        if (data?.authImagePositionX !== undefined) setAuthImagePositionX(data.authImagePositionX);
+        if (data?.authImagePositionY !== undefined) setAuthImagePositionY(data.authImagePositionY);
       })
       .catch(() => {});
   }, []);
@@ -27,9 +33,13 @@ export function AuthSplitShell({
       <div
         className="login-split-brand"
         style={{
-          background: authImageUrl
-            ? `linear-gradient(180deg, rgba(11,18,32,0.35) 0%, rgba(11,18,32,0.75) 100%), url(${authImageUrl}) center/cover no-repeat`
+          backgroundColor: "#0B1220",
+          backgroundImage: authImageUrl
+            ? `linear-gradient(180deg, rgba(11,18,32,0.35) 0%, rgba(11,18,32,0.75) 100%), url(${authImageUrl})`
             : "linear-gradient(160deg, #0B1220 0%, #0F172A 55%, #14213A 100%)",
+          backgroundSize: authImageUrl ? `cover, ${authImageZoom}%` : undefined,
+          backgroundPosition: authImageUrl ? `center, ${authImagePositionX}% ${authImagePositionY}%` : undefined,
+          backgroundRepeat: "no-repeat",
           color: "#fff",
           padding: "64px 56px",
           display: "flex",
@@ -48,11 +58,6 @@ export function AuthSplitShell({
             }}
           />
         )}
-        <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em" }}>Marin Froid</div>
-          <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>Plateforme privée B2B</div>
-        </div>
-
         <div style={{ position: "relative" }}>
           <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 12, maxWidth: 380 }}>
             {headline}

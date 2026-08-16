@@ -17,6 +17,9 @@ export default async function AdminBrandingPage() {
           <BrandingForm
             initialLogoUrl={branding?.logoUrl ?? ""}
             initialAuthImageUrl={branding?.authImageUrl ?? ""}
+            initialAuthImageZoom={branding?.authImageZoom ?? 100}
+            initialAuthImagePositionX={branding?.authImagePositionX ?? 50}
+            initialAuthImagePositionY={branding?.authImagePositionY ?? 50}
             initialPrimaryColor={branding?.primaryColor ?? "#0E7C7B"}
             initialSecondaryColor={branding?.secondaryColor ?? "#FF5A4E"}
           />
