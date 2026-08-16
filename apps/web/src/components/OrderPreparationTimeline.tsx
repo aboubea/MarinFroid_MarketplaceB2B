@@ -87,14 +87,15 @@ export function OrderPreparationTimeline({ status, history }: { status: string; 
 
   return (
     <div className="card" style={{ padding: "28px 24px 20px" }}>
-      <div style={{ display: "flex", alignItems: "flex-start" }}>
+      <div className="order-timeline-scroll" style={{ overflowX: "auto" }}>
+      <div className="order-timeline-row" style={{ display: "flex", alignItems: "flex-start" }}>
         {STEPS.map((step, idx) => {
           const done = idx <= currentIndex;
           const isCurrent = idx === currentIndex;
           const date = dateByStatus.get(step.key);
           return (
             <div key={step.key} style={{ display: "flex", alignItems: "flex-start", flex: idx < STEPS.length - 1 ? 1 : "0 0 auto" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 96 }}>
+              <div className="order-timeline-step" style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 96 }}>
                 <div style={{ fontSize: 11.5, fontWeight: 700, color: done ? "var(--color-success)" : "var(--color-text-faint)", marginBottom: 8, height: 14 }}>
                   {date ? formatDate(date) : ""}
                 </div>
@@ -137,6 +138,7 @@ export function OrderPreparationTimeline({ status, history }: { status: string; 
             </div>
           );
         })}
+      </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--color-border)", color: "var(--color-text-muted)", fontSize: 13 }}>
