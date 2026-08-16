@@ -134,10 +134,7 @@ export default async function AdminOverviewPage() {
 
       <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
         <section>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>Dernières commandes</h2>
-            <Link href="/admin/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir toutes les commandes →</Link>
-          </div>
+          <h2 className="section-title">Dernières commandes</h2>
           <div className="card" style={{ overflow: "hidden" }}>
             {recentOrders.length === 0 ? (
               <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucune commande.</div>
