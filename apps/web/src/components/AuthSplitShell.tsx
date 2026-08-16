@@ -1,6 +1,7 @@
 "use client";
 
 import { useBranding } from "./BrandingContext";
+import { useTransparentLogo } from "@/lib/strip-image-background";
 
 export function AuthSplitShell({
   headline,
@@ -12,6 +13,7 @@ export function AuthSplitShell({
   children: React.ReactNode;
 }) {
   const { logoUrl, authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
+  const transparentLogoUrl = useTransparentLogo(logoUrl);
 
   return (
     <main className="login-split">
@@ -59,7 +61,7 @@ export function AuthSplitShell({
         <div style={{ width: "100%", maxWidth: 380 }}>
           {logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
+            <img src={transparentLogoUrl ?? logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
           )}
           {children}
         </div>
