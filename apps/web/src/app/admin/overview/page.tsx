@@ -106,28 +106,30 @@ export default async function AdminOverviewPage() {
         <section style={{ marginBottom: 16 }}>
           <h2 className="section-title">Commandes en retard</h2>
           <div className="card" style={{ overflow: "hidden" }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>N° Commande</th>
-                  <th>Client</th>
-                  <th>Statut</th>
-                  <th>Depuis</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lateOrdersWithOrg.map((o) => (
-                  <tr key={o.id}>
-                    <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
-                    <td style={{ color: "var(--color-text-muted)" }}>{o.organization?.name ?? "—"}</td>
-                    <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
-                    <td style={{ color: "var(--color-danger, #DC2626)", fontWeight: 600 }}>
-                      {Math.floor((Date.now() - new Date(o.createdAt).getTime()) / (24 * 60 * 60 * 1000))} j
-                    </td>
+            <div style={{ overflowX: "auto" }}>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>N° Commande</th>
+                    <th>Client</th>
+                    <th>Statut</th>
+                    <th>Depuis</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {lateOrdersWithOrg.map((o) => (
+                    <tr key={o.id}>
+                      <td><Link href={`/admin/orders/${o.id}`} style={{ fontWeight: 600 }}>{o.reference}</Link></td>
+                      <td style={{ color: "var(--color-text-muted)" }}>{o.organization?.name ?? "—"}</td>
+                      <td><span className={`badge badge-${o.status}`}>{orderStatusLabel(o.status)}</span></td>
+                      <td style={{ color: "var(--color-danger, #DC2626)", fontWeight: 600 }}>
+                        {Math.floor((Date.now() - new Date(o.createdAt).getTime()) / (24 * 60 * 60 * 1000))} j
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       )}

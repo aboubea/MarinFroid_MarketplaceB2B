@@ -60,34 +60,36 @@ export default async function AdminNotificationsPage() {
         {logs.length === 0 ? (
           <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun email envoyé pour l'instant.</div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Destinataire</th>
-                <th>Type</th>
-                <th>Commande</th>
-                <th>Statut</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {logs.map((log) => (
-                <tr key={log.id}>
-                  <td>{log.toEmail}</td>
-                  <td style={{ color: "var(--color-text-muted)" }}>{TEMPLATE_LABELS[log.template] ?? log.template}</td>
-                  <td style={{ color: "var(--color-text-muted)" }}>
-                    {log.relatedOrderId ? orderById.get(log.relatedOrderId)?.reference ?? "—" : "—"}
-                  </td>
-                  <td>
-                    <span className={`badge ${log.status === "sent" ? "badge-completed" : "badge-cancelled"}`}>
-                      {log.status === "sent" ? "Envoyé" : "Échec"}
-                    </span>
-                  </td>
-                  <td style={{ color: "var(--color-text-muted)" }}>{new Date(log.createdAt).toLocaleString("fr-FR")}</td>
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Destinataire</th>
+                  <th>Type</th>
+                  <th>Commande</th>
+                  <th>Statut</th>
+                  <th>Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {logs.map((log) => (
+                  <tr key={log.id}>
+                    <td>{log.toEmail}</td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{TEMPLATE_LABELS[log.template] ?? log.template}</td>
+                    <td style={{ color: "var(--color-text-muted)" }}>
+                      {log.relatedOrderId ? orderById.get(log.relatedOrderId)?.reference ?? "—" : "—"}
+                    </td>
+                    <td>
+                      <span className={`badge ${log.status === "sent" ? "badge-completed" : "badge-cancelled"}`}>
+                        {log.status === "sent" ? "Envoyé" : "Échec"}
+                      </span>
+                    </td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{new Date(log.createdAt).toLocaleString("fr-FR")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </>

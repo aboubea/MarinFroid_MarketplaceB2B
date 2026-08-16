@@ -132,7 +132,7 @@ export function NotificationSettings() {
   return (
     <div>
       <div className="card fade-up" style={{ overflow: "hidden", marginBottom: 32 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px 140px", padding: "12px 20px", fontSize: 11.5, fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", borderBottom: "1px solid var(--color-border)" }}>
+        <div className="notif-events-row" style={{ padding: "12px 20px", fontSize: 11.5, fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", borderBottom: "1px solid var(--color-border)" }}>
           <span>Événement</span>
           <span>Email client</span>
           <span>Email équipe</span>
@@ -140,9 +140,8 @@ export function NotificationSettings() {
         {events.map((ev, idx) => (
           <div
             key={ev.id}
+            className="notif-events-row"
             style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 140px 140px",
               alignItems: "center",
               padding: "14px 20px",
               borderBottom: idx < events.length - 1 ? "1px solid var(--color-border)" : "none",
@@ -174,9 +173,9 @@ export function NotificationSettings() {
         ))}
       </div>
 
-      <form onSubmit={addRecipient} style={{ display: "flex", gap: 8 }}>
-        <input className="input" placeholder="email@marinfroid.fr" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-        <input className="input" placeholder="Libellé (optionnel)" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} style={{ maxWidth: 200 }} />
+      <form onSubmit={addRecipient} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <input className="input" placeholder="email@marinfroid.fr" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} style={{ flex: "1 1 200px" }} />
+        <input className="input" placeholder="Libellé (optionnel)" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} style={{ flex: "1 1 160px", maxWidth: 200 }} />
         <button className="btn-primary" type="submit">Ajouter</button>
       </form>
     </div>
