@@ -879,4 +879,9 @@ a.card:hover, .card.interactive:hover {
 }
 @media (max-width: 560px) {
   .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  /* A stepper + button side by side don't fit a narrow mobile tile —
+     stack them instead of letting the button overflow/clip. */
+  .product-tile-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .product-tile-actions .stepper { align-self: center; }
+  .product-tile-actions .btn-primary { width: 100%; }
 }
