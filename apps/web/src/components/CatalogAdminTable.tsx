@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { EmptyState } from "./EmptyState";
 import { ListSkeleton } from "./Skeleton";
-import { IconSearch } from "./icons";
+import { IconSearch, IconEdit, IconTrash } from "./icons";
 import { safeFetch } from "@/lib/safe-fetch";
 import { useToast } from "./Toast";
 import { PageHeader } from "./PageHeader";
@@ -26,6 +26,7 @@ export function CatalogAdminTable() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     safeFetch<{ products: ProductRow[] }>("/api/admin/catalog/products").then((result) => {
@@ -38,6 +39,19 @@ export function CatalogAdminTable() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function handleDelete(p: ProductRow) {
+    if (!window.confirm(`Supprimer définitivement « ${p.name} » ? Cette action est irréversible.`)) return;
+    setDeletingId(p.id);
+    const result = await safeFetch(`/api/admin/catalog/products/${p.id}`, { method: "DELETE" });
+    setDeletingId(null);
+    if (result.ok) {
+      setProducts((prev) => prev.filter((item) => item.id !== p.id));
+      toast.show("Produit supprimé.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible de supprimer ce produit.", "error");
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -83,6 +97,7 @@ export function CatalogAdminTable() {
                   <th>Catégorie</th>
                   <th>Prix indicatif</th>
                   <th>Statut</th>
+                  <th style={{ textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -95,6 +110,23 @@ export function CatalogAdminTable() {
                     <td style={{ color: "var(--color-text-muted)" }}>{p.categoryName ?? "—"}</td>
                     <td>{p.indicativePrice ? `${Number(p.indicativePrice).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} / ${p.unit}` : "—"}</td>
                     <td><span className={`status-dot ${p.active ? "on" : "off"}`}>{p.active ? "Active" : "Désactivée"}</span></td>
+                    <td style={{ textAlign: "right" }}>
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        <Link href={`/admin/catalog/${p.id}`} className="icon-btn" title="Modifier" aria-label="Modifier">
+                          <IconEdit />
+                        </Link>
+                        <button
+                          type="button"
+                          className="icon-btn danger"
+                          title="Supprimer"
+                          aria-label="Supprimer"
+                          disabled={deletingId === p.id}
+                          onClick={() => handleDelete(p)}
+                        >
+                          <IconTrash />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -22,6 +22,7 @@ const ACTION_LABELS: Record<string, string> = {
   account_activated: "Compte activé",
   client_suspended: "Société suspendue",
   client_reactivated: "Société réactivée",
+  product_deleted: "Produit supprimé",
 };
 
 const ACTION_BADGE: Record<string, string> = {
@@ -31,6 +32,7 @@ const ACTION_BADGE: Record<string, string> = {
   account_activated: "badge-completed",
   client_suspended: "badge-cancelled",
   client_reactivated: "badge-completed",
+  product_deleted: "badge-cancelled",
 };
 
 export function ActivityLog() {
