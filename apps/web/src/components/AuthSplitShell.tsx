@@ -43,15 +43,6 @@ export function AuthSplitShell({
             }}
           />
         )}
-        {logoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={logoUrl}
-            alt="Marin Froid"
-            className="login-split-brand-logo"
-            style={{ position: "absolute", top: 28, left: 32, height: 32, width: "auto", maxWidth: 160, objectFit: "contain", zIndex: 1 }}
-          />
-        )}
         <div className="login-split-copy" style={{ position: "relative" }}>
           <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 12, maxWidth: 380 }}>
             {headline}
@@ -68,7 +59,7 @@ export function AuthSplitShell({
         <div style={{ width: "100%", maxWidth: 380 }}>
           {logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 36, width: "auto", maxWidth: 200, objectFit: "contain", display: "block", margin: "0 auto 24px" }} />
+            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
           )}
           {children}
         </div>
