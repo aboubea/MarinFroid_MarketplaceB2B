@@ -60,35 +60,37 @@ export function Sidebar({
             </>
           )}
         </div>
-        <nav className="sidebar-nav">
-          {links.map((link) => {
-            const isActive = link.href === bestMatch?.href;
-            return (
-              <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`} title={link.label}>
-                {link.icon}
-                <span className="sidebar-link-label">{link.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="sidebar-footer">
-          <button
-            className="sidebar-link"
-            style={{ width: "100%", background: "transparent", border: "none", textAlign: "left" }}
-            title="Déconnexion"
-            onClick={async () => {
-              await fetch("/api/auth/logout", { method: "POST" });
-              window.location.href = "/login";
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <path d="M16 17l5-5-5-5" />
-              <path d="M21 12H9" />
-            </svg>
-            <span className="sidebar-link-label">Déconnexion</span>
-          </button>
-          <div className="sidebar-link-label" style={{ fontSize: 12, color: "#8A93A6", padding: "10px 13px 0" }}>{footerLabel}</div>
+        <div className="sidebar-body">
+          <nav className="sidebar-nav">
+            {links.map((link) => {
+              const isActive = link.href === bestMatch?.href;
+              return (
+                <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`} title={link.label}>
+                  {link.icon}
+                  <span className="sidebar-link-label">{link.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="sidebar-footer">
+            <button
+              className="sidebar-link"
+              style={{ width: "100%", background: "transparent", border: "none", textAlign: "left" }}
+              title="Déconnexion"
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.href = "/login";
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+              <span className="sidebar-link-label">Déconnexion</span>
+            </button>
+            <div className="sidebar-link-label" style={{ fontSize: 12, color: "#8A93A6", padding: "10px 13px 0" }}>{footerLabel}</div>
+          </div>
         </div>
       </aside>
     </>

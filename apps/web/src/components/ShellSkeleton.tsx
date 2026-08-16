@@ -4,13 +4,15 @@ function SidebarSkeleton() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">Marin Froid</div>
-      <nav className="sidebar-nav">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} style={{ padding: "10px 13px" }}>
-            <div style={{ width: "60%", height: 12, borderRadius: 4, background: "rgba(255,255,255,0.08)" }} />
-          </div>
-        ))}
-      </nav>
+      <div className="sidebar-body">
+        <nav className="sidebar-nav">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} style={{ padding: "10px 13px" }}>
+              <div style={{ width: "60%", height: 12, borderRadius: 4, background: "rgba(255,255,255,0.08)" }} />
+            </div>
+          ))}
+        </nav>
+      </div>
     </aside>
   );
 }
