@@ -12,12 +12,18 @@ export function AuthSplitShell({
   children: React.ReactNode;
 }) {
   const [authImageUrl, setAuthImageUrl] = useState<string | null>(null);
+  const [authImageZoom, setAuthImageZoom] = useState(100);
+  const [authImagePositionX, setAuthImagePositionX] = useState(50);
+  const [authImagePositionY, setAuthImagePositionY] = useState(50);
 
   useEffect(() => {
     fetch("/api/branding")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.authImageUrl) setAuthImageUrl(data.authImageUrl);
+        if (data?.authImageZoom) setAuthImageZoom(data.authImageZoom);
+        if (data?.authImagePositionX !== undefined) setAuthImagePositionX(data.authImagePositionX);
+        if (data?.authImagePositionY !== undefined) setAuthImagePositionY(data.authImagePositionY);
       })
       .catch(() => {});
   }, []);
@@ -27,9 +33,13 @@ export function AuthSplitShell({
       <div
         className="login-split-brand"
         style={{
-          background: authImageUrl
-            ? `linear-gradient(180deg, rgba(11,18,32,0.35) 0%, rgba(11,18,32,0.75) 100%), url(${authImageUrl}) center/cover no-repeat`
+          backgroundColor: "#0B1220",
+          backgroundImage: authImageUrl
+            ? `linear-gradient(180deg, rgba(11,18,32,0.35) 0%, rgba(11,18,32,0.75) 100%), url(${authImageUrl})`
             : "linear-gradient(160deg, #0B1220 0%, #0F172A 55%, #14213A 100%)",
+          backgroundSize: authImageUrl ? `cover, ${authImageZoom}%` : undefined,
+          backgroundPosition: authImageUrl ? `center, ${authImagePositionX}% ${authImagePositionY}%` : undefined,
+          backgroundRepeat: "no-repeat",
           color: "#fff",
           padding: "64px 56px",
           display: "flex",

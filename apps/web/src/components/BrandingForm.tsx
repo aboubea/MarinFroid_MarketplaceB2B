@@ -20,17 +20,26 @@ function contrastRatio(a: string, b: string): number {
 export function BrandingForm({
   initialLogoUrl,
   initialAuthImageUrl,
+  initialAuthImageZoom,
+  initialAuthImagePositionX,
+  initialAuthImagePositionY,
   initialPrimaryColor,
   initialSecondaryColor,
 }: {
   initialLogoUrl: string;
   initialAuthImageUrl: string;
+  initialAuthImageZoom: number;
+  initialAuthImagePositionX: number;
+  initialAuthImagePositionY: number;
   initialPrimaryColor: string;
   initialSecondaryColor: string;
 }) {
   const toast = useToast();
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [authImageUrl, setAuthImageUrl] = useState(initialAuthImageUrl);
+  const [authImageZoom, setAuthImageZoom] = useState(initialAuthImageZoom);
+  const [authImagePositionX, setAuthImagePositionX] = useState(initialAuthImagePositionX);
+  const [authImagePositionY, setAuthImagePositionY] = useState(initialAuthImagePositionY);
   const [primaryColor, setPrimaryColor] = useState(initialPrimaryColor);
   const [secondaryColor, setSecondaryColor] = useState(initialSecondaryColor);
   const [saving, setSaving] = useState(false);
@@ -81,7 +90,7 @@ export function BrandingForm({
     const result = await safeFetch("/api/admin/branding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ logoUrl, authImageUrl, primaryColor, secondaryColor }),
+      body: JSON.stringify({ logoUrl, authImageUrl, authImageZoom, authImagePositionX, authImagePositionY, primaryColor, secondaryColor }),
     });
     setSaving(false);
     if (result.ok) {
@@ -122,12 +131,78 @@ export function BrandingForm({
             <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleAuthImageChange} disabled={uploadingAuthImage} style={{ display: "none" }} />
           </label>
           {authImageUrl && (
-            <button type="button" className="btn-secondary" style={{ fontSize: 12.5 }} onClick={() => setAuthImageUrl("")}>
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{ fontSize: 12.5 }}
+              onClick={() => {
+                setAuthImageUrl("");
+                setAuthImageZoom(100);
+                setAuthImagePositionX(50);
+                setAuthImagePositionY(50);
+              }}
+            >
               Retirer
             </button>
           )}
         </div>
-        <input className="input" value={authImageUrl} onChange={(e) => setAuthImageUrl(e.target.value)} placeholder="https://..." />
+        <input className="input" value={authImageUrl} onChange={(e) => setAuthImageUrl(e.target.value)} placeholder="https://..." style={{ marginBottom: authImageUrl ? 14 : 0 }} />
+
+        {authImageUrl && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div
+              style={{
+                height: 160,
+                borderRadius: "var(--radius-md)",
+                overflow: "hidden",
+                backgroundImage: `url(${authImageUrl})`,
+                backgroundSize: `${authImageZoom}%`,
+                backgroundPosition: `${authImagePositionX}% ${authImagePositionY}%`,
+                backgroundRepeat: "no-repeat",
+                border: "1px solid var(--color-border)",
+              }}
+            />
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--color-text-muted)", marginBottom: 4 }}>
+                <span>Zoom</span><span>{authImageZoom}%</span>
+              </div>
+              <input
+                type="range"
+                min={100}
+                max={250}
+                value={authImageZoom}
+                onChange={(e) => setAuthImageZoom(Number(e.target.value))}
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--color-text-muted)", marginBottom: 4 }}>
+                <span>Position horizontale</span><span>{authImagePositionX}%</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={authImagePositionX}
+                onChange={(e) => setAuthImagePositionX(Number(e.target.value))}
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--color-text-muted)", marginBottom: 4 }}>
+                <span>Position verticale</span><span>{authImagePositionY}%</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={authImagePositionY}
+                onChange={(e) => setAuthImagePositionY(Number(e.target.value))}
+                style={{ width: "100%" }}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <div>
         <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Couleur d&apos;action</label>
