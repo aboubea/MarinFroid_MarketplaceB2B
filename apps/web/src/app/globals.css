@@ -299,6 +299,20 @@ a.card:hover, .card.interactive:hover {
 .hamburger-btn { color: var(--color-text); }
 .hamburger-btn:hover { background: var(--color-bg); }
 .sidebar-close:hover { background: rgba(255,255,255,0.1); }
+.cart-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  max-width: 88vw;
+  box-shadow: var(--shadow-elevated);
+  z-index: 60;
+  overflow: hidden;
+}
+@media (max-width: 480px) {
+  .cart-popover { width: 92vw; right: -8px; }
+}
+
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
