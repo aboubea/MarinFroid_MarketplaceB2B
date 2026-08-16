@@ -17,6 +17,64 @@ function contrastRatio(a: string, b: string): number {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
+/**
+ * Logos are usually exported on a solid-color canvas rather than a
+ * transparent one. Sample the four corners, treat that as the background,
+ * and erase pixels close to it so the mark reads correctly regardless of
+ * where it's displayed (dark sidebar, white form, photo backdrop...).
+ * Only makes sense for raster formats — SVGs are left untouched.
+ */
+function stripSolidBackground(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    if (file.type === "image/svg+xml") {
+      resolve(file);
+      return;
+    }
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      const { width, height } = canvas;
+      const data = ctx.getImageData(0, 0, width, height);
+      const px = data.data;
+      const corners = [0, (width - 1) * 4, (height - 1) * width * 4, ((height - 1) * width + width - 1) * 4];
+      const bg = corners.reduce(
+        (acc, i) => [acc[0] + px[i] / 4, acc[1] + px[i + 1] / 4, acc[2] + px[i + 2] / 4],
+        [0, 0, 0],
+      );
+      const threshold = 32;
+      const feather = 24;
+      for (let i = 0; i < px.length; i += 4) {
+        const dist = Math.sqrt((px[i] - bg[0]) ** 2 + (px[i + 1] - bg[1]) ** 2 + (px[i + 2] - bg[2]) ** 2);
+        if (dist < threshold) {
+          px[i + 3] = 0;
+        } else if (dist < threshold + feather) {
+          px[i + 3] = Math.round((px[i + 3] * (dist - threshold)) / feather);
+        }
+      }
+      ctx.putImageData(data, 0, 0);
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          resolve(file);
+          return;
+        }
+        resolve(new File([blob], file.name.replace(/\.\w+$/, ".png"), { type: "image/png" }));
+      }, "image/png");
+    };
+    img.onerror = () => resolve(file);
+    img.src = objectUrl;
+  });
+}
+
 export function BrandingForm({
   initialLogoUrl,
   initialAuthImageUrl,
@@ -51,8 +109,9 @@ export function BrandingForm({
     e.target.value = "";
     if (!file) return;
     setUploading(true);
+    const processed = await stripSolidBackground(file);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", processed);
     const result = await safeFetch<{ url: string }>("/api/admin/upload", { method: "POST", body: formData });
     setUploading(false);
     if (result.ok && result.data) {

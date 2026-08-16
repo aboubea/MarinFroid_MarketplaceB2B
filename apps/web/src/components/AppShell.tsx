@@ -49,7 +49,7 @@ export function AppShell({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
             )}
-            <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
+            <span className="topbar-org-name" style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
               {organizationName}
             </span>
           </div>

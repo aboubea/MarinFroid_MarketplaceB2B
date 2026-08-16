@@ -69,15 +69,6 @@ export default function LoginPage() {
             }}
           />
         )}
-        {logoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={logoUrl}
-            alt="Marin Froid"
-            className="login-split-brand-logo"
-            style={{ position: "absolute", top: 28, left: 32, height: 32, width: "auto", maxWidth: 160, objectFit: "contain", zIndex: 1 }}
-          />
-        )}
         <div className="login-split-copy" style={{ position: "relative" }}>
           <h1 style={{ fontSize: 38, fontWeight: 750, letterSpacing: "-0.035em", lineHeight: 1.12, marginBottom: 28, maxWidth: 420 }}>
             Vos commandes professionnelles Marin Froid, en moins d'une minute.
@@ -116,7 +107,7 @@ export default function LoginPage() {
         <div style={{ width: "100%", maxWidth: 380 }}>
           {logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 36, width: "auto", maxWidth: 200, objectFit: "contain", display: "block", margin: "0 auto 24px" }} />
+            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
           )}
           <h2 style={{ fontSize: 28, fontWeight: 750, letterSpacing: "-0.03em", marginBottom: 6 }}>Bienvenue</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: 14.5, marginBottom: 30 }}>
