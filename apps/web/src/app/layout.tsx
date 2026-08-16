@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   description: "Portail de commande privé Marin Froid",
 };
 
+// Static pages under this layout (login, forgot-password...) read no
+// cookies, so without this the branding query below gets baked in at
+// build time and never reflects changes made afterwards in the admin.
+export const dynamic = "force-dynamic";
+
 async function getBranding() {
   try {
     const db = getDb();

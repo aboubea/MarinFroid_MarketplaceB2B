@@ -282,8 +282,16 @@ a.card:hover, .card.interactive:hover {
   padding: 6px var(--space-3) var(--space-4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
+/* An uploaded logo image goes edge-to-edge (no padding/margin, full sidebar
+   width) instead of sitting inside the text logo's padded box. */
+.sidebar-logo:has(.sidebar-logo-img-wrap) { padding: 0; }
+.sidebar-logo-img-wrap {
+  display: block;
+  width: 100%;
+  margin: calc(var(--space-5) * -1) calc(var(--space-3) * -1) 0;
+}
+.sidebar-logo-img { display: block; width: 100%; height: auto; object-fit: contain; }
 .sidebar-close, .hamburger-btn {
   display: none;
   align-items: center;
@@ -298,6 +306,13 @@ a.card:hover, .card.interactive:hover {
 }
 .hamburger-btn { color: var(--color-text); }
 .hamburger-btn:hover { background: var(--color-bg); }
+.sidebar-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  color: #fff;
+}
 .sidebar-close:hover { background: rgba(255,255,255,0.1); }
 .cart-popover {
   position: absolute;
@@ -554,7 +569,6 @@ a.card:hover, .card.interactive:hover {
 }
 
 .sidebar-logo-short { display: none; }
-.sidebar-logo-img { max-height: 28px; max-width: 100%; object-fit: contain; }
 
 .app-shell, .app-shell > div { min-width: 0; }
 .card { min-width: 0; }
@@ -565,6 +579,7 @@ a.card:hover, .card.interactive:hover {
   .sidebar-logo { padding: 0; margin-bottom: var(--space-5); text-align: center; }
   .sidebar-logo-full { display: none; }
   .sidebar-logo-short { display: inline; }
+  .sidebar-logo-img-wrap { margin: calc(var(--space-5) * -1) calc(var(--space-2) * -1) 0; }
   .sidebar-link { justify-content: center; padding: 10px; width: 44px; }
   .sidebar-link-label { display: none; }
   .sidebar-footer { width: 100%; }
