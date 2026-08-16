@@ -25,7 +25,7 @@ export default async function AdminPreparationPage() {
     <AdminShell fullName={session.fullName} role={session.role}>
       <PageHeader title="Préparation des commandes" subtitle="Ce qu'il faut traiter maintenant." />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
         <div className="stat-card">
           <div className="stat-value">{toTreat.length}</div>
           <div className="stat-label">À traiter</div>
