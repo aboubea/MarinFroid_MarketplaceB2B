@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { safeFetch } from "@/lib/safe-fetch";
 import { useBranding } from "@/components/BrandingContext";
+import { useTransparentLogo } from "@/lib/strip-image-background";
 
 const BENEFITS = [
   "Catalogue professionnel dédié",
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { logoUrl, authImageUrl, authImageZoom, authImagePositionX, authImagePositionY } = useBranding();
+  const transparentLogoUrl = useTransparentLogo(logoUrl);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -107,7 +109,7 @@ export default function LoginPage() {
         <div style={{ width: "100%", maxWidth: 380 }}>
           {logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
+            <img src={transparentLogoUrl ?? logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 64, width: "auto", maxWidth: 320, objectFit: "contain", display: "block", margin: "0 auto 32px" }} />
           )}
           <h2 style={{ fontSize: 28, fontWeight: 750, letterSpacing: "-0.03em", marginBottom: 6 }}>Bienvenue</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: 14.5, marginBottom: 30 }}>
