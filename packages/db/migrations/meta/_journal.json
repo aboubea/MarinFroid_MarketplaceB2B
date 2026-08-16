@@ -64,6 +64,13 @@
       "when": 1786805074536,
       "tag": "0008_add_user_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1786908446852,
+      "tag": "0009_cuddly_korg",
+      "breakpoints": true
     }
   ]
 }

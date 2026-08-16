@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { safeFetch } from "@/lib/safe-fetch";
 
@@ -18,6 +18,16 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [authImageUrl, setAuthImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/branding")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.authImageUrl) setAuthImageUrl(data.authImageUrl);
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

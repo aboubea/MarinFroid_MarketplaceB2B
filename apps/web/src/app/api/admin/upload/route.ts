@@ -4,7 +4,7 @@ import { requireMarinFroidSession } from "@/lib/session-guard";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
-const ALLOWED_FOLDERS = ["branding", "products"];
+const ALLOWED_FOLDERS = ["branding", "products", "auth"];
 
 export async function POST(request: Request) {
   await requireMarinFroidSession();
