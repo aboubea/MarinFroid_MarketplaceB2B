@@ -79,10 +79,6 @@ export default async function DashboardPage() {
   }
   const frequent = Array.from(byProduct.values()).sort((a, b) => b.orderCount - a.orderCount).slice(0, 20);
 
-  const lastOrderItems = recentOrders.length
-    ? await db.query.orderItems.findMany({ where: eq(orderItems.orderId, recentOrders[0].id) })
-    : [];
-
   const recentOrdersTotals = await getOrderTotals(recentOrders.map((o) => o.id));
 
   return (
@@ -119,49 +115,26 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid-split-2" style={{ gap: 16, marginBottom: 32, alignItems: "start" }}>
-        <section>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>Derniers achats</h2>
-            <Link href="/orders" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir tout l&apos;historique →</Link>
-          </div>
-          <div className="card" style={{ overflow: "hidden" }}>
-            {lastOrderItems.length === 0 ? (
-              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Aucun achat pour le moment.</div>
-            ) : (
-              <div style={{ maxHeight: 5 * 48, overflowY: "auto" }}>
-                {lastOrderItems.map((item, idx) => (
-                  <div key={item.id} style={{ padding: "9px 14px", borderBottom: idx < lastOrderItems.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 600 }}>{item.productNameSnapshot}</div>
-                    <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>Qté habituelle {item.quantity} {item.unitSnapshot}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>Réachat express</h2>
-            <Link href="/reachat" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir plus de produits →</Link>
-          </div>
-          <div className="card" style={{ overflow: "hidden" }}>
-            {frequent.length === 0 ? (
-              <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d&apos;historique.</div>
-            ) : (
-              <div style={{ maxHeight: 5 * 42, overflowY: "auto" }}>
-                {frequent.map((item, idx) => (
-                  <div key={item.productId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: idx < frequent.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500, flex: 1 }}>{item.name}</div>
-                    <DashboardQuickAdd productId={item.productId} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
+      <section style={{ marginBottom: 32 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <h2 className="section-title" style={{ marginBottom: 0 }}>Réachat express</h2>
+          <Link href="/reachat" style={{ fontSize: 12.5, fontWeight: 600 }}>Voir plus de produits →</Link>
+        </div>
+        <div className="card" style={{ overflow: "hidden" }}>
+          {frequent.length === 0 ? (
+            <div style={{ padding: 16, fontSize: 12.5, color: "var(--color-text-muted)" }}>Pas encore d&apos;historique.</div>
+          ) : (
+            <div style={{ maxHeight: 5 * 42, overflowY: "auto" }}>
+              {frequent.map((item, idx) => (
+                <div key={item.productId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 14px", borderBottom: idx < frequent.length - 1 ? "1px solid var(--color-border)" : "none" }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 500, flex: 1 }}>{item.name}</div>
+                  <DashboardQuickAdd productId={item.productId} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       <section>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
