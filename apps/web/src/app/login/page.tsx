@@ -52,7 +52,9 @@ export default function LoginPage() {
       <div
         className="login-split-brand"
         style={{
-          background: "linear-gradient(160deg, #0D1620 0%, #101720 55%, #12222A 100%)",
+          background: authImageUrl
+            ? `linear-gradient(180deg, rgba(11,18,32,0.35) 0%, rgba(11,18,32,0.75) 100%), url(${authImageUrl}) center/cover no-repeat`
+            : "linear-gradient(160deg, #0D1620 0%, #101720 55%, #12222A 100%)",
           color: "#fff",
           padding: "64px 56px",
           display: "flex",
@@ -62,13 +64,15 @@ export default function LoginPage() {
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "radial-gradient(circle at 78% 18%, rgba(20,190,180,0.22), transparent 55%), radial-gradient(circle at 8% 88%, rgba(255,90,78,0.14), transparent 48%)",
-          }}
-        />
+        {!authImageUrl && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "radial-gradient(circle at 78% 18%, rgba(20,190,180,0.22), transparent 55%), radial-gradient(circle at 8% 88%, rgba(255,90,78,0.14), transparent 48%)",
+            }}
+          />
+        )}
         <div style={{ position: "relative" }}>
           <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em" }}>Marin Froid</div>
           <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>Plateforme privée B2B</div>
