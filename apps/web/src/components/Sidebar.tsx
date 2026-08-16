@@ -36,27 +36,29 @@ export function Sidebar({
     <>
       {mobileOpen ? <div className="sidebar-backdrop" onClick={onCloseMobile} /> : null}
       <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
+        <button
+          type="button"
+          aria-label="Fermer le menu"
+          className="sidebar-close"
+          onClick={onCloseMobile}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M18 6L6 18" />
+            <path d="M6 6l12 12" />
+          </svg>
+        </button>
         <div className="sidebar-logo">
           {logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="Marin Froid" className="sidebar-logo-img" />
+            <div className="sidebar-logo-img-wrap">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={logoUrl} alt="Marin Froid" className="sidebar-logo-img" />
+            </div>
           ) : (
             <>
               <span className="sidebar-logo-full">Marin Froid</span>
               <span className="sidebar-logo-short">MF</span>
             </>
           )}
-          <button
-            type="button"
-            aria-label="Fermer le menu"
-            className="sidebar-close"
-            onClick={onCloseMobile}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M18 6L6 18" />
-              <path d="M6 6l12 12" />
-            </svg>
-          </button>
         </div>
         <nav className="sidebar-nav">
           {links.map((link) => {
