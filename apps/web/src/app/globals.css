@@ -571,12 +571,18 @@ a.card:hover, .card.interactive:hover {
 .search-input-wrap .input { padding-left: 42px; border-radius: var(--radius-pill); }
 
 .login-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+.login-form-logo { display: none; }
 @media (max-width: 860px) {
   .login-split { grid-template-columns: 1fr; }
   /* Keep the branding panel visible as a short banner instead of hiding it
      entirely — the headline/benefits copy is dropped since there's no room. */
   .login-split-brand { min-height: 200px; padding: 28px 24px !important; }
   .login-split-copy, .login-split-footnote { display: none; }
+  /* The overlaid logo on the image banner is dropped in favour of a
+     centered one above the form fields, where a white-background logo
+     naturally blends into the page instead of showing as a boxed-in mark. */
+  .login-split-brand-logo { display: none; }
+  .login-form-logo { display: block; }
 }
 
 .sidebar-logo-short { display: none; }
