@@ -86,59 +86,45 @@ export function OrderPreparationTimeline({ status, history }: { status: string; 
   const currentIndex = STEPS.findIndex((s) => s.key === status);
 
   return (
-    <div className="card" style={{ padding: "28px 24px 20px" }}>
-      <div className="order-timeline-scroll" style={{ overflowX: "auto" }}>
-      <div className="order-timeline-row" style={{ display: "flex", alignItems: "flex-start" }}>
+    <div className="card order-timeline-card" style={{ padding: "28px 24px 20px" }}>
+      <div className="order-timeline-row">
         {STEPS.map((step, idx) => {
           const done = idx <= currentIndex;
           const isCurrent = idx === currentIndex;
           const date = dateByStatus.get(step.key);
           return (
-            <div key={step.key} style={{ display: "flex", alignItems: "flex-start", flex: idx < STEPS.length - 1 ? 1 : "0 0 auto" }}>
-              <div className="order-timeline-step" style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 96 }}>
-                <div style={{ fontSize: 11.5, fontWeight: 700, color: done ? "var(--color-success)" : "var(--color-text-faint)", marginBottom: 8, height: 14 }}>
-                  {date ? formatDate(date) : ""}
-                </div>
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: done ? "var(--color-success)" : "var(--color-surface)",
-                    border: done ? "none" : "2px solid var(--color-border-strong)",
-                    color: done ? "#fff" : "var(--color-text-faint)",
-                    boxShadow: isCurrent ? "0 0 0 4px rgba(22,163,74,0.15)" : "none",
-                    transition: "all 0.25s var(--ease)",
-                  }}
-                >
-                  {step.icon}
-                </div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--color-text)", marginTop: 10, textAlign: "center" }}>
-                  {step.title}
-                </div>
-                <div style={{ fontSize: 11, color: "var(--color-text-muted)", marginTop: 2, textAlign: "center", lineHeight: 1.3 }}>
-                  {step.subtitle}
+            <div key={step.key} className="order-timeline-item" style={{ flex: idx < STEPS.length - 1 ? 1 : "0 0 auto" }}>
+              <div className="order-timeline-step">
+                <div className="order-timeline-step-main">
+                  <div
+                    className="order-timeline-dot"
+                    style={{
+                      background: done ? "var(--color-success)" : "var(--color-surface)",
+                      border: done ? "none" : "2px solid var(--color-border-strong)",
+                      color: done ? "#fff" : "var(--color-text-faint)",
+                      boxShadow: isCurrent ? "0 0 0 4px rgba(22,163,74,0.15)" : "none",
+                    }}
+                  >
+                    {step.icon}
+                  </div>
+                  <div className="order-timeline-text">
+                    <div className="order-timeline-title-row">
+                      <span className="order-timeline-title">{step.title}</span>
+                      {date && <span className="order-timeline-date" style={{ color: done ? "var(--color-success)" : "var(--color-text-faint)" }}>{formatDate(date)}</span>}
+                    </div>
+                    <div className="order-timeline-subtitle">{step.subtitle}</div>
+                  </div>
                 </div>
               </div>
               {idx < STEPS.length - 1 && (
                 <div
-                  style={{
-                    flex: 1,
-                    height: 2,
-                    background: idx < currentIndex ? "var(--color-success)" : "var(--color-border)",
-                    marginTop: 40 + 7,
-                    minWidth: 24,
-                    transition: "background 0.25s var(--ease)",
-                  }}
+                  className="order-timeline-connector"
+                  style={{ background: idx < currentIndex ? "var(--color-success)" : "var(--color-border)" }}
                 />
               )}
             </div>
           );
         })}
-      </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 24, paddingTop: 16, borderTop: "1px solid var(--color-border)", color: "var(--color-text-muted)", fontSize: 13 }}>
