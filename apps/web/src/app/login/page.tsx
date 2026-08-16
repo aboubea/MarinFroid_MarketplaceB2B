@@ -74,6 +74,7 @@ export default function LoginPage() {
           <img
             src={logoUrl}
             alt="Marin Froid"
+            className="login-split-brand-logo"
             style={{ position: "absolute", top: 28, left: 32, height: 32, width: "auto", maxWidth: 160, objectFit: "contain", zIndex: 1 }}
           />
         )}
@@ -113,6 +114,10 @@ export default function LoginPage() {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
         <div style={{ width: "100%", maxWidth: 380 }}>
+          {logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt="Marin Froid" className="login-form-logo" style={{ height: 36, width: "auto", maxWidth: 200, objectFit: "contain", display: "block", margin: "0 auto 24px" }} />
+          )}
           <h2 style={{ fontSize: 28, fontWeight: 750, letterSpacing: "-0.03em", marginBottom: 6 }}>Bienvenue</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: 14.5, marginBottom: 30 }}>
             Connectez-vous à votre espace professionnel.
