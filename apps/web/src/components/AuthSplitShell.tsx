@@ -49,11 +49,6 @@ export function AuthSplitShell({
           />
         )}
         <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em" }}>Marin Froid</div>
-          <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>Plateforme privée B2B</div>
-        </div>
-
-        <div style={{ position: "relative" }}>
           <h1 style={{ fontSize: 30, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.25, marginBottom: 12, maxWidth: 380 }}>
             {headline}
           </h1>

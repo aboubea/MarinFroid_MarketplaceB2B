@@ -74,11 +74,6 @@ export default function LoginPage() {
           />
         )}
         <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em" }}>Marin Froid</div>
-          <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>Plateforme privée B2B</div>
-        </div>
-
-        <div style={{ position: "relative" }}>
           <h1 style={{ fontSize: 38, fontWeight: 750, letterSpacing: "-0.035em", lineHeight: 1.12, marginBottom: 28, maxWidth: 420 }}>
             Vos commandes professionnelles Marin Froid, en moins d'une minute.
           </h1>
