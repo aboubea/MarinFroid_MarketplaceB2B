@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { CartIcon } from "./CartIcon";
+import { CartPopover } from "./CartPopover";
 import { NotificationBell } from "./NotificationBell";
 import { IconHome, IconGrid, IconList, IconUser, IconUsers, IconRefresh } from "./icons";
 import Link from "next/link";
@@ -52,7 +52,7 @@ export function AppShell({
               {organizationName}
             </span>
             <Link href="/notifications" aria-label="Notifications" className="topbar-action"><NotificationBell /></Link>
-            <Link href="/cart" aria-label="Panier" className="topbar-action"><CartIcon /></Link>
+            <CartPopover />
           </div>
         </header>
         <main className="container app-shell-scroll" style={{ paddingTop: compact ? 18 : 32, paddingBottom: compact ? 20 : 64, maxWidth: "100%" }}>
