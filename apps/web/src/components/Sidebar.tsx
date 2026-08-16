@@ -47,7 +47,7 @@ export function Sidebar({
             <path d="M6 6l12 12" />
           </svg>
         </button>
-        <div className="sidebar-logo">
+        <div className={`sidebar-logo ${logoUrl ? "sidebar-logo-image-mode" : ""}`}>
           {logoUrl ? (
             <div className="sidebar-logo-img-wrap">
               {/* eslint-disable-next-line @next/next/no-img-element */}

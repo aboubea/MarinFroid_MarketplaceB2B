@@ -285,7 +285,7 @@ a.card:hover, .card.interactive:hover {
 }
 /* An uploaded logo image goes edge-to-edge (no padding/margin, full sidebar
    width) instead of sitting inside the text logo's padded box. */
-.sidebar-logo:has(.sidebar-logo-img-wrap) { padding: 0; }
+.sidebar-logo.sidebar-logo-image-mode { padding: 0; }
 .sidebar-logo-img-wrap {
   display: block;
   width: 100%;
