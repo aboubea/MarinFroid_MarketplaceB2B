@@ -571,7 +571,9 @@ a.card:hover, .card.interactive:hover {
 .search-input-wrap .input { padding-left: 42px; border-radius: var(--radius-pill); }
 
 .login-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
-.login-form-logo { display: none; }
+/* multiply blends a white/light logo background into the page background
+   so only the mark itself reads, instead of a visible boxed rectangle. */
+.login-form-logo { display: none; mix-blend-mode: multiply; }
 @media (max-width: 860px) {
   .login-split { grid-template-columns: 1fr; }
   /* Keep the branding panel visible as a short banner instead of hiding it
