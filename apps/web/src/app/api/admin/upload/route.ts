@@ -9,9 +9,12 @@ const ALLOWED_FOLDERS = ["branding", "products"];
 export async function POST(request: Request) {
   await requireMarinFroidSession();
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  // Vercel Blob authenticates either via a static BLOB_READ_WRITE_TOKEN or,
+  // for stores connected in OIDC mode, via BLOB_STORE_ID + the runtime's
+  // OIDC token (no static token is ever set in that mode).
+  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
     return NextResponse.json(
-      { error: "Le stockage Vercel Blob n'est pas configuré (BLOB_READ_WRITE_TOKEN manquant)." },
+      { error: "Le stockage Vercel Blob n'est pas configuré (aucun store connecté au projet)." },
       { status: 500 },
     );
   }
@@ -30,10 +33,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Fichier trop volumineux (5 Mo max)." }, { status: 400 });
   }
 
-  const blob = await put(`${folder}/${Date.now()}-${file.name}`, file, {
-    access: "public",
-    addRandomSuffix: true,
-  });
-
-  return NextResponse.json({ url: blob.url });
+  try {
+    const blob = await put(`${folder}/${Date.now()}-${file.name}`, file, {
+      access: "public",
+      addRandomSuffix: true,
+    });
+    return NextResponse.json({ url: blob.url });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur inconnue.";
+    return NextResponse.json({ error: `Échec de l'upload vers Vercel Blob : ${message}` }, { status: 500 });
+  }
 }
