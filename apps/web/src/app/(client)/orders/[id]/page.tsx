@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, deliveryAddresses, orderStatusHistory } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { ReorderButton } from "@/components/ReorderButton";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { orderStatusLabel } from "@/lib/order-status";
@@ -18,7 +17,7 @@ export default async function OrderDetailPage({
 }) {
   const { id } = await params;
   const { confirmed } = await searchParams;
-  const { session, organization } = await requireClientSession();
+  const { organization } = await requireClientSession();
   const db = getDb();
 
   const order = await db.query.orders.findFirst({
@@ -38,7 +37,7 @@ export default async function OrderDetailPage({
   ]);
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       {confirmed === "1" && (
         <div className="card success-pop" style={{ padding: 16, marginBottom: 24, borderColor: "var(--color-success)", background: "#F0FDF4", display: "flex", alignItems: "center", gap: 10 }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -99,6 +98,6 @@ export default async function OrderDetailPage({
       </div>
 
       <ReorderButton orderId={order.id} />
-    </AppShell>
+    </>
   );
 }

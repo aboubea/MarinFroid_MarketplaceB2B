@@ -1,9 +1,8 @@
-import { AppShellSkeleton } from "@/components/ShellSkeleton";
 import { SkeletonBlock } from "@/components/Skeleton";
 
 export default function Loading() {
   return (
-    <AppShellSkeleton>
+    <>
       <SkeletonBlock width={140} height={13} style={{ marginBottom: 20 }} />
       <div className="grid-media-420" style={{ gap: 40, alignItems: "start" }}>
         <SkeletonBlock height={420} style={{ borderRadius: "var(--radius-lg)" }} />
@@ -15,6 +14,6 @@ export default function Loading() {
           <SkeletonBlock width={220} height={42} style={{ borderRadius: "var(--radius-md)" }} />
         </div>
       </div>
-    </AppShellSkeleton>
+    </>
   );
 }

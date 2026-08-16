@@ -4,13 +4,12 @@ import { notFound } from "next/navigation";
 import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { products, productImages, productDocuments } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { ProductForm } from "@/components/ProductForm";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await requireMarinFroidAdminSession();
+  await requireMarinFroidAdminSession();
   const db = getDb();
 
   const product = await db.query.products.findFirst({ where: eq(products.id, id) });
@@ -22,12 +21,12 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   ]);
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <Link href="/admin/catalog" style={{ fontSize: 13, color: "var(--color-text-muted)", display: "inline-block", marginBottom: 16 }}>
         ← Retour au catalogue
       </Link>
       <PageHeader title={product.name} />
       <ProductForm existing={product} images={images} documents={documents} />
-    </AdminShell>
+    </>
   );
 }

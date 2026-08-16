@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { deliveryAddresses } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { AddressManager } from "@/components/AddressManager";
 import { Avatar } from "@/components/Avatar";
 import { PageHeader } from "@/components/PageHeader";
@@ -23,7 +22,7 @@ export default async function AccountPage() {
   });
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <PageHeader title="Mon compte" />
 
       <div className="grid-aside-360">
@@ -89,6 +88,6 @@ export default async function AccountPage() {
           )}
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

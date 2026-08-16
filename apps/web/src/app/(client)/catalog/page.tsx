@@ -1,13 +1,10 @@
 import { eq } from "drizzle-orm";
-import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { products, productImages } from "@marin-froid/db";
-import { AppShell } from "@/components/AppShell";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function CatalogPage() {
-  const { session, organization } = await requireClientSession();
   const db = getDb();
 
   const categories = await db.query.productCategories.findMany({ orderBy: (c, { asc }) => [asc(c.position)] });
@@ -24,7 +21,7 @@ export default async function CatalogPage() {
   }
 
   return (
-    <AppShell fullName={session.fullName} organizationName={organization.name} role={session.role}>
+    <>
       <PageHeader title="Catalogue" />
       <CatalogBrowser
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
@@ -40,6 +37,6 @@ export default async function CatalogPage() {
           imageUrl: imageByProduct.get(p.id) ?? null,
         }))}
       />
-    </AppShell>
+    </>
   );
 }

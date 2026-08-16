@@ -1,8 +1,6 @@
 import { and, eq, gte, inArray, lt } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { orders, organizations, deliveryAddresses, orderItems } from "@marin-froid/db";
-import { AdminShell } from "@/components/AdminShell";
 import { DeliveriesRoutePanel, type DeliveryStop } from "@/components/DeliveriesRoutePanel";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -16,7 +14,6 @@ function targetThursday(): Date {
 }
 
 export default async function AdminDeliveriesPage() {
-  const session = await requireMarinFroidSession();
   const db = getDb();
 
   const start = targetThursday();
@@ -71,13 +68,13 @@ export default async function AdminDeliveriesPage() {
   const isToday = start.toDateString() === new Date().toDateString();
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <>
       <PageHeader
         title="Livraisons du jour"
         subtitle={`${isToday ? "Tournée d'aujourd'hui" : `Prochaine tournée — jeudi ${start.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`} · Départ Marin Froid, Chemin du Chapitre, Toulouse.`}
       />
 
       <DeliveriesRoutePanel initialStops={stops} />
-    </AdminShell>
+    </>
   );
 }
