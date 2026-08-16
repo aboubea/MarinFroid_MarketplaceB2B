@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { CartPopover } from "./CartPopover";
 import { NotificationPopover } from "./NotificationPopover";
+import { useBranding } from "./BrandingContext";
 import { IconHome, IconGrid, IconList, IconUser, IconUsers, IconRefresh } from "./icons";
 import Link from "next/link";
 
@@ -29,6 +30,7 @@ export function AppShell({
     { href: "/account", label: "Compte", icon: <IconUser /> },
   ];
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { logoUrl } = useBranding();
 
   return (
     <div className="app-shell">
@@ -43,6 +45,10 @@ export function AppShell({
                 <path d="M4 18h16" />
               </svg>
             </button>
+            {logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+            )}
             <span style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
               Bonjour, {fullName.split(" ")[0]}
             </span>

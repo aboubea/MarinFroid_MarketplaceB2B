@@ -305,6 +305,7 @@ a.card:hover, .card.interactive:hover {
   flex-shrink: 0;
 }
 .hamburger-btn { color: var(--color-text); }
+.topbar-logo { display: none; height: 24px; width: auto; object-fit: contain; flex-shrink: 0; }
 .hamburger-btn:hover { background: var(--color-bg); }
 .sidebar-close {
   position: absolute;
@@ -606,6 +607,7 @@ a.card:hover, .card.interactive:hover {
   /* The org name duplicates the sidebar footer — drop it before it squeezes
      the greeting and the action buttons on a phone. */
   .topbar-org { display: none; }
+  .topbar-logo { display: block; }
   .page-title { font-size: 24px; }
   .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
   .data-table thead th, .data-table tbody td { padding: 11px 14px; font-size: 13px; }
