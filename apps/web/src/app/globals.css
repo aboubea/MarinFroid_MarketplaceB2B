@@ -255,6 +255,12 @@ a.card:hover, .card.interactive:hover {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* .container's `margin: 0 auto` (meant for centering standalone pages)
+     disables flex cross-axis stretch here, shrinking main to its content's
+     width instead of filling the shell. Force it back to full width. */
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 .sidebar {
   background: linear-gradient(180deg, var(--color-ink-soft) 0%, var(--color-ink) 100%);
