@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { CartPopover } from "./CartPopover";
-import { NotificationBell } from "./NotificationBell";
+import { NotificationPopover } from "./NotificationPopover";
 import { IconHome, IconGrid, IconList, IconUser, IconUsers, IconRefresh } from "./icons";
 import Link from "next/link";
 
@@ -51,7 +51,7 @@ export function AppShell({
             <span className="topbar-org" style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginRight: 8 }}>
               {organizationName}
             </span>
-            <Link href="/notifications" aria-label="Notifications" className="topbar-action"><NotificationBell /></Link>
+            <NotificationPopover />
             <CartPopover />
           </div>
         </header>
