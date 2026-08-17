@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
 import { orderStatusLabel } from "@/lib/order-status";
@@ -20,6 +20,16 @@ export function DeliveriesRoutePanel({ initialStops }: { initialStops: DeliveryS
   const [stops, setStops] = useState(initialStops);
   const [optimizing, setOptimizing] = useState(false);
   const [optimized, setOptimized] = useState(false);
+
+  // A pull-to-refresh (router.refresh()) re-runs the server component and
+  // passes a new initialStops array — sync it in, since useState only
+  // reads its initial value once and this component otherwise never
+  // remounts on that kind of refresh.
+  useEffect(() => {
+    setStops(initialStops);
+    setOptimized(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialStops]);
 
   async function handleOptimize() {
     setOptimizing(true);

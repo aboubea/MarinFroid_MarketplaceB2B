@@ -51,7 +51,7 @@ export function AdminOrdersBoard() {
   const [detail, setDetail] = useState<OrderDetail | null>(null);
   const [savingStatus, setSavingStatus] = useState(false);
 
-  useEffect(() => {
+  function loadOrders() {
     safeFetch<{ orders: OrderRow[] }>("/api/admin/orders").then((result) => {
       setLoading(false);
       if (result.ok && result.data) {
@@ -60,6 +60,14 @@ export function AdminOrdersBoard() {
         toast.show(result.error ?? "Impossible de charger les commandes.", "error");
       }
     });
+  }
+
+  useEffect(() => {
+    loadOrders();
+    // Pull-to-refresh on mobile dispatches this — this board loads its own
+    // data client-side, so router.refresh() alone wouldn't touch it.
+    window.addEventListener("ptr:refresh", loadOrders);
+    return () => window.removeEventListener("ptr:refresh", loadOrders);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

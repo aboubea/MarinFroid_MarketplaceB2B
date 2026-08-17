@@ -3,6 +3,7 @@ import { getDb } from "@/lib/db";
 import { orders } from "@marin-froid/db";
 import { AdminOrdersBoard } from "@/components/AdminOrdersBoard";
 import { PageHeader } from "@/components/PageHeader";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 export default async function AdminPreparationPage() {
   const db = getDb();
@@ -19,7 +20,7 @@ export default async function AdminPreparationPage() {
   ]);
 
   return (
-    <>
+    <PullToRefresh>
       <PageHeader title="Préparation des commandes" subtitle="Ce qu'il faut traiter maintenant." />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
@@ -44,6 +45,6 @@ export default async function AdminPreparationPage() {
       </div>
 
       <AdminOrdersBoard />
-    </>
+    </PullToRefresh>
   );
 }

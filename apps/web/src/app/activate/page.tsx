@@ -41,7 +41,7 @@ function ResendInviteForm({ error }: { error: string | null }) {
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <input className="input" type="email" placeholder="Adresse e-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input className="input" type="email" autoComplete="email" placeholder="Adresse e-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <button className="btn-primary" type="submit" disabled={sending}>
             {sending ? "Envoi..." : "Renvoyer le lien d'activation"}
           </button>

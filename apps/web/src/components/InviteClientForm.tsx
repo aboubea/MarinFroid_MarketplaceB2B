@@ -37,7 +37,7 @@ export function InviteClientForm() {
     <form onSubmit={handleSubmit} className="invite-client-form">
       <input className="input" placeholder="Nom de la société" value={orgName} onChange={(e) => setOrgName(e.target.value)} required />
       <input className="input" placeholder="Nom du contact" value={contactName} onChange={(e) => setContactName(e.target.value)} required />
-      <input className="input" type="email" placeholder="Email du contact" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} required />
+      <input className="input" type="email" autoComplete="email" placeholder="Email du contact" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} required />
       <button className="btn-primary" type="submit" disabled={sending}>
         {sending ? "Envoi..." : "Inviter"}
       </button>

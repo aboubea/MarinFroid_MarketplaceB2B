@@ -25,13 +25,17 @@ function ItemCard({ item }: { item: Item }) {
   const toast = useToast();
   const [quantity, setQuantity] = useState(item.usualQuantity || 1);
   const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleAdd() {
+    if (loading) return;
+    setLoading(true);
     const result = await safeFetch("/api/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId: item.productId, quantity }),
     });
+    setLoading(false);
     if (result.ok) {
       setAdded(true);
       window.dispatchEvent(new CustomEvent("cart:updated"));
@@ -69,8 +73,8 @@ function ItemCard({ item }: { item: Item }) {
           <span style={{ minWidth: 20, textAlign: "center", fontSize: 13 }}>{quantity}</span>
           <button className="stepper-btn" onClick={() => setQuantity((q) => q + 1)}>+</button>
         </div>
-        <button className="btn-primary" style={{ fontSize: 13, padding: "8px 14px" }} onClick={handleAdd}>
-          {added ? "Ajouté ✓" : "Ajouter"}
+        <button className="btn-primary" style={{ fontSize: 13, padding: "8px 14px" }} onClick={handleAdd} disabled={loading}>
+          {added ? "Ajouté ✓" : loading ? "..." : "Ajouter"}
         </button>
       </div>
     </div>

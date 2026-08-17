@@ -118,7 +118,7 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
 
       {showInvite && (
         <form onSubmit={handleInvite} className="card fade-up" style={{ padding: 18, display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 20 }}>
-          <input className="input" style={{ flex: 1, minWidth: 200 }} type="email" placeholder="email@societe.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input className="input" style={{ flex: 1, minWidth: 200 }} type="email" autoComplete="email" placeholder="email@societe.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <select className="input" style={{ width: "auto" }} value={role} onChange={(e) => setRole(e.target.value as "org_buyer" | "org_viewer")}>
             <option value="org_buyer">Acheteur</option>
             <option value="org_viewer">Lecture / administratif</option>

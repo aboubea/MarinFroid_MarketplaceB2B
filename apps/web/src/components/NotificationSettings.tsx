@@ -174,7 +174,7 @@ export function NotificationSettings() {
       </div>
 
       <form onSubmit={addRecipient} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <input className="input" placeholder="email@marinfroid.fr" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} style={{ flex: "1 1 200px" }} />
+        <input className="input" type="email" inputMode="email" autoComplete="email" placeholder="email@marinfroid.fr" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} style={{ flex: "1 1 200px" }} />
         <input className="input" placeholder="Libellé (optionnel)" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} style={{ flex: "1 1 160px", maxWidth: 200 }} />
         <button className="btn-primary" type="submit">Ajouter</button>
       </form>

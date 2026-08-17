@@ -113,7 +113,7 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
 
       {showInvite && (
         <form onSubmit={handleInvite} className="card fade-up invite-client-form" style={{ padding: 18, marginBottom: 20 }}>
-          <input className="input" type="email" placeholder="email@marinfroid.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input className="input" type="email" autoComplete="email" placeholder="email@marinfroid.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <select className="input" value={role} onChange={(e) => setRole(e.target.value as "mf_admin" | "mf_ops")}>
             <option value="mf_ops">Équipe préparation</option>
             <option value="mf_admin">Administrateur</option>
