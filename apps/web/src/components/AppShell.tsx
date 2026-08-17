@@ -34,13 +34,15 @@ export function AppShell({
 
   return (
     <div className="app-shell">
-      <Sidebar links={links} footerLabel={organizationName} mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
+      <Sidebar links={links} footerLabel={organizationName} homeHref="/dashboard" mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
       <div className="app-shell-content">
         <header className="topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+              <Link href="/dashboard" className="topbar-logo-link" aria-label="Retour au tableau de bord">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+              </Link>
             )}
             <span className="topbar-org-name" style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.015em" }}>
               {organizationName}

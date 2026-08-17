@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { useBranding } from "./BrandingContext";
 import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconActivity, IconGrid, IconColumns, IconTruck, IconShield } from "./icons";
@@ -32,16 +33,19 @@ export function AdminShell({ children, fullName, role }: { children: React.React
     : SHARED_LINKS;
   const [mobileOpen, setMobileOpen] = useState(false);
   const { logoUrl } = useBranding();
+  const homeHref = isAdmin ? "/admin/overview" : "/admin";
 
   return (
     <div className="app-shell">
-      <Sidebar links={links} footerLabel="Équipe Marin Froid" mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
+      <Sidebar links={links} footerLabel="Équipe Marin Froid" homeHref={homeHref} mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
       <div className="app-shell-content">
         <header className="topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+              <Link href={homeHref} className="topbar-logo-link" aria-label="Retour à l'accueil">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
+              </Link>
             )}
             <span style={{ fontSize: 14, fontWeight: 600 }}>Back-office</span>
           </div>
