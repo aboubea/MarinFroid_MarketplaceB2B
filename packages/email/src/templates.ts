@@ -30,6 +30,18 @@ export function invitationEmail(params: { organizationName: string; activationUr
   };
 }
 
+export function opsRecipientAddedEmail(params: { fullName: string }) {
+  return {
+    subject: `Récapitulatifs de commande Marin Froid`,
+    html: layout(
+      "Vous recevrez les commandes par email",
+      `<p>Bonjour ${params.fullName},</p>
+       <p>Vous avez été ajouté(e) comme destinataire des récapitulatifs de commande Marin Froid : vous recevrez un email pour chaque nouvelle commande, avec le détail des produits et de la livraison.</p>
+       <p>Aucune action requise de votre part — pas de compte ni de connexion nécessaire.</p>`
+    ),
+  };
+}
+
 export function accountActivatedEmail(params: { fullName: string; loginUrl: string }) {
   return {
     subject: `Votre compte Marin Froid est actif`,

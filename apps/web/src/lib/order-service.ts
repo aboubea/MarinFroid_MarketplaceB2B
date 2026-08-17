@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { getDb } from "./db";
-import { orders, orderItems, orderStatusHistory, notificationRecipients, deliveryAddresses } from "@marin-froid/db";
+import { orders, orderItems, orderStatusHistory, notificationRecipients, deliveryAddresses, users } from "@marin-froid/db";
 import { getCartWithItems, clearCart } from "./cart";
 import { createEmailClient, orderCreatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "./notification-settings";
@@ -163,7 +163,11 @@ async function sendOrderCreatedEmails(params: {
   }
 
   if (await isNotificationEnabled("order_created", "ops")) {
-    const recipients = await db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) });
+    const [manualRecipients, opsStaff] = await Promise.all([
+      db.query.notificationRecipients.findMany({ where: eq(notificationRecipients.active, true) }),
+      db.query.users.findMany({ where: and(eq(users.role, "mf_ops"), eq(users.active, true)) }),
+    ]);
+    const opsEmails = new Set([...manualRecipients.map((r) => r.email), ...opsStaff.map((u) => u.email)]);
     const opsTemplate = orderCreatedEmail({
       reference: params.reference,
       organizationName: params.organizationName,
@@ -174,8 +178,8 @@ async function sendOrderCreatedEmails(params: {
       deliveryAddress: params.deliveryAddress,
       notes: params.notes,
     });
-    for (const recipient of recipients) {
-      await sendTrackedEmail(emailClient, "order_created", { to: recipient.email, ...opsTemplate, relatedOrderId: params.orderId });
+    for (const email of opsEmails) {
+      await sendTrackedEmail(emailClient, "order_created", { to: email, ...opsTemplate, relatedOrderId: params.orderId });
     }
   }
 }
