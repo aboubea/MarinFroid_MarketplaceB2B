@@ -363,14 +363,26 @@ a.card:hover, .card.interactive:hover {
   right: 0;
   width: 340px;
   max-width: 88vw;
+  /* Caps total height (header + list + footer) to the viewport so on a
+     short/landscape screen the whole card scrolls instead of its footer
+     (close button, "voir tout") landing off-screen with no way to reach it. */
+  max-height: calc(100dvh - 90px);
+  display: flex;
+  flex-direction: column;
   box-shadow: var(--shadow-elevated);
   z-index: 60;
   overflow: hidden;
 }
 @media (max-width: 480px) {
-  .cart-popover { width: 92vw; right: -8px; }
+  .cart-popover { width: 92vw; right: -8px; max-height: calc(100dvh - 84px); }
 }
 
+.toast-stack { bottom: 24px; }
+@media (max-width: 700px) {
+  /* Clear the docked buy-bar and the floating menu button on mobile —
+     at bottom:24 a toast would render on top of both. */
+  .toast-stack { bottom: calc(104px + env(safe-area-inset-bottom)); left: 16px; right: 16px; }
+}
 .sidebar-backdrop {
   position: fixed;
   inset: 0;

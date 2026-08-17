@@ -60,9 +60,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ show }}>
       {children}
       <div
+        className="toast-stack"
         style={{
           position: "fixed",
-          bottom: 24,
           right: 24,
           left: 24,
           zIndex: 1000,

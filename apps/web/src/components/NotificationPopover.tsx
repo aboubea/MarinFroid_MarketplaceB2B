@@ -94,7 +94,7 @@ export function NotificationPopover() {
 
       {open && (
         <div className="card cart-popover fade-up">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--color-border)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
             <span style={{ fontSize: 14, fontWeight: 700 }}>Notifications</span>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               {unreadCount > 0 && (
@@ -125,7 +125,7 @@ export function NotificationPopover() {
           ) : notifications.length === 0 ? (
             <div style={{ padding: 24, fontSize: 12.5, color: "var(--color-text-muted)", textAlign: "center" }}>Aucune notification.</div>
           ) : (
-            <div style={{ maxHeight: 360, overflowY: "auto" }}>
+            <div style={{ flex: "0 1 360px", minHeight: 0, overflowY: "auto" }}>
               {notifications.map((n, idx) => {
                 const accent = accentColor(n.title);
                 const content = (
@@ -177,7 +177,7 @@ export function NotificationPopover() {
             </div>
           )}
 
-          <div style={{ padding: 12, borderTop: "1px solid var(--color-border)" }}>
+          <div style={{ padding: 12, borderTop: "1px solid var(--color-border)", flexShrink: 0 }}>
             <Link href="/notifications" className="btn-secondary" style={{ display: "block", textAlign: "center" }} onClick={() => setOpen(false)}>
               Voir toutes les notifications
             </Link>

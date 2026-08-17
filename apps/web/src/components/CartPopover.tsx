@@ -88,7 +88,7 @@ export function CartPopover() {
 
       {open && (
         <div className="card cart-popover fade-up">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--color-border)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
             <span style={{ fontSize: 14, fontWeight: 700 }}>Panier</span>
             <button
               type="button"
@@ -108,7 +108,7 @@ export function CartPopover() {
           ) : items.length === 0 ? (
             <div style={{ padding: 24, fontSize: 12.5, color: "var(--color-text-muted)", textAlign: "center" }}>Votre panier est vide.</div>
           ) : (
-            <div style={{ maxHeight: 320, overflowY: "auto" }}>
+            <div style={{ flex: "0 1 320px", minHeight: 0, overflowY: "auto" }}>
               {items.map((item, idx) => (
                 <div
                   key={item.productId}
@@ -146,7 +146,7 @@ export function CartPopover() {
             </div>
           )}
 
-          <div style={{ padding: 16, borderTop: "1px solid var(--color-border)" }}>
+          <div style={{ padding: 16, borderTop: "1px solid var(--color-border)", flexShrink: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <span style={{ fontSize: 12.5, color: "var(--color-text-muted)" }}>Sous-total indicatif</span>
               <span style={{ fontSize: 15, fontWeight: 700 }}>{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
