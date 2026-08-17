@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useBranding } from "./BrandingContext";
+
+const SWIPE_CLOSE_THRESHOLD = 60;
 
 export interface SidebarLink {
   href: string;
@@ -32,10 +34,37 @@ export function Sidebar({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { onCloseMobile?.(); }, [pathname]);
 
+  const asideRef = useRef<HTMLElement>(null);
+  const touch = useRef<{ startX: number; dx: number; dragging: boolean }>({ startX: 0, dx: 0, dragging: false });
+
+  function onTouchStart(e: React.TouchEvent) {
+    touch.current = { startX: e.touches[0].clientX, dx: 0, dragging: true };
+    asideRef.current?.classList.add("sidebar-dragging");
+  }
+  function onTouchMove(e: React.TouchEvent) {
+    if (!touch.current.dragging) return;
+    const dx = Math.min(0, e.touches[0].clientX - touch.current.startX);
+    touch.current.dx = dx;
+    if (asideRef.current) asideRef.current.style.transform = `translateX(${dx}px)`;
+  }
+  function onTouchEnd() {
+    if (!touch.current.dragging) return;
+    touch.current.dragging = false;
+    asideRef.current?.classList.remove("sidebar-dragging");
+    if (asideRef.current) asideRef.current.style.transform = "";
+    if (touch.current.dx < -SWIPE_CLOSE_THRESHOLD) onCloseMobile?.();
+  }
+
   return (
     <>
       {mobileOpen ? <div className="sidebar-backdrop" onClick={onCloseMobile} /> : null}
-      <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
+      <aside
+        ref={asideRef}
+        className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <button
           type="button"
           aria-label="Fermer le menu"

@@ -55,11 +55,16 @@ export function AppShell({
           {children}
         </main>
       </div>
-      <button type="button" aria-label="Ouvrir le menu" className="mobile-menu-fab" onClick={() => setMobileOpen(true)}>
+      <button
+        type="button"
+        aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+        className={`mobile-menu-fab ${mobileOpen ? "mobile-menu-fab-open" : ""}`}
+        onClick={() => setMobileOpen((o) => !o)}
+      >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <path d="M4 6h16" />
-          <path d="M4 12h16" />
-          <path d="M4 18h16" />
+          <path className="mobile-menu-fab-bar mobile-menu-fab-bar-top" d="M4 6h16" />
+          <path className="mobile-menu-fab-bar mobile-menu-fab-bar-mid" d="M4 12h16" />
+          <path className="mobile-menu-fab-bar mobile-menu-fab-bar-bot" d="M4 18h16" />
         </svg>
       </button>
     </div>
