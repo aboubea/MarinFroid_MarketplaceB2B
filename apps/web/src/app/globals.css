@@ -671,9 +671,6 @@ a.card:hover, .card.interactive:hover {
   .sidebar-logo { padding: 6px var(--space-2) var(--space-4); text-align: left; }
   .sidebar-logo-full { display: inline; }
   .sidebar-logo-short { display: none; }
-  /* Bigger logo in the off-canvas mobile drawer only — the wrap keeps its
-     own width so this doesn't touch the sidebar's desktop proportions. */
-  .sidebar-logo-img { transform: scale(1.45); transform-origin: center; }
   .sidebar-link { justify-content: flex-start; width: auto; padding: 11px 14px; }
   .sidebar-link-label { display: inline; }
   .sidebar-footer { width: auto; }
