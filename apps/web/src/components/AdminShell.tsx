@@ -39,13 +39,6 @@ export function AdminShell({ children, fullName, role }: { children: React.React
       <div className="app-shell-content">
         <header className="topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button type="button" aria-label="Ouvrir le menu" className="hamburger-btn" onClick={() => setMobileOpen(true)}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
-            </button>
             {logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logoUrl} alt="Marin Froid" className="topbar-logo" />
@@ -58,6 +51,13 @@ export function AdminShell({ children, fullName, role }: { children: React.React
           {children}
         </main>
       </div>
+      <button type="button" aria-label="Ouvrir le menu" className="mobile-menu-fab" onClick={() => setMobileOpen(true)}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M4 6h16" />
+          <path d="M4 12h16" />
+          <path d="M4 18h16" />
+        </svg>
+      </button>
     </div>
   );
 }

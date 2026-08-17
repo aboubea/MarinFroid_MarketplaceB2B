@@ -301,7 +301,7 @@ a.card:hover, .card.interactive:hover {
    is cropped to it so the logo reads bigger without resizing the sidebar. */
 .sidebar-logo-img-wrap { display: block; width: 100%; overflow: hidden; }
 .sidebar-logo-img { display: block; width: 100%; height: auto; object-fit: contain; }
-.sidebar-close, .hamburger-btn {
+.sidebar-close {
   display: none;
   align-items: center;
   justify-content: center;
@@ -313,9 +313,7 @@ a.card:hover, .card.interactive:hover {
   color: inherit;
   flex-shrink: 0;
 }
-.hamburger-btn { color: var(--color-text); }
 .topbar-logo { display: none; height: 24px; width: auto; object-fit: contain; flex-shrink: 0; }
-.hamburger-btn:hover { background: var(--color-bg); }
 .sidebar-close {
   position: absolute;
   top: var(--space-3);
@@ -324,6 +322,29 @@ a.card:hover, .card.interactive:hover {
   color: #fff;
 }
 .sidebar-close:hover { background: rgba(255,255,255,0.1); }
+
+/* Mobile-only floating action button that opens the sidebar drawer,
+   replacing the old topbar hamburger. Hidden above the phone breakpoint. */
+.mobile-menu-fab {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  right: var(--space-4);
+  /* Clears the docked buy-bar (product pages, <=700px) so the two floating
+     controls never overlap; harmless extra clearance on pages without it. */
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-elevated);
+  z-index: 45;
+}
+.mobile-menu-fab:hover { filter: brightness(1.05); }
+.mobile-menu-fab:active { transform: scale(0.96); }
 .cart-popover {
   position: absolute;
   top: calc(100% + 10px);
@@ -623,7 +644,7 @@ a.card:hover, .card.interactive:hover {
      the greeting and the action buttons on a phone. */
   .topbar-org { display: none; }
   .topbar-org-name { display: none; }
-  .topbar-logo { display: block; }
+  .topbar-logo { display: block; height: 52px; max-width: 55vw; }
   .page-title { font-size: 24px; }
   .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
   .data-table thead th, .data-table tbody td { padding: 11px 14px; font-size: 13px; }
@@ -632,7 +653,7 @@ a.card:hover, .card.interactive:hover {
   /* Below phone width the icon-only rail becomes an off-canvas drawer:
      the sidebar is hidden off-screen and opened via the topbar hamburger. */
   .app-shell { grid-template-columns: 1fr; }
-  .hamburger-btn { display: inline-flex; }
+  .mobile-menu-fab { display: inline-flex; }
   .sidebar-close { display: inline-flex; }
   .sidebar {
     position: fixed;
