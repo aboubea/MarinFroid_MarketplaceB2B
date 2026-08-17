@@ -38,6 +38,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <OrderPreparationTimeline
           status={order.status}
           history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
+          estimatedDeliveryDate={order.estimatedDeliveryDate?.toString() ?? null}
         />
       </div>
 

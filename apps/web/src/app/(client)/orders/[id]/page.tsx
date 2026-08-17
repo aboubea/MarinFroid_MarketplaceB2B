@@ -56,6 +56,7 @@ export default async function OrderDetailPage({
         <OrderPreparationTimeline
           status={order.status}
           history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
+          estimatedDeliveryDate={order.estimatedDeliveryDate?.toString() ?? null}
         />
       </div>
 
