@@ -5,6 +5,7 @@ import { orders } from "@marin-froid/db";
 import { OrdersList } from "@/components/OrdersList";
 import { getOrderTotals } from "@/lib/order-totals";
 import { PageHeader } from "@/components/PageHeader";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 export default async function OrdersPage() {
   const { organization } = await requireClientSession();
@@ -16,7 +17,7 @@ export default async function OrdersPage() {
   const totals = await getOrderTotals(list.map((o) => o.id));
 
   return (
-    <>
+    <PullToRefresh>
       <PageHeader title="Vos commandes" />
       <OrdersList
         orders={list.map((o) => ({
@@ -27,6 +28,6 @@ export default async function OrdersPage() {
           totalAmount: totals.get(o.id) ?? 0,
         }))}
       />
-    </>
+    </PullToRefresh>
   );
 }

@@ -26,14 +26,18 @@ export function ProductTile({
 }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   async function handleAdd() {
+    if (loading) return;
+    setLoading(true);
     const result = await safeFetch("/api/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, quantity }),
     });
+    setLoading(false);
     if (result.ok) {
       setAdded(true);
       window.dispatchEvent(new CustomEvent("cart:updated"));
@@ -78,8 +82,9 @@ export function ProductTile({
           className="btn-primary"
           style={added ? { background: "var(--color-success)", boxShadow: "none" } : undefined}
           onClick={handleAdd}
+          disabled={loading}
         >
-          {added ? "Ajouté ✓" : "Ajouter"}
+          {added ? "Ajouté ✓" : loading ? "..." : "Ajouter"}
         </button>
       </div>
     </div>

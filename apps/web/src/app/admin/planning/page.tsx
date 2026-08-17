@@ -3,6 +3,7 @@ import { eq, asc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { orders, organizations, orderItems } from "@marin-froid/db";
 import { PageHeader } from "@/components/PageHeader";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 const COLUMNS = [
   { status: "submitted" as const, title: "À traiter", accent: "var(--color-warning, #D97706)" },
@@ -44,7 +45,7 @@ export default async function AdminPlanningPage() {
   );
 
   return (
-    <>
+    <PullToRefresh>
       <PageHeader title="Planning" subtitle="Charge par étape, commandes les plus anciennes en premier." />
 
       <div className="planning-board">
@@ -101,6 +102,6 @@ export default async function AdminPlanningPage() {
           </div>
         ))}
       </div>
-    </>
+    </PullToRefresh>
   );
 }

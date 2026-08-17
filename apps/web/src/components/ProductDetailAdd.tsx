@@ -7,14 +7,18 @@ import { safeFetch } from "@/lib/safe-fetch";
 export function ProductDetailAdd({ productId }: { productId: string }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   async function handleAdd() {
+    if (loading) return;
+    setLoading(true);
     const result = await safeFetch("/api/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, quantity }),
     });
+    setLoading(false);
     if (result.ok) {
       setAdded(true);
       window.dispatchEvent(new CustomEvent("cart:updated"));
@@ -35,9 +39,10 @@ export function ProductDetailAdd({ productId }: { productId: string }) {
       <button
         className={`btn-primary buy-bar-cta ${added ? "success-pop" : ""}`}
         onClick={handleAdd}
+        disabled={loading}
         style={added ? { background: "var(--color-success)" } : undefined}
       >
-        {added ? "Ajouté au panier ✓" : "Ajouter au panier"}
+        {added ? "Ajouté au panier ✓" : loading ? "Ajout..." : "Ajouter au panier"}
       </button>
     </div>
   );

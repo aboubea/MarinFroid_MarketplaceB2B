@@ -847,7 +847,27 @@ a.card:hover, .card.interactive:hover {
   .sidebar-link:active { transform: scale(0.97); background: var(--color-bg); }
   .icon-btn:active { transform: scale(0.88); }
   .badge, .stat-card { transition: transform 0.2s var(--ease-spring); }
+
+  /* Apple/Google recommend a minimum ~44px touch target — the icon itself
+     stays the same visual size, the tappable box around it grows. */
+  .icon-btn { width: 44px; height: 44px; }
+  .data-table td a, .data-table td button { min-height: 44px; display: inline-flex; align-items: center; }
 }
+
+/* Pull-to-refresh indicator — a thin arc that fills/rotates with the pull,
+   then spins while router.refresh() re-fetches the page's server data. */
+.ptr-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--color-primary);
+}
+.ptr-indicator-idle { transition: height 0.2s var(--ease); }
+@keyframes ptrSpin {
+  to { transform: rotate(360deg); }
+}
+.ptr-spin { animation: ptrSpin 0.7s linear infinite; }
 
 .empty-state {
   display: flex;
