@@ -94,7 +94,7 @@ export function Sidebar({
             {links.map((link) => {
               const isActive = link.href === bestMatch?.href;
               return (
-                <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`} title={link.label}>
+                <Link key={link.href} href={link.href} className={`sidebar-link ${isActive ? "active" : ""}`} title={link.label} onClick={onCloseMobile}>
                   {link.icon}
                   <span className="sidebar-link-label">{link.label}</span>
                 </Link>
