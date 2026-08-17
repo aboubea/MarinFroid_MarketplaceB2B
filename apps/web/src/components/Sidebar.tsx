@@ -16,11 +16,13 @@ export interface SidebarLink {
 export function Sidebar({
   links,
   footerLabel,
+  homeHref,
   mobileOpen,
   onCloseMobile,
 }: {
   links: SidebarLink[];
   footerLabel: string;
+  homeHref: string;
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
 }) {
@@ -35,15 +37,38 @@ export function Sidebar({
   useEffect(() => { onCloseMobile?.(); }, [pathname]);
 
   const asideRef = useRef<HTMLElement>(null);
-  const touch = useRef<{ startX: number; dx: number; dragging: boolean }>({ startX: 0, dx: 0, dragging: false });
+  // `dragging` only flips to true once real horizontal movement is seen —
+  // until then nothing touches the DOM, so a plain tap on a link is never
+  // mistaken for the start of a swipe (that mistaken classList/style write
+  // on touchstart was making links need a second tap to register).
+  const touch = useRef<{ startX: number; startY: number; dx: number; dragging: boolean }>({
+    startX: 0,
+    startY: 0,
+    dx: 0,
+    dragging: false,
+  });
+  const DRAG_ACTIVATE_THRESHOLD = 10;
 
   function onTouchStart(e: React.TouchEvent) {
-    touch.current = { startX: e.touches[0].clientX, dx: 0, dragging: true };
-    asideRef.current?.classList.add("sidebar-dragging");
+    touch.current = { startX: e.touches[0].clientX, startY: e.touches[0].clientY, dx: 0, dragging: false };
   }
   function onTouchMove(e: React.TouchEvent) {
-    if (!touch.current.dragging) return;
-    const dx = Math.min(0, e.touches[0].clientX - touch.current.startX);
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
+    const rawDx = x - touch.current.startX;
+    const rawDy = y - touch.current.startY;
+    if (!touch.current.dragging) {
+      // Only commit to a horizontal drag once movement is both leftward
+      // and clearly more horizontal than vertical (so vertical scrolling
+      // inside the drawer isn't hijacked either).
+      if (rawDx < -DRAG_ACTIVATE_THRESHOLD && Math.abs(rawDx) > Math.abs(rawDy)) {
+        touch.current.dragging = true;
+        asideRef.current?.classList.add("sidebar-dragging");
+      } else {
+        return;
+      }
+    }
+    const dx = Math.min(0, rawDx);
     touch.current.dx = dx;
     if (asideRef.current) asideRef.current.style.transform = `translateX(${dx}px)`;
   }
@@ -76,7 +101,7 @@ export function Sidebar({
             <path d="M6 6l12 12" />
           </svg>
         </button>
-        <div className={`sidebar-logo ${logoUrl ? "sidebar-logo-image-mode" : ""}`}>
+        <Link href={homeHref} className={`sidebar-logo ${logoUrl ? "sidebar-logo-image-mode" : ""}`} onClick={onCloseMobile}>
           {logoUrl ? (
             <div className="sidebar-logo-img-wrap">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -88,7 +113,7 @@ export function Sidebar({
               <span className="sidebar-logo-short">MF</span>
             </>
           )}
-        </div>
+        </Link>
         <div className="sidebar-body">
           <nav className="sidebar-nav">
             {links.map((link) => {
