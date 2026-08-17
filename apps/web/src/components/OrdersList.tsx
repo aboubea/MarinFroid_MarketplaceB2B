@@ -46,7 +46,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
         illustration="inbox"
         title="Aucune commande pour le moment"
         description="Vos commandes apparaîtront ici dès que vous en aurez passé une."
-        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir le catalogue</a>}
+        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir les produits lessiviels</a>}
       />
     );
   }

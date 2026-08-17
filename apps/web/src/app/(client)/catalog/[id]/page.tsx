@@ -21,7 +21,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <Link href="/catalog" style={{ fontSize: 13, color: "var(--color-text-muted)", display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 20 }}>
-        ← Retour au catalogue
+        ← Retour aux produits lessiviels
       </Link>
 
       <div className="grid-media-420" style={{ gap: 40, alignItems: "start" }}>

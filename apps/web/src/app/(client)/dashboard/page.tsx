@@ -45,15 +45,6 @@ export default async function DashboardPage() {
     .innerJoin(products, eq(products.id, orderItems.productId))
     .where(eq(orders.organizationId, organization.id));
 
-  const items30d = await db
-    .select({ quantity: orderItems.quantity, indicativePrice: products.indicativePrice })
-    .from(orderItems)
-    .innerJoin(orders, eq(orders.id, orderItems.orderId))
-    .innerJoin(products, eq(products.id, orderItems.productId))
-    .where(and(eq(orders.organizationId, organization.id), gte(orders.createdAt, thirtyDaysAgo)));
-  const spend30d = items30d.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0);
-  const hasPricing = items30d.some((i) => i.indicativePrice);
-
   const byProduct = new Map<
     string,
     { productId: string; name: string; sku: string; unit: string; indicativePrice: string | null; orderCount: number; lastOrderedAt: string }
@@ -87,19 +78,13 @@ export default async function DashboardPage() {
         subtitle="Voici un aperçu de votre activité."
         action={
           <Link href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>
-            Commander
+            Approvisionner
           </Link>
         }
       />
 
       <h2 className="eyebrow">Performance</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
-        {hasPricing && (
-          <div className="stat-card stat-card-accent">
-            <div className="stat-value">{spend30d.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}</div>
-            <div className="stat-label">Dépenses indicatives (30j)</div>
-          </div>
-        )}
         <div className="stat-card">
           <div className="stat-value">{orders30d.length}</div>
           <div className="stat-label">Commandes (30j)</div>

@@ -72,8 +72,8 @@ export function CartTable({
       <EmptyState
         illustration="cart"
         title="Votre panier est vide"
-        description="Ajoutez des produits depuis le catalogue ou reprenez une commande précédente."
-        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir le catalogue</a>}
+        description="Ajoutez des produits depuis la page Produits Lessiviels ou reprenez une commande précédente."
+        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir les produits lessiviels</a>}
       />
     );
   }

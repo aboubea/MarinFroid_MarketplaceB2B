@@ -23,7 +23,7 @@ export function AppShell({
 }) {
   const links = [
     { href: "/dashboard", label: "Tableau de bord", icon: <IconHome /> },
-    { href: "/catalog", label: "Catalogue", icon: <IconGrid /> },
+    { href: "/catalog", label: "Produits Lessiviels", icon: <IconGrid /> },
     { href: "/reachat", label: "Réachat rapide", icon: <IconRefresh size={16} /> },
     { href: "/orders", label: "Commandes", icon: <IconList /> },
     ...(role === "org_admin" ? [{ href: "/team", label: "Équipe", icon: <IconUsers /> }] : []),
