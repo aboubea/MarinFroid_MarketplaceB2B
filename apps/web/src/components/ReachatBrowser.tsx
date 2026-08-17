@@ -97,7 +97,7 @@ export function ReachatBrowser({ items }: { items: Item[] }) {
         illustration="box"
         title="Pas encore d'historique"
         description="Vos produits habituels apparaîtront ici après votre première commande."
-        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir le catalogue</a>}
+        action={<a href="/catalog" className="btn-primary" style={{ display: "inline-block" }}>Parcourir les produits lessiviels</a>}
       />
     );
   }

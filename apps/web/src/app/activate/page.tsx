@@ -102,7 +102,7 @@ function ActivateForm() {
   return (
     <AuthSplitShell
       headline="Bienvenue dans votre espace professionnel."
-      description="Activez votre compte pour accéder au catalogue, passer vos commandes et suivre leur préparation en temps réel."
+      description="Activez votre compte pour accéder aux produits lessiviels, passer vos commandes et suivre leur préparation en temps réel."
     >
       <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 4 }}>Activez votre compte</h2>
 

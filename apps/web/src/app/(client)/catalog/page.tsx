@@ -22,7 +22,7 @@ export default async function CatalogPage() {
 
   return (
     <>
-      <PageHeader title="Catalogue" />
+      <PageHeader title="Produits Lessiviels" />
       <CatalogBrowser
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
         products={allProducts.map((p) => ({

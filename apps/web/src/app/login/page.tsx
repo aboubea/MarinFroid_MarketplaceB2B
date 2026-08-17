@@ -7,7 +7,7 @@ import { useBranding } from "@/components/BrandingContext";
 import { useTransparentLogo } from "@/lib/strip-image-background";
 
 const BENEFITS = [
-  "Catalogue professionnel dédié",
+  "Produits lessiviels professionnels dédiés",
   "Disponibilité en temps réel",
   "Commandes express",
   "Livraison planifiée",
