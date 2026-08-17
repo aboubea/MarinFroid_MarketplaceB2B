@@ -334,17 +334,19 @@ a.card:hover, .card.interactive:hover {
   /* Clears the docked buy-bar (product pages, <=700px) so the two floating
      controls never overlap; harmless extra clearance on pages without it. */
   bottom: calc(84px + env(safe-area-inset-bottom));
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  border: none;
-  background: var(--color-primary);
+  border: 2.5px solid rgba(255, 255, 255, 0.92);
+  background: linear-gradient(150deg, var(--color-primary), var(--color-primary-hover));
   color: #fff;
-  box-shadow: var(--shadow-elevated);
+  /* Colored glow (on-brand) layered under the ambient elevation shadow so
+     the button reads clearly against photos, tables, and light cards. */
+  box-shadow: 0 10px 26px rgba(14, 124, 123, 0.42), var(--shadow-elevated);
   z-index: 46;
-  transition: transform 0.18s var(--ease-spring), box-shadow 0.2s var(--ease);
+  transition: transform 0.18s var(--ease-spring), box-shadow 0.2s var(--ease), filter 0.15s var(--ease);
 }
-.mobile-menu-fab:hover { filter: brightness(1.05); }
+.mobile-menu-fab:hover { filter: brightness(1.08); }
 .mobile-menu-fab:active { transform: scale(0.92); }
 .mobile-menu-fab-bar {
   transform-box: fill-box;
