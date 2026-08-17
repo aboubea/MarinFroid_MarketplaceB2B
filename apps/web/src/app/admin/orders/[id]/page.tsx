@@ -2,9 +2,9 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses, products } from "@marin-froid/db";
-import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { PageHeader } from "@/components/PageHeader";
+import { orderStatusLabel } from "@/lib/order-status";
 
 function formatEUR(value: number) {
   return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
@@ -49,7 +49,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       <PageHeader
         title={order.reference}
         subtitle={`${organization?.name} · ${new Date(order.createdAt).toLocaleString("fr-FR")}`}
-        action={<OrderStatusSelect orderId={order.id} currentStatus={order.status} />}
+        action={<span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>}
       />
 
       <div style={{ marginBottom: 20 }}>
