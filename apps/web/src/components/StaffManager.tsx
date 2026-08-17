@@ -28,7 +28,6 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
   const [query, setQuery] = useState("");
   const [showInvite, setShowInvite] = useState(false);
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"mf_admin" | "mf_ops">("mf_ops");
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
@@ -55,7 +54,7 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
     const result = await safeFetch("/api/admin/staff/invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ email, role: "mf_admin" }),
     });
     setSending(false);
     if (result.ok) {
@@ -64,22 +63,6 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
       toast.show("Invitation envoyée.", "success");
     } else {
       toast.show(result.error ?? "Erreur lors de l'envoi de l'invitation.", "error");
-    }
-  }
-
-  async function changeRole(id: string, role: "mf_admin" | "mf_ops") {
-    const previous = members;
-    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role } : m)));
-    const result = await safeFetch(`/api/admin/staff/${id}/role`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role }),
-    });
-    if (!result.ok) {
-      setMembers(previous);
-      toast.show(result.error ?? "Impossible de mettre à jour le rôle.", "error");
-    } else {
-      toast.show("Rôle mis à jour.", "success");
     }
   }
 
@@ -114,10 +97,6 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
       {showInvite && (
         <form onSubmit={handleInvite} className="card fade-up invite-client-form" style={{ padding: 18, marginBottom: 20 }}>
           <input className="input" type="email" autoComplete="email" placeholder="email@marinfroid.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <select className="input" value={role} onChange={(e) => setRole(e.target.value as "mf_admin" | "mf_ops")}>
-            <option value="mf_ops">Équipe préparation</option>
-            <option value="mf_admin">Administrateur</option>
-          </select>
           <button className="btn-primary" type="submit" disabled={sending}>{sending ? "Envoi..." : "Envoyer l'invitation"}</button>
           <button className="btn-secondary" type="button" onClick={() => setShowInvite(false)}>Annuler</button>
         </form>
@@ -150,21 +129,7 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
                       </div>
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{m.email}</td>
-                    <td>
-                      {m.id === currentUserId ? (
-                        ROLE_LABELS[m.role] ?? m.role
-                      ) : (
-                        <select
-                          className="input"
-                          style={{ width: "auto", fontSize: 12.5, padding: "6px 10px" }}
-                          value={m.role}
-                          onChange={(e) => changeRole(m.id, e.target.value as "mf_admin" | "mf_ops")}
-                        >
-                          <option value="mf_ops">Équipe préparation</option>
-                          <option value="mf_admin">Administrateur</option>
-                        </select>
-                      )}
-                    </td>
+                    <td>{ROLE_LABELS[m.role] ?? m.role}</td>
                     <td>
                       <span className={`status-dot ${m.active ? "on" : "off"}`}>{m.active ? "Actif" : "Désactivé"}</span>
                     </td>

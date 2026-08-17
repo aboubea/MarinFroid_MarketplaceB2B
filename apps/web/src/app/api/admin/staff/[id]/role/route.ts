@@ -5,7 +5,10 @@ import { getDb } from "@/lib/db";
 import { users } from "@marin-froid/db";
 import { logActivity } from "@/lib/activity";
 
-const ALLOWED_ROLES = ["mf_admin", "mf_ops"] as const;
+// mf_ops is a legacy, interface-less role — only promoting to mf_admin is
+// allowed going forward (an existing mf_ops account can still be targeted,
+// see the query below, e.g. to promote one).
+const ALLOWED_ROLES = ["mf_admin"] as const;
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -37,7 +40,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     action: "staff_role_updated",
     entityType: "user",
     entityId: id,
-    summary: `Rôle de ${target.fullName} changé en « ${role === "mf_admin" ? "Administrateur" : "Équipe préparation"} »`,
+    summary: `Rôle de ${target.fullName} changé en « Administrateur »`,
   });
 
   return NextResponse.json({ ok: true });

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "./db";
-import { orders, orderItems, orderStatusHistory, notificationRecipients } from "@marin-froid/db";
+import { orders, orderItems, orderStatusHistory, notificationRecipients, deliveryAddresses } from "@marin-froid/db";
 import { getCartWithItems, clearCart } from "./cart";
 import { createEmailClient, orderCreatedEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "./notification-settings";
@@ -53,7 +53,11 @@ export async function submitOrderFromCart(params: {
       deliveryAddressId: params.deliveryAddressId ?? null,
       notes: params.notes ?? null,
       estimatedDeliveryDate,
-      status: "submitted",
+      // No separate confirmation step anymore — an order goes straight to
+      // "in preparation" the moment it's placed. Marin Froid staff no
+      // longer have a dedicated ops interface; they just receive an email
+      // (see sendOrderCreatedEmails below) with the order to fulfill.
+      status: "processing",
     })
     .returning();
 
@@ -68,7 +72,7 @@ export async function submitOrderFromCart(params: {
     }))
   );
 
-  await db.insert(orderStatusHistory).values({ orderId: order.id, status: "submitted" });
+  await db.insert(orderStatusHistory).values({ orderId: order.id, status: "processing" });
 
   await clearCart(cart.id);
 
@@ -87,7 +91,7 @@ export async function submitOrderFromCart(params: {
     organizationId: params.organizationId,
     category: "order_created",
     title: `Commande ${reference} transmise`,
-    body: `${items.length} article(s) — en attente de confirmation par l'équipe Marin Froid.`,
+    body: `${items.length} article(s) — en cours de préparation par l'équipe Marin Froid.`,
     orderId: order.id,
   });
 
@@ -98,18 +102,25 @@ export async function submitOrderFromCart(params: {
       organizationId: params.organizationId,
       category: "order_created",
       title: `Commande ${reference} transmise par ${params.userFullName ?? params.userEmail}`,
-      body: `${items.length} article(s) — en attente de confirmation par l'équipe Marin Froid.`,
+      body: `${items.length} article(s) — en cours de préparation par l'équipe Marin Froid.`,
       orderId: order.id,
     });
   }
 
+  const address = params.deliveryAddressId
+    ? await db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, params.deliveryAddressId) })
+    : null;
+
   await sendOrderCreatedEmails({
     reference,
     organizationName: params.organizationName,
-    itemCount: items.length,
+    items: items.map((i) => ({ name: i.name, sku: i.sku, quantity: i.quantity, unit: i.unit })),
     orderId: order.id,
     customerEmail: params.userEmail,
     ccEmails: broadcastUsers.map((u) => u.email),
+    estimatedDeliveryDate: estimatedDeliveryDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
+    deliveryAddress: address ? `${address.label} · ${address.line1}, ${address.postalCode} ${address.city}` : null,
+    notes: params.notes ?? null,
   });
 
   return order;
@@ -118,10 +129,13 @@ export async function submitOrderFromCart(params: {
 async function sendOrderCreatedEmails(params: {
   reference: string;
   organizationName: string;
-  itemCount: number;
+  items: { name: string; sku: string; quantity: number; unit: string }[];
   orderId: string;
   customerEmail: string;
   ccEmails?: string[];
+  estimatedDeliveryDate?: string | null;
+  deliveryAddress?: string | null;
+  notes?: string | null;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -137,9 +151,10 @@ async function sendOrderCreatedEmails(params: {
     const customerTemplate = orderCreatedEmail({
       reference: params.reference,
       organizationName: params.organizationName,
-      itemCount: params.itemCount,
+      items: params.items,
       orderUrl,
       isForOps: false,
+      estimatedDeliveryDate: params.estimatedDeliveryDate,
     });
     const recipients = [params.customerEmail, ...(params.ccEmails ?? [])];
     for (const email of recipients) {
@@ -152,9 +167,12 @@ async function sendOrderCreatedEmails(params: {
     const opsTemplate = orderCreatedEmail({
       reference: params.reference,
       organizationName: params.organizationName,
-      itemCount: params.itemCount,
+      items: params.items,
       orderUrl,
       isForOps: true,
+      estimatedDeliveryDate: params.estimatedDeliveryDate,
+      deliveryAddress: params.deliveryAddress,
+      notes: params.notes,
     });
     for (const recipient of recipients) {
       await sendTrackedEmail(emailClient, "order_created", { to: recipient.email, ...opsTemplate, relatedOrderId: params.orderId });

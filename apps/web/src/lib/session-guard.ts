@@ -17,9 +17,13 @@ export async function requireClientSession() {
   return { session: session!, organization: org! };
 }
 
+// The mf_ops (preparer) role no longer has any interface — those staff
+// just receive order emails via the notification recipients list. Both
+// guards below are equivalent now, but kept separate since call sites
+// still name the one that matches their intent.
 export async function requireMarinFroidSession() {
   const session = await getSession();
-  if (!session || (session.role !== "mf_admin" && session.role !== "mf_ops")) {
+  if (!session || session.role !== "mf_admin") {
     redirect("/login");
   }
   return session!;
@@ -27,11 +31,8 @@ export async function requireMarinFroidSession() {
 
 export async function requireMarinFroidAdminSession() {
   const session = await getSession();
-  if (!session || (session.role !== "mf_admin" && session.role !== "mf_ops")) {
+  if (!session || session.role !== "mf_admin") {
     redirect("/login");
-  }
-  if (session!.role !== "mf_admin") {
-    redirect("/admin");
   }
   return session!;
 }

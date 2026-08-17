@@ -5,7 +5,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await requireMarinFroidSession();
 
   return (
-    <AdminShell fullName={session.fullName} role={session.role}>
+    <AdminShell fullName={session.fullName}>
       {children}
     </AdminShell>
   );

@@ -8,7 +8,9 @@ import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
 import { sendTrackedEmail } from "@/lib/email-log";
 
-const ALLOWED_ROLES = ["mf_admin", "mf_ops"] as const;
+// The preparer (mf_ops) role no longer has an interface — those staff are
+// just added as email-only notification recipients instead of accounts.
+const ALLOWED_ROLES = ["mf_admin"] as const;
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
     organizationId: session.organizationId,
     action: "invitation_sent",
     entityType: "user",
-    summary: `Collaborateur Marin Froid invité (${email}, ${role === "mf_admin" ? "administrateur" : "équipe préparation"})`,
+    summary: `Collaborateur Marin Froid invité (${email}, administrateur)`,
   });
 
   return NextResponse.json({ ok: true });

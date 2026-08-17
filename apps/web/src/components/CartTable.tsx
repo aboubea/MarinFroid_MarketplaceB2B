@@ -142,7 +142,7 @@ export function CartTable({
 
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
-            Notes au préparateur (optionnel)
+            Notes pour l&apos;équipe Marin Froid (optionnel)
           </label>
           <textarea
             className="input"
