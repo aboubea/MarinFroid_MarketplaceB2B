@@ -2,11 +2,15 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, deliveryAddresses, orderStatusHistory } from "@marin-froid/db";
+import { orders, orderItems, deliveryAddresses, orderStatusHistory, products } from "@marin-froid/db";
 import { ReorderButton } from "@/components/ReorderButton";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { orderStatusLabel } from "@/lib/order-status";
 import { PageHeader } from "@/components/PageHeader";
+
+function formatEUR(value: number) {
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+}
 
 export default async function OrderDetailPage({
   params,
@@ -25,8 +29,20 @@ export default async function OrderDetailPage({
   });
   if (!order) notFound();
 
-  const [items, address, history] = await Promise.all([
-    db.query.orderItems.findMany({ where: eq(orderItems.orderId, order.id) }),
+  const [rawItems, address, history] = await Promise.all([
+    db
+      .select({
+        id: orderItems.id,
+        productNameSnapshot: orderItems.productNameSnapshot,
+        skuSnapshot: orderItems.skuSnapshot,
+        unitSnapshot: orderItems.unitSnapshot,
+        quantity: orderItems.quantity,
+        preparedQuantity: orderItems.preparedQuantity,
+        indicativePrice: products.indicativePrice,
+      })
+      .from(orderItems)
+      .innerJoin(products, eq(products.id, orderItems.productId))
+      .where(eq(orderItems.orderId, order.id)),
     order.deliveryAddressId
       ? db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, order.deliveryAddressId) })
       : Promise.resolve(null),
@@ -35,6 +51,15 @@ export default async function OrderDetailPage({
       orderBy: (h, { asc }) => [asc(h.createdAt)],
     }),
   ]);
+
+  const items = rawItems.map((item) => {
+    const unitPrice = item.indicativePrice ? Number(item.indicativePrice) : null;
+    const qty = item.preparedQuantity ?? item.quantity;
+    return { ...item, unitPrice, lineTotal: unitPrice !== null ? unitPrice * qty : null };
+  });
+  const orderTotal = items.some((i) => i.unitPrice !== null)
+    ? items.reduce((sum, i) => sum + (i.lineTotal ?? 0), 0)
+    : null;
 
   return (
     <>
@@ -83,19 +108,33 @@ export default async function OrderDetailPage({
 
       <div className="card" style={{ overflow: "hidden", marginBottom: 20 }}>
         {items.map((item, idx) => (
-          <div key={item.id} style={{ padding: 16, borderBottom: idx < items.length - 1 ? "1px solid var(--color-border)" : "none", display: "flex", justifyContent: "space-between" }}>
-            <div>
+          <div key={item.id} style={{ padding: 16, borderBottom: idx < items.length - 1 ? "1px solid var(--color-border)" : "none", display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{item.productNameSnapshot}</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.skuSnapshot} · {item.unitSnapshot}</div>
+              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
+                {item.skuSnapshot} · {item.unitSnapshot}
+                {item.unitPrice !== null && ` · ${formatEUR(item.unitPrice)} / ${item.unitSnapshot}`}
+              </div>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontWeight: 600 }}>× {item.preparedQuantity ?? item.quantity}</div>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              {item.lineTotal !== null && (
+                <div style={{ fontWeight: 700, fontSize: 14.5 }}>{formatEUR(item.lineTotal)}</div>
+              )}
+              <div style={{ fontWeight: item.lineTotal !== null ? 500 : 600, fontSize: item.lineTotal !== null ? 12 : 14, color: item.lineTotal !== null ? "var(--color-text-muted)" : undefined }}>
+                × {item.preparedQuantity ?? item.quantity}
+              </div>
               {item.preparedQuantity !== null && item.preparedQuantity !== item.quantity && (
                 <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>commandé × {item.quantity}</div>
               )}
             </div>
           </div>
         ))}
+        {orderTotal !== null && (
+          <div style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--color-bg)" }}>
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--color-text-muted)" }}>Total indicatif</span>
+            <span style={{ fontSize: 17, fontWeight: 750, letterSpacing: "-0.01em" }}>{formatEUR(orderTotal)}</span>
+          </div>
+        )}
       </div>
 
       <ReorderButton orderId={order.id} />
