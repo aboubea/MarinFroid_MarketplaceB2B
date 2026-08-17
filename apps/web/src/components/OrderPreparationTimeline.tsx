@@ -72,7 +72,15 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
-export function OrderPreparationTimeline({ status, history }: { status: string; history: HistoryEntry[] }) {
+export function OrderPreparationTimeline({
+  status,
+  history,
+  estimatedDeliveryDate,
+}: {
+  status: string;
+  history: HistoryEntry[];
+  estimatedDeliveryDate?: string | null;
+}) {
   if (status === "cancelled") {
     return (
       <div className="card" style={{ padding: "20px 24px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
@@ -92,6 +100,7 @@ export function OrderPreparationTimeline({ status, history }: { status: string; 
           const done = idx <= currentIndex;
           const isCurrent = idx === currentIndex;
           const date = dateByStatus.get(step.key);
+          const showEstimate = !date && step.key === "completed" && !done && !!estimatedDeliveryDate;
           return (
             <div key={step.key} className="order-timeline-item" style={{ flex: idx < STEPS.length - 1 ? 1 : "0 0 auto" }}>
               <div className="order-timeline-step">
@@ -111,6 +120,11 @@ export function OrderPreparationTimeline({ status, history }: { status: string; 
                     <div className="order-timeline-title-row">
                       <span className="order-timeline-title">{step.title}</span>
                       {date && <span className="order-timeline-date" style={{ color: done ? "var(--color-success)" : "var(--color-text-faint)" }}>{formatDate(date)}</span>}
+                      {showEstimate && (
+                        <span className="order-timeline-date order-timeline-date-estimate">
+                          est. {formatDate(estimatedDeliveryDate!)}
+                        </span>
+                      )}
                     </div>
                     <div className="order-timeline-subtitle">{step.subtitle}</div>
                   </div>
