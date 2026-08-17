@@ -644,7 +644,7 @@ a.card:hover, .card.interactive:hover {
      the greeting and the action buttons on a phone. */
   .topbar-org { display: none; }
   .topbar-org-name { display: none; }
-  .topbar-logo { display: block; }
+  .topbar-logo { display: block; height: 52px; max-width: 55vw; }
   .page-title { font-size: 24px; }
   .btn-primary, .btn-secondary, .btn-accent { padding: 12px 20px; }
   .data-table thead th, .data-table tbody td { padding: 11px 14px; font-size: 13px; }
