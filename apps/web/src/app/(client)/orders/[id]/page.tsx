@@ -2,8 +2,9 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, deliveryAddresses, products } from "@marin-froid/db";
+import { orders, orderItems, orderStatusHistory, deliveryAddresses, products } from "@marin-froid/db";
 import { ReorderButton } from "@/components/ReorderButton";
+import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { orderStatusLabel } from "@/lib/order-status";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -28,7 +29,7 @@ export default async function OrderDetailPage({
   });
   if (!order) notFound();
 
-  const [rawItems, address] = await Promise.all([
+  const [rawItems, address, history] = await Promise.all([
     db
       .select({
         id: orderItems.id,
@@ -44,6 +45,10 @@ export default async function OrderDetailPage({
     order.deliveryAddressId
       ? db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, order.deliveryAddressId) })
       : Promise.resolve(null),
+    db.query.orderStatusHistory.findMany({
+      where: eq(orderStatusHistory.orderId, order.id),
+      orderBy: (h, { asc }) => [asc(h.createdAt)],
+    }),
   ]);
 
   const items = rawItems.map((item) => {
@@ -69,6 +74,14 @@ export default async function OrderDetailPage({
         subtitle={new Date(order.createdAt).toLocaleString("fr-FR")}
         action={<span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>}
       />
+
+      <div style={{ marginBottom: 20 }}>
+        <OrderPreparationTimeline
+          status={order.status}
+          history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
+          estimatedDeliveryDate={order.estimatedDeliveryDate?.toString() ?? null}
+        />
+      </div>
 
       {(address || order.estimatedDeliveryDate || order.notes) && (
         <div className="card" style={{ padding: 16, marginBottom: 20, fontSize: 13, color: "var(--color-text-muted)", display: "flex", flexDirection: "column", gap: 6 }}>
