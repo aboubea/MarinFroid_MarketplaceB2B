@@ -17,6 +17,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Identifiants invalides." }, { status: 401 });
   }
 
+  if (user.role === "mf_ops") {
+    return NextResponse.json(
+      { error: "Ce rôle n'a plus d'accès à la plateforme : les commandes sont désormais transmises par email." },
+      { status: 403 },
+    );
+  }
+
   await createSession({
     userId: user.id,
     organizationId: user.organizationId,

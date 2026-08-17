@@ -4,8 +4,11 @@ import { getDb } from "@/lib/db";
 import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses, products } from "@marin-froid/db";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
-import { OrderItemsPrepPanel } from "@/components/OrderItemsPrepPanel";
 import { PageHeader } from "@/components/PageHeader";
+
+function formatEUR(value: number) {
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+}
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,7 +26,6 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         skuSnapshot: orderItems.skuSnapshot,
         unitSnapshot: orderItems.unitSnapshot,
         quantity: orderItems.quantity,
-        preparedQuantity: orderItems.preparedQuantity,
         indicativePrice: products.indicativePrice,
       })
       .from(orderItems)
@@ -38,12 +40,16 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       : Promise.resolve(null),
   ]);
 
+  const orderTotal = items.some((i) => i.indicativePrice)
+    ? items.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * i.quantity : 0), 0)
+    : null;
+
   return (
     <>
       <PageHeader
         title={order.reference}
         subtitle={`${organization?.name} · ${new Date(order.createdAt).toLocaleString("fr-FR")}`}
-        action={<OrderStatusSelect orderId={order.id} currentStatus={order.status} hideNextForStatuses={["processing"]} />}
+        action={<OrderStatusSelect orderId={order.id} currentStatus={order.status} />}
       />
 
       <div style={{ marginBottom: 20 }}>
@@ -80,7 +86,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           {order.notes && (
             <div style={{ gridColumn: "1 / -1" }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: 4 }}>
-                Notes au préparateur
+                Notes internes
               </div>
               <div style={{ fontSize: 13, color: "var(--color-text)" }}>{order.notes}</div>
             </div>
@@ -88,7 +94,33 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
       )}
 
-      <OrderItemsPrepPanel orderId={order.id} orderStatus={order.status} items={items} />
+      <div className="card" style={{ overflow: "hidden" }}>
+        {items.map((item, idx) => (
+          <div key={item.id} style={{ padding: 16, borderBottom: idx < items.length - 1 ? "1px solid var(--color-border)" : "none", display: "flex", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{item.productNameSnapshot}</div>
+              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
+                {item.skuSnapshot} · {item.unitSnapshot}
+                {item.indicativePrice && ` · ${formatEUR(Number(item.indicativePrice))} / ${item.unitSnapshot}`}
+              </div>
+            </div>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              {item.indicativePrice && (
+                <div style={{ fontWeight: 700, fontSize: 14.5 }}>{formatEUR(Number(item.indicativePrice) * item.quantity)}</div>
+              )}
+              <div style={{ fontWeight: item.indicativePrice ? 500 : 600, fontSize: item.indicativePrice ? 12 : 14, color: item.indicativePrice ? "var(--color-text-muted)" : undefined }}>
+                × {item.quantity}
+              </div>
+            </div>
+          </div>
+        ))}
+        {orderTotal !== null && (
+          <div style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--color-bg)" }}>
+            <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--color-text-muted)" }}>Total indicatif</span>
+            <span style={{ fontSize: 17, fontWeight: 750, letterSpacing: "-0.01em" }}>{formatEUR(orderTotal)}</span>
+          </div>
+        )}
+      </div>
     </>
   );
 }

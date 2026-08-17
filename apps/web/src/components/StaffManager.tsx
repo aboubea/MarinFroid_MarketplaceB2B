@@ -28,10 +28,11 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
   const [query, setQuery] = useState("");
   const [showInvite, setShowInvite] = useState(false);
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<"mf_admin" | "mf_ops">("mf_ops");
   const [sending, setSending] = useState(false);
 
-  useEffect(() => {
+  function loadStaff() {
     safeFetch<{ users: StaffMember[] }>("/api/admin/staff").then((result) => {
       setLoading(false);
       if (result.ok && result.data) {
@@ -40,6 +41,10 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
         toast.show(result.error ?? "Impossible de charger l'équipe.", "error");
       }
     });
+  }
+
+  useEffect(() => {
+    loadStaff();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -55,13 +60,15 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
     const result = await safeFetch("/api/admin/staff/invite", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ email, role, fullName: role === "mf_ops" ? fullName : undefined }),
     });
     setSending(false);
     if (result.ok) {
       setEmail("");
+      setFullName("");
       setShowInvite(false);
-      toast.show("Invitation envoyée.", "success");
+      toast.show(role === "mf_ops" ? "Destinataire ajouté." : "Invitation envoyée.", "success");
+      loadStaff();
     } else {
       toast.show(result.error ?? "Erreur lors de l'envoi de l'invitation.", "error");
     }
@@ -114,11 +121,16 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
       {showInvite && (
         <form onSubmit={handleInvite} className="card fade-up invite-client-form" style={{ padding: 18, marginBottom: 20 }}>
           <input className="input" type="email" autoComplete="email" placeholder="email@marinfroid.fr" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          {role === "mf_ops" && (
+            <input className="input" placeholder="Nom (ex. Équipe préparation)" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          )}
           <select className="input" value={role} onChange={(e) => setRole(e.target.value as "mf_admin" | "mf_ops")}>
-            <option value="mf_ops">Équipe préparation</option>
-            <option value="mf_admin">Administrateur</option>
+            <option value="mf_ops">Équipe préparation — reçoit le récapitulatif des commandes par email</option>
+            <option value="mf_admin">Administrateur — accès complet au back-office</option>
           </select>
-          <button className="btn-primary" type="submit" disabled={sending}>{sending ? "Envoi..." : "Envoyer l'invitation"}</button>
+          <button className="btn-primary" type="submit" disabled={sending}>
+            {sending ? "Envoi..." : role === "mf_ops" ? "Ajouter le destinataire" : "Envoyer l'invitation"}
+          </button>
           <button className="btn-secondary" type="button" onClick={() => setShowInvite(false)}>Annuler</button>
         </form>
       )}

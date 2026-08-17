@@ -2,9 +2,8 @@ import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { requireClientSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, deliveryAddresses, orderStatusHistory, products } from "@marin-froid/db";
+import { orders, orderItems, deliveryAddresses, products } from "@marin-froid/db";
 import { ReorderButton } from "@/components/ReorderButton";
-import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { orderStatusLabel } from "@/lib/order-status";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -29,7 +28,7 @@ export default async function OrderDetailPage({
   });
   if (!order) notFound();
 
-  const [rawItems, address, history] = await Promise.all([
+  const [rawItems, address] = await Promise.all([
     db
       .select({
         id: orderItems.id,
@@ -37,7 +36,6 @@ export default async function OrderDetailPage({
         skuSnapshot: orderItems.skuSnapshot,
         unitSnapshot: orderItems.unitSnapshot,
         quantity: orderItems.quantity,
-        preparedQuantity: orderItems.preparedQuantity,
         indicativePrice: products.indicativePrice,
       })
       .from(orderItems)
@@ -46,16 +44,11 @@ export default async function OrderDetailPage({
     order.deliveryAddressId
       ? db.query.deliveryAddresses.findFirst({ where: eq(deliveryAddresses.id, order.deliveryAddressId) })
       : Promise.resolve(null),
-    db.query.orderStatusHistory.findMany({
-      where: eq(orderStatusHistory.orderId, order.id),
-      orderBy: (h, { asc }) => [asc(h.createdAt)],
-    }),
   ]);
 
   const items = rawItems.map((item) => {
     const unitPrice = item.indicativePrice ? Number(item.indicativePrice) : null;
-    const qty = item.preparedQuantity ?? item.quantity;
-    return { ...item, unitPrice, lineTotal: unitPrice !== null ? unitPrice * qty : null };
+    return { ...item, unitPrice, lineTotal: unitPrice !== null ? unitPrice * item.quantity : null };
   });
   const orderTotal = items.some((i) => i.unitPrice !== null)
     ? items.reduce((sum, i) => sum + (i.lineTotal ?? 0), 0)
@@ -76,14 +69,6 @@ export default async function OrderDetailPage({
         subtitle={new Date(order.createdAt).toLocaleString("fr-FR")}
         action={<span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>}
       />
-
-      <div style={{ marginBottom: 20 }}>
-        <OrderPreparationTimeline
-          status={order.status}
-          history={history.map((h) => ({ status: h.status, createdAt: h.createdAt.toString() }))}
-          estimatedDeliveryDate={order.estimatedDeliveryDate?.toString() ?? null}
-        />
-      </div>
 
       {(address || order.estimatedDeliveryDate || order.notes) && (
         <div className="card" style={{ padding: 16, marginBottom: 20, fontSize: 13, color: "var(--color-text-muted)", display: "flex", flexDirection: "column", gap: 6 }}>
@@ -121,11 +106,8 @@ export default async function OrderDetailPage({
                 <div style={{ fontWeight: 700, fontSize: 14.5 }}>{formatEUR(item.lineTotal)}</div>
               )}
               <div style={{ fontWeight: item.lineTotal !== null ? 500 : 600, fontSize: item.lineTotal !== null ? 12 : 14, color: item.lineTotal !== null ? "var(--color-text-muted)" : undefined }}>
-                × {item.preparedQuantity ?? item.quantity}
+                × {item.quantity}
               </div>
-              {item.preparedQuantity !== null && item.preparedQuantity !== item.quantity && (
-                <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>commandé × {item.quantity}</div>
-              )}
             </div>
           </div>
         ))}

@@ -4,20 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { useBranding } from "./BrandingContext";
-import { IconHome, IconClipboard, IconList, IconUsers, IconPalette, IconBell, IconActivity, IconGrid, IconColumns, IconTruck, IconShield } from "./icons";
+import { IconHome, IconList, IconUsers, IconPalette, IconBell, IconActivity, IconGrid, IconColumns, IconTruck, IconShield } from "./icons";
 
-const ADMIN_ONLY_LINKS = [
+const LINKS = [
   { href: "/admin/overview", label: "Administration", icon: <IconHome /> },
-];
-
-const SHARED_LINKS = [
-  { href: "/admin", label: "Préparation", icon: <IconClipboard /> },
   { href: "/admin/planning", label: "Planning", icon: <IconColumns /> },
   { href: "/admin/deliveries", label: "Livraisons du jour", icon: <IconTruck /> },
   { href: "/admin/orders", label: "Commandes", icon: <IconList /> },
-];
-
-const ADMIN_ONLY_TAIL_LINKS = [
   { href: "/admin/catalog", label: "Catalogue", icon: <IconGrid /> },
   { href: "/admin/clients", label: "Clients", icon: <IconUsers /> },
   { href: "/admin/staff", label: "Équipe Marin Froid", icon: <IconShield /> },
@@ -26,18 +19,14 @@ const ADMIN_ONLY_TAIL_LINKS = [
   { href: "/admin/branding", label: "Branding", icon: <IconPalette /> },
 ];
 
-export function AdminShell({ children, fullName, role }: { children: React.ReactNode; fullName: string; role?: string }) {
-  const isAdmin = role === "mf_admin";
-  const links = isAdmin
-    ? [...ADMIN_ONLY_LINKS, ...SHARED_LINKS, ...ADMIN_ONLY_TAIL_LINKS]
-    : SHARED_LINKS;
+export function AdminShell({ children, fullName }: { children: React.ReactNode; fullName: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { logoUrl } = useBranding();
-  const homeHref = isAdmin ? "/admin/overview" : "/admin";
+  const homeHref = "/admin/overview";
 
   return (
     <div className="app-shell">
-      <Sidebar links={links} footerLabel="Équipe Marin Froid" homeHref={homeHref} mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
+      <Sidebar links={LINKS} footerLabel="Équipe Marin Froid" homeHref={homeHref} mobileOpen={mobileOpen} onCloseMobile={() => setMobileOpen(false)} />
       <div className="app-shell-content">
         <header className="topbar">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
