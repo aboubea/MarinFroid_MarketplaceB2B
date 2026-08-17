@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses } from "@marin-froid/db";
+import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses, products } from "@marin-froid/db";
 import { OrderStatusSelect } from "@/components/OrderStatusSelect";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
 import { OrderItemsPrepPanel } from "@/components/OrderItemsPrepPanel";
@@ -16,7 +16,19 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
   const [organization, items, history, deliveryAddress] = await Promise.all([
     db.query.organizations.findFirst({ where: eq(organizations.id, order.organizationId) }),
-    db.query.orderItems.findMany({ where: eq(orderItems.orderId, order.id) }),
+    db
+      .select({
+        id: orderItems.id,
+        productNameSnapshot: orderItems.productNameSnapshot,
+        skuSnapshot: orderItems.skuSnapshot,
+        unitSnapshot: orderItems.unitSnapshot,
+        quantity: orderItems.quantity,
+        preparedQuantity: orderItems.preparedQuantity,
+        indicativePrice: products.indicativePrice,
+      })
+      .from(orderItems)
+      .innerJoin(products, eq(products.id, orderItems.productId))
+      .where(eq(orderItems.orderId, order.id)),
     db.query.orderStatusHistory.findMany({
       where: eq(orderStatusHistory.orderId, order.id),
       orderBy: (h, { asc }) => [asc(h.createdAt)],

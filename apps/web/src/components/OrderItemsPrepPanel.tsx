@@ -12,6 +12,11 @@ interface Item {
   unitSnapshot: string;
   quantity: number;
   preparedQuantity: number | null;
+  indicativePrice?: string | null;
+}
+
+function formatEUR(value: number) {
+  return value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 }
 
 export function OrderItemsPrepPanel({ orderId, items, orderStatus }: { orderId: string; items: Item[]; orderStatus: string }) {
@@ -66,7 +71,10 @@ export function OrderItemsPrepPanel({ orderId, items, orderStatus }: { orderId: 
           >
             <div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{item.productNameSnapshot}</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{item.skuSnapshot} · {item.unitSnapshot}</div>
+              <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>
+                {item.skuSnapshot} · {item.unitSnapshot}
+                {item.indicativePrice && ` · ${formatEUR(Number(item.indicativePrice))} / ${item.unitSnapshot}`}
+              </div>
             </div>
 
             {editable ? (
@@ -79,18 +87,34 @@ export function OrderItemsPrepPanel({ orderId, items, orderStatus }: { orderId: 
                 </div>
               </div>
             ) : (
-              <div style={{ fontWeight: 600 }}>
-                × {item.preparedQuantity ?? item.quantity}
+              <div style={{ textAlign: "right" }}>
+                {item.indicativePrice && (
+                  <div style={{ fontWeight: 700, fontSize: 14.5 }}>
+                    {formatEUR(Number(item.indicativePrice) * (item.preparedQuantity ?? item.quantity))}
+                  </div>
+                )}
+                <div style={{ fontWeight: item.indicativePrice ? 500 : 600, fontSize: item.indicativePrice ? 12 : 14, color: item.indicativePrice ? "var(--color-text-muted)" : undefined }}>
+                  × {item.preparedQuantity ?? item.quantity}
+                </div>
                 {item.preparedQuantity !== null && item.preparedQuantity !== item.quantity && (
-                  <span style={{ fontSize: 11, color: "var(--color-text-muted)", fontWeight: 400, marginLeft: 6 }}>
-                    (commandé × {item.quantity})
-                  </span>
+                  <div style={{ fontSize: 11, color: "var(--color-text-muted)" }}>(commandé × {item.quantity})</div>
                 )}
               </div>
             )}
           </div>
         );
       })}
+
+      {!editable && items.some((i) => i.indicativePrice) && (
+        <div style={{ padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--color-bg)" }}>
+          <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--color-text-muted)" }}>Total indicatif</span>
+          <span style={{ fontSize: 17, fontWeight: 750, letterSpacing: "-0.01em" }}>
+            {formatEUR(
+              items.reduce((sum, i) => sum + (i.indicativePrice ? Number(i.indicativePrice) * (i.preparedQuantity ?? i.quantity) : 0), 0),
+            )}
+          </span>
+        </div>
+      )}
 
       {editable && (
         <div style={{ padding: 16, display: "flex", justifyContent: "flex-end" }}>
