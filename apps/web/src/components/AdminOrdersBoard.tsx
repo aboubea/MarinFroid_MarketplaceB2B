@@ -39,8 +39,6 @@ const TABS = [
   { key: "cancelled", label: "Annulées" },
 ];
 
-const STATUSES = ["submitted", "acknowledged", "processing", "shipped", "completed", "cancelled"];
-
 export function AdminOrdersBoard() {
   const toast = useToast();
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -49,7 +47,6 @@ export function AdminOrdersBoard() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<OrderDetail | null>(null);
-  const [savingStatus, setSavingStatus] = useState(false);
 
   function loadOrders() {
     safeFetch<{ orders: OrderRow[] }>("/api/admin/orders").then((result) => {
@@ -94,24 +91,6 @@ export function AdminOrdersBoard() {
       return matchesTab && matchesQuery;
     });
   }, [orders, tab, query]);
-
-  async function handleStatusChange(status: string) {
-    if (!detail) return;
-    setSavingStatus(true);
-    const result = await safeFetch(`/api/admin/orders/${detail.order.id}/status`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    setSavingStatus(false);
-    if (!result.ok) {
-      toast.show(result.error ?? "Impossible de mettre à jour le statut.", "error");
-      return;
-    }
-    setDetail({ ...detail, order: { ...detail.order, status } });
-    setOrders((prev) => prev.map((o) => (o.id === detail.order.id ? { ...o, status } : o)));
-    toast.show("Statut mis à jour.", "success");
-  }
 
   return (
     <div>
@@ -176,9 +155,7 @@ export function AdminOrdersBoard() {
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{detail.order.reference}</div>
                 <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{detail.organizationName}</div>
               </div>
-              <select className="input" style={{ width: "auto" }} value={detail.order.status} disabled={savingStatus} onChange={(e) => handleStatusChange(e.target.value)}>
-                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
+              <span className={`badge badge-${detail.order.status}`}>{orderStatusLabel(detail.order.status)}</span>
             </div>
 
             {detail.address && (
