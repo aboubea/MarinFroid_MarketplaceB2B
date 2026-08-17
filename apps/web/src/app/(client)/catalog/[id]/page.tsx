@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
@@ -27,8 +28,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div>
           <div className="product-thumb" style={{ aspectRatio: "1 / 1", fontSize: 13, marginBottom: 10 }}>
             {images.length > 0 ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={images[0].url} alt={product.name} fetchPriority="high" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <Image src={images[0].url} alt={product.name} fill priority sizes="(max-width: 860px) 100vw, 420px" style={{ objectFit: "cover" }} />
             ) : (
               product.sku
             )}
@@ -37,8 +37,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div className="product-thumb-grid">
               {images.slice(1).map((img) => (
                 <div key={img.id} className="product-thumb" style={{ aspectRatio: "1 / 1" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.url} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <Image src={img.url} alt="" fill sizes="(max-width: 860px) 30vw, 130px" style={{ objectFit: "cover" }} />
                 </div>
               ))}
             </div>

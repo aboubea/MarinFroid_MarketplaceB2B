@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
 
@@ -52,8 +53,7 @@ export function ProductTile({
       <Link href={`/catalog/${productId}`} style={{ display: "block" }}>
         <div className="product-thumb">
           {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt={name} loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <Image src={imageUrl} alt={name} fill sizes="(max-width: 560px) 45vw, (max-width: 960px) 30vw, 220px" style={{ objectFit: "cover" }} />
           ) : (
             sku
           )}

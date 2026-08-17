@@ -544,6 +544,7 @@ a.card:hover, .card.interactive:hover {
 .product-tile-actions .btn-primary { flex: 1; padding: 11px 16px; }
 
 .product-thumb {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-md);
