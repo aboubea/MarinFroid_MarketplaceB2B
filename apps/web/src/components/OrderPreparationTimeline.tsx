@@ -99,8 +99,12 @@ export function OrderPreparationTimeline({
         {STEPS.map((step, idx) => {
           const done = idx <= currentIndex;
           const isCurrent = idx === currentIndex;
-          const date = dateByStatus.get(step.key);
-          const showEstimate = !date && step.key === "completed" && !done && !!estimatedDeliveryDate;
+          // A "completed" history row can exist before the order is
+          // actually delivered (e.g. seeded/backfilled data) — while the
+          // step isn't done yet, always show the estimate rather than
+          // that not-yet-true date.
+          const date = step.key === "completed" && !done ? undefined : dateByStatus.get(step.key);
+          const showEstimate = step.key === "completed" && !done && !!estimatedDeliveryDate;
           return (
             <div key={step.key} className="order-timeline-item" style={{ flex: idx < STEPS.length - 1 ? 1 : "0 0 auto" }}>
               <div className="order-timeline-step">
