@@ -207,7 +207,7 @@ export function BrandingForm({
       <div>
         <label style={{ fontSize: 13, fontWeight: 600, display: "block", marginBottom: 2 }}>Couleur d&apos;action</label>
         <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "0 0 6px" }}>
-          Boutons « Ajouter au panier », liens et champs actifs.
+          Liens et champs actifs. (Les boutons « Ajouter au panier » suivent la couleur de marque fixe et ne sont pas affectés par ce réglage.)
         </p>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} />
@@ -226,7 +226,7 @@ export function BrandingForm({
       </div>
       {lowContrast && (
         <p style={{ fontSize: 12, color: "var(--color-warning)", background: "var(--color-warning-soft)", padding: "10px 12px", borderRadius: "var(--radius-md)", margin: 0 }}>
-          Attention : le contraste de la couleur d&apos;action sur fond clair est faible, le texte blanc des boutons risque d&apos;être peu lisible.
+          Attention : le contraste de la couleur d&apos;action sur fond clair est faible, les liens dans cette couleur risquent d&apos;être peu lisibles.
         </p>
       )}
 
@@ -240,10 +240,8 @@ export function BrandingForm({
             )}
             <span style={{ fontWeight: 700, letterSpacing: "-0.02em" }}>Marin Froid</span>
           </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button type="button" className="btn-primary" style={{ background: primaryColor, boxShadow: "none" }}>
-              Ajouter au panier
-            </button>
+          <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+            <a style={{ color: primaryColor, fontWeight: 650, fontSize: 13.5 }}>Voir tout →</a>
             <button type="button" className="btn-accent" style={{ background: secondaryColor, boxShadow: "none" }}>
               Valider la commande
             </button>

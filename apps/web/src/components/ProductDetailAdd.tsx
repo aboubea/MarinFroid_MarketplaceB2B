@@ -40,7 +40,7 @@ export function ProductDetailAdd({ productId }: { productId: string }) {
         className={`btn-primary buy-bar-cta ${added ? "success-pop" : ""}`}
         onClick={handleAdd}
         disabled={loading}
-        style={added ? { background: "var(--color-success)" } : undefined}
+        style={added ? { background: "var(--color-success)", color: "#fff" } : undefined}
       >
         {added ? "Ajouté au panier ✓" : loading ? "Ajout..." : "Ajouter au panier"}
       </button>

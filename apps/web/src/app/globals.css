@@ -13,10 +13,17 @@
   --color-ink: #101720;
   --color-ink-soft: #1B2534;
 
-  /* Vibrant action colour — this is what drives the "add to cart" pull */
+  /* Brand teal — links, focus states, badges. Admin-overridable via
+     branding settings (brand-theme.ts). Buttons use --color-btn instead. */
   --color-primary: #0E7C7B;
   --color-primary-hover: #0A6564;
   --color-primary-soft: #E6F4F4;
+  /* Dedicated to action-button fills (menu FAB, "Ajouter au panier", etc.)
+     per an explicit brand request — kept separate from --color-primary
+     since that token doubles as link/text color elsewhere, where this
+     lighter tone wouldn't read as legible text. */
+  --color-btn: rgb(156, 187, 182);
+  --color-btn-hover: rgb(133, 159, 155);
   --color-accent: #FF5A4E;
   --color-accent-hover: #E8483D;
   --color-accent-soft: #FFECEA;
@@ -43,6 +50,11 @@
   --shadow-cta-hover: 0 8px 22px rgba(14, 124, 123, 0.36);
   --shadow-accent: 0 2px 8px rgba(255, 90, 78, 0.3);
   --shadow-accent-hover: 0 8px 22px rgba(255, 90, 78, 0.38);
+  /* Independent of --shadow-cta (which the admin branding color can
+     override, see brand-theme.ts) so the fixed button color's glow
+     always matches it regardless of branding settings. */
+  --shadow-btn: 0 2px 8px rgba(133, 159, 155, 0.35);
+  --shadow-btn-hover: 0 8px 22px rgba(133, 159, 155, 0.42);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -130,8 +142,8 @@ a.card:hover, .card.interactive:hover {
 
 /* Buttons: pill-shaped, confident, with a spring press */
 .btn-primary {
-  background: var(--color-primary);
-  color: #fff;
+  background: var(--color-btn);
+  color: var(--color-ink);
   border: none;
   border-radius: var(--radius-pill);
   padding: 12px 22px;
@@ -139,9 +151,9 @@ a.card:hover, .card.interactive:hover {
   font-size: 14px;
   letter-spacing: -0.008em;
   transition: background 0.18s var(--ease), transform 0.16s var(--ease-spring), box-shadow 0.2s var(--ease);
-  box-shadow: var(--shadow-cta);
+  box-shadow: var(--shadow-btn);
 }
-.btn-primary:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-cta-hover); transform: translateY(-1px); }
+.btn-primary:hover { background: var(--color-btn-hover); box-shadow: var(--shadow-btn-hover); transform: translateY(-1px); }
 .btn-primary:active { transform: scale(0.96) translateY(0); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none; }
 
@@ -339,11 +351,11 @@ a.card:hover, .card.interactive:hover {
   height: 56px;
   border-radius: 50%;
   border: 2.5px solid rgba(255, 255, 255, 0.92);
-  background: linear-gradient(150deg, var(--color-primary), var(--color-primary-hover));
-  color: #fff;
+  background: linear-gradient(150deg, var(--color-btn), var(--color-btn-hover));
+  color: var(--color-ink);
   /* Colored glow (on-brand) layered under the ambient elevation shadow so
      the button reads clearly against photos, tables, and light cards. */
-  box-shadow: 0 10px 26px rgba(14, 124, 123, 0.42), var(--shadow-elevated);
+  box-shadow: 0 10px 26px rgba(133, 159, 155, 0.5), var(--shadow-elevated);
   z-index: 46;
   transition: transform 0.18s var(--ease-spring), box-shadow 0.2s var(--ease), filter 0.15s var(--ease);
 }

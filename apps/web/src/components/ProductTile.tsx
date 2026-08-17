@@ -80,7 +80,7 @@ export function ProductTile({
         </div>
         <button
           className="btn-primary"
-          style={added ? { background: "var(--color-success)", boxShadow: "none" } : undefined}
+          style={added ? { background: "var(--color-success)", color: "#fff", boxShadow: "none" } : undefined}
           onClick={handleAdd}
           disabled={loading}
         >
