@@ -185,6 +185,8 @@ a.card:hover, .card.interactive:hover {
 }
 .btn-secondary:hover { background: var(--color-bg); border-color: var(--color-text); }
 .btn-secondary:active { transform: scale(0.96); }
+.btn-secondary.danger { color: var(--color-danger); border-color: var(--color-danger-soft); }
+.btn-secondary.danger:hover { background: var(--color-danger-soft); border-color: var(--color-danger); }
 
 .btn-ghost {
   background: transparent;

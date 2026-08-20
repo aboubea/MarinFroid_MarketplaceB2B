@@ -4,17 +4,10 @@ import { requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
 import { organizations, users, deliveryAddresses } from "@marin-froid/db";
 import { OrgStatusToggle } from "@/components/OrgStatusToggle";
-import { Avatar } from "@/components/Avatar";
+import { OrgUsersTable } from "@/components/OrgUsersTable";
+import { DeleteOrgButton } from "@/components/DeleteOrgButton";
 import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
-
-const ROLE_LABELS: Record<string, string> = {
-  mf_admin: "Admin Marin Froid",
-  mf_ops: "Équipe commandes",
-  org_admin: "Administrateur",
-  org_buyer: "Acheteur",
-  org_viewer: "Lecture / administratif",
-};
 
 export default async function AdminClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,43 +21,22 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
 
   return (
     <>
-      <PageHeader title={organization.name} action={<OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />} />
+      <PageHeader
+        title={organization.name}
+        action={
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <OrgStatusToggle organizationId={organization.id} currentStatus={organization.status} />
+            <DeleteOrgButton organizationId={organization.id} organizationName={organization.name} />
+          </div>
+        }
+      />
 
       <h2 className="section-title">Utilisateurs</h2>
       <div className="card" style={{ overflow: "hidden" }}>
-        {orgUsers.length === 0 ? (
-          <EmptyState illustration="users" title="Aucun utilisateur" description="Cette société n'a pas encore d'utilisateur actif." />
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Membre</th>
-                  <th>Email</th>
-                  <th>Rôle</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orgUsers.map((u) => (
-                  <tr key={u.id}>
-                    <td>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <Avatar name={u.fullName} />
-                        <span style={{ fontWeight: 600 }}>{u.fullName}</span>
-                      </div>
-                    </td>
-                    <td style={{ color: "var(--color-text-muted)" }}>{u.email}</td>
-                    <td>{ROLE_LABELS[u.role] ?? u.role}</td>
-                    <td>
-                      <span className={`status-dot ${u.active ? "on" : "off"}`}>{u.active ? "Actif" : "Désactivé"}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <OrgUsersTable
+          organizationId={organization.id}
+          initialUsers={orgUsers.map((u) => ({ id: u.id, fullName: u.fullName, email: u.email, role: u.role, active: u.active }))}
+        />
       </div>
 
       <h2 className="section-title" style={{ margin: "24px 0 12px" }}>Adresses de livraison</h2>

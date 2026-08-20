@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { requireMarinFroidSession } from "@/lib/session-guard";
+import { requireMarinFroidSession, requireMarinFroidAdminSession } from "@/lib/session-guard";
 import { getDb } from "@/lib/db";
-import { orders, orderItems, organizations, deliveryAddresses, orderStatusHistory, products } from "@marin-froid/db";
+import { orders, orderItems, organizations, deliveryAddresses, orderStatusHistory, products, emailLogs } from "@marin-froid/db";
 import { getOrderTotals } from "@/lib/order-totals";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -42,4 +43,35 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     history,
     totalAmount: totals.get(order.id) ?? 0,
   });
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await requireMarinFroidAdminSession();
+  const db = getDb();
+
+  const order = await db.query.orders.findFirst({ where: eq(orders.id, id) });
+  if (!order) return NextResponse.json({ error: "Commande introuvable." }, { status: 404 });
+
+  try {
+    // order_items and order_status_history cascade off orders, but
+    // email_logs references orders with no onDelete — clear those first or
+    // the delete below fails on any order that ever had a tracked email.
+    await db.delete(emailLogs).where(eq(emailLogs.relatedOrderId, id));
+    await db.delete(orders).where(eq(orders.id, id));
+  } catch {
+    return NextResponse.json({ error: "Impossible de supprimer cette commande." }, { status: 409 });
+  }
+
+  await logActivity({
+    actorUserId: session.userId,
+    actorLabel: session.fullName,
+    organizationId: order.organizationId,
+    action: "order_deleted",
+    entityType: "order",
+    entityId: id,
+    summary: `Commande ${order.reference} supprimée`,
+  });
+
+  return NextResponse.json({ ok: true });
 }

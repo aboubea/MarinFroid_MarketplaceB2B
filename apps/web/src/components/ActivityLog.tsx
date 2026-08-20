@@ -23,6 +23,10 @@ const ACTION_LABELS: Record<string, string> = {
   client_suspended: "Société suspendue",
   client_reactivated: "Société réactivée",
   product_deleted: "Produit supprimé",
+  order_deleted: "Commande supprimée",
+  client_deleted: "Société supprimée",
+  staff_deleted: "Collaborateur supprimé",
+  org_user_deleted: "Utilisateur supprimé",
 };
 
 const ACTION_BADGE: Record<string, string> = {
@@ -33,6 +37,10 @@ const ACTION_BADGE: Record<string, string> = {
   client_suspended: "badge-cancelled",
   client_reactivated: "badge-completed",
   product_deleted: "badge-cancelled",
+  order_deleted: "badge-cancelled",
+  client_deleted: "badge-cancelled",
+  staff_deleted: "badge-cancelled",
+  org_user_deleted: "badge-cancelled",
 };
 
 export function ActivityLog() {

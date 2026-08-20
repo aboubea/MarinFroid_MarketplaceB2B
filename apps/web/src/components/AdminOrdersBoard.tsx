@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { IconDownload, IconSearch } from "./icons";
+import { IconDownload, IconSearch, IconTrash } from "./icons";
 import { EmptyState } from "./EmptyState";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
@@ -47,6 +47,7 @@ export function AdminOrdersBoard() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<OrderDetail | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function loadOrders() {
     safeFetch<{ orders: OrderRow[] }>("/api/admin/orders").then((result) => {
@@ -82,6 +83,21 @@ export function AdminOrdersBoard() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
+
+  async function deleteOrder() {
+    if (!detail) return;
+    if (!window.confirm(`Supprimer définitivement la commande ${detail.order.reference} ?`)) return;
+    setDeleting(true);
+    const result = await safeFetch(`/api/admin/orders/${detail.order.id}`, { method: "DELETE" });
+    setDeleting(false);
+    if (!result.ok) {
+      toast.show(result.error ?? "Impossible de supprimer cette commande.", "error");
+      return;
+    }
+    setOrders((prev) => prev.filter((o) => o.id !== detail.order.id));
+    setSelectedId(null);
+    toast.show("Commande supprimée.", "success");
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -155,7 +171,12 @@ export function AdminOrdersBoard() {
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{detail.order.reference}</div>
                 <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>{detail.organizationName}</div>
               </div>
-              <span className={`badge badge-${detail.order.status}`}>{orderStatusLabel(detail.order.status)}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span className={`badge badge-${detail.order.status}`}>{orderStatusLabel(detail.order.status)}</span>
+                <button className="icon-btn danger" title="Supprimer" onClick={deleteOrder} disabled={deleting}>
+                  <IconTrash />
+                </button>
+              </div>
             </div>
 
             {detail.address && (

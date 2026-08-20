@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { orders, orderItems, organizations, orderStatusHistory, deliveryAddresses, products } from "@marin-froid/db";
 import { OrderPreparationTimeline } from "@/components/OrderPreparationTimeline";
+import { DeleteOrderButton } from "@/components/DeleteOrderButton";
 import { PageHeader } from "@/components/PageHeader";
 import { orderStatusLabel } from "@/lib/order-status";
 
@@ -49,7 +50,12 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       <PageHeader
         title={order.reference}
         subtitle={`${organization?.name} · ${new Date(order.createdAt).toLocaleString("fr-FR")}`}
-        action={<span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>}
+        action={
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span className={`badge badge-${order.status}`}>{orderStatusLabel(order.status)}</span>
+            <DeleteOrderButton orderId={order.id} reference={order.reference} />
+          </div>
+        }
       />
 
       <div style={{ marginBottom: 20 }}>
