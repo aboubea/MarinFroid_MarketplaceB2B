@@ -3,11 +3,12 @@ import { randomBytes } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { invitations, organizations } from "@marin-froid/db";
+import { invitations, organizations, users } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
 import { logActivity } from "@/lib/activity";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 const ALLOWED_ROLES = ["org_buyer", "org_viewer"] as const;
 
@@ -26,11 +27,15 @@ export async function POST(request: Request) {
   const organization = await db.query.organizations.findFirst({ where: eq(organizations.id, session.organizationId) });
   if (!organization) return NextResponse.json({ error: "Société introuvable." }, { status: 404 });
 
+  const normalizedEmail = email.toLowerCase().trim();
+  const existingUser = await db.query.users.findFirst({ where: eq(users.email, normalizedEmail) });
+  if (existingUser) return NextResponse.json({ error: "Un compte existe déjà avec cet email." }, { status: 400 });
+
   const token = randomBytes(24).toString("hex");
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
 
   await db.insert(invitations).values({
-    email: email.toLowerCase().trim(),
+    email: normalizedEmail,
     organizationId: session.organizationId,
     role,
     token,
@@ -41,7 +46,7 @@ export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey && (await isNotificationEnabled("invitation_sent", "customer"))) {
     const emailClient = createEmailClient(apiKey);
-    const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+    const baseUrl = getBaseUrl(request);
     const template = invitationEmail({
       organizationName: organization.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,

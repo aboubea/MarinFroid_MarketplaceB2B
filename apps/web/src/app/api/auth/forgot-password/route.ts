@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db";
 import { users } from "@marin-froid/db";
 import { createEmailClient, passwordResetEmail } from "@marin-froid/email";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
     const apiKey = process.env.RESEND_API_KEY;
     if (apiKey) {
       const emailClient = createEmailClient(apiKey);
-      const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+      const baseUrl = getBaseUrl(request);
       const template = passwordResetEmail({ resetUrl: `${baseUrl}/reset-password?token=${token}` });
       await sendTrackedEmail(emailClient, "password_reset", { to: user.email, ...template });
     }
