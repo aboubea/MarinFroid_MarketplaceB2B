@@ -7,6 +7,7 @@ import { invitations, organizations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,7 +26,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey && organization && (await isNotificationEnabled("invitation_sent", "customer"))) {
     const emailClient = createEmailClient(apiKey);
-    const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+    const baseUrl = getBaseUrl(request);
     const template = invitationEmail({
       organizationName: organization.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,

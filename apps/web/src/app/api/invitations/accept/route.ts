@@ -6,6 +6,7 @@ import { hashPassword, createSession } from "@/lib/auth";
 import { createEmailClient, accountActivatedEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 export async function POST(request: Request) {
   const { token, fullName, password } = await request.json();
@@ -22,6 +23,11 @@ export async function POST(request: Request) {
   });
   if (!invitation) {
     return NextResponse.json({ error: "Invitation invalide ou expirée." }, { status: 400 });
+  }
+
+  const existingUser = await db.query.users.findFirst({ where: eq(users.email, invitation.email) });
+  if (existingUser) {
+    return NextResponse.json({ error: "Un compte existe déjà avec cet email. Connectez-vous plutôt." }, { status: 400 });
   }
 
   const [user] = await db
@@ -48,7 +54,7 @@ export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey) {
     const emailClient = createEmailClient(apiKey);
-    const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+    const baseUrl = getBaseUrl(request);
     const template = accountActivatedEmail({ fullName, loginUrl: `${baseUrl}/login` });
     await sendTrackedEmail(emailClient, "account_activated", { to: user.email, ...template });
   }

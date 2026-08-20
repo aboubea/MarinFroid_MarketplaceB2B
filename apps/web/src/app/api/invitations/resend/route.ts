@@ -6,6 +6,7 @@ import { invitations, organizations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { isNotificationEnabled } from "@/lib/notification-settings";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 // Public, self-service resend for someone who has an invitation but lost
 // the link. Always responds { ok: true } regardless of whether the email
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     const apiKey = process.env.RESEND_API_KEY;
     if (apiKey && organization && (await isNotificationEnabled("invitation_sent", "customer"))) {
       const emailClient = createEmailClient(apiKey);
-      const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+      const baseUrl = getBaseUrl(request);
       const template = invitationEmail({
         organizationName: organization.name,
         activationUrl: `${baseUrl}/activate?token=${token}`,

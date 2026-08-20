@@ -6,6 +6,7 @@ import { organizations, invitations } from "@marin-froid/db";
 import { createEmailClient, invitationEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 export async function POST(request: Request) {
   const session = await requireMarinFroidSession();
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey) {
     const emailClient = createEmailClient(apiKey);
-    const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+    const baseUrl = getBaseUrl(request);
     const template = invitationEmail({
       organizationName: org.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,

@@ -7,6 +7,7 @@ import { invitations, organizations, users } from "@marin-froid/db";
 import { createEmailClient, invitationEmail, opsRecipientAddedEmail } from "@marin-froid/email";
 import { logActivity } from "@/lib/activity";
 import { sendTrackedEmail } from "@/lib/email-log";
+import { getBaseUrl } from "@/lib/base-url";
 
 const ALLOWED_ROLES = ["mf_admin", "mf_ops"] as const;
 
@@ -65,6 +66,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const existingUser = await db.query.users.findFirst({ where: eq(users.email, normalizedEmail) });
+  if (existingUser) return NextResponse.json({ error: "Un compte existe déjà avec cet email." }, { status: 400 });
+
   const token = randomBytes(24).toString("hex");
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
 
@@ -80,7 +84,7 @@ export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   if (apiKey) {
     const emailClient = createEmailClient(apiKey);
-    const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+    const baseUrl = getBaseUrl(request);
     const template = invitationEmail({
       organizationName: organization.name,
       activationUrl: `${baseUrl}/activate?token=${token}`,
