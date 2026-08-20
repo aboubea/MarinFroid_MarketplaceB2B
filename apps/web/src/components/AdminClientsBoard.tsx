@@ -41,6 +41,7 @@ export function AdminClientsBoard({ initialOrganizations }: { initialOrganizatio
   const [detail, setDetail] = useState<OrgDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [savingStatus, setSavingStatus] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!selectedId) {
@@ -85,6 +86,21 @@ export function AdminClientsBoard({ initialOrganizations }: { initialOrganizatio
     setDetail({ ...detail, organization: { ...detail.organization, status: nextStatus } });
     setOrganizations((prev) => prev.map((o) => (o.id === detail.organization.id ? { ...o, status: nextStatus } : o)));
     toast.show(nextStatus === "suspended" ? "Société suspendue." : "Société réactivée.", "success");
+  }
+
+  async function deleteOrg() {
+    if (!detail) return;
+    if (!window.confirm(`Supprimer définitivement la société ${detail.organization.name} et tous ses utilisateurs ?`)) return;
+    setDeleting(true);
+    const result = await safeFetch(`/api/admin/clients/${detail.organization.id}`, { method: "DELETE" });
+    setDeleting(false);
+    if (!result.ok) {
+      toast.show(result.error ?? "Impossible de supprimer cette société.", "error");
+      return;
+    }
+    setOrganizations((prev) => prev.filter((o) => o.id !== detail.organization.id));
+    setSelectedId(null);
+    toast.show("Société supprimée.", "success");
   }
 
   return (
@@ -151,9 +167,14 @@ export function AdminClientsBoard({ initialOrganizations }: { initialOrganizatio
                   </div>
                 </div>
 
-                <button className="btn-secondary" style={{ width: "100%", marginBottom: 16 }} onClick={toggleStatus} disabled={savingStatus}>
-                  {detail.organization.status === "suspended" ? "Réactiver la société" : "Suspendre la société"}
-                </button>
+                <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+                  <button className="btn-secondary" style={{ flex: 1 }} onClick={toggleStatus} disabled={savingStatus}>
+                    {detail.organization.status === "suspended" ? "Réactiver" : "Suspendre"}
+                  </button>
+                  <button className="btn-secondary danger" onClick={deleteOrg} disabled={deleting}>
+                    Supprimer
+                  </button>
+                </div>
 
                 <div style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
                   Utilisateurs ({detail.users.length})

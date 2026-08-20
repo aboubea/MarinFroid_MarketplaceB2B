@@ -185,6 +185,8 @@ a.card:hover, .card.interactive:hover {
 }
 .btn-secondary:hover { background: var(--color-bg); border-color: var(--color-text); }
 .btn-secondary:active { transform: scale(0.96); }
+.btn-secondary.danger { color: var(--color-danger); border-color: var(--color-danger-soft); }
+.btn-secondary.danger:hover { background: var(--color-danger-soft); border-color: var(--color-danger); }
 
 .btn-ghost {
   background: transparent;
@@ -515,8 +517,14 @@ a.card:hover, .card.interactive:hover {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* Grid items stretch to the tallest one in their row by default —
+     filling that height (rather than sizing to content) plus the
+     flex-growing link below is what keeps "Ajouter" pinned to the same
+     spot on every card regardless of name/meta text length. */
+  height: 100%;
   transition: box-shadow 0.25s var(--ease), transform 0.25s var(--ease), border-color 0.25s var(--ease);
 }
+.product-tile-link { display: flex; flex-direction: column; min-height: 0; }
 .product-tile:hover {
   box-shadow: var(--shadow-card-hover);
   border-color: transparent;
@@ -532,6 +540,10 @@ a.card:hover, .card.interactive:hover {
   letter-spacing: -0.015em;
   line-height: 1.35;
   color: var(--color-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .product-tile-meta { font-size: 12.5px; color: var(--color-text-muted); }
 .product-tile-price {
@@ -550,8 +562,8 @@ a.card:hover, .card.interactive:hover {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
-  padding: 0 6px;
+  margin-top: auto;
+  padding: 10px 6px 0;
 }
 .product-tile-actions .btn-primary { flex: 1; padding: 11px 16px; }
 

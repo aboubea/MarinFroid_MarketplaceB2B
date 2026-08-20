@@ -6,7 +6,7 @@ import { safeFetch } from "@/lib/safe-fetch";
 import { ListSkeleton } from "./Skeleton";
 import { Avatar } from "./Avatar";
 import { EmptyState } from "./EmptyState";
-import { IconPower, IconSearch, IconUserPlus } from "./icons";
+import { IconPower, IconSearch, IconUserPlus, IconTrash } from "./icons";
 
 interface StaffMember {
   id: string;
@@ -87,6 +87,19 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
       toast.show(result.error ?? "Impossible de mettre à jour le rôle.", "error");
     } else {
       toast.show("Rôle mis à jour.", "success");
+    }
+  }
+
+  async function deleteMember(id: string, name: string) {
+    if (!window.confirm(`Supprimer définitivement ${name} de l'équipe Marin Froid ?`)) return;
+    const previous = members;
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+    const result = await safeFetch(`/api/admin/staff/${id}`, { method: "DELETE" });
+    if (!result.ok) {
+      setMembers(previous);
+      toast.show(result.error ?? "Impossible de supprimer cet utilisateur.", "error");
+    } else {
+      toast.show("Utilisateur supprimé.", "success");
     }
   }
 
@@ -182,13 +195,22 @@ export function StaffManager({ currentUserId }: { currentUserId: string }) {
                     </td>
                     <td style={{ textAlign: "right" }}>
                       {m.id !== currentUserId ? (
-                        <button
-                          className="icon-btn danger"
-                          title={m.active ? "Désactiver" : "Réactiver"}
-                          onClick={() => toggleActive(m.id, !m.active)}
-                        >
-                          <IconPower />
-                        </button>
+                        <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                          <button
+                            className="icon-btn danger"
+                            title={m.active ? "Désactiver" : "Réactiver"}
+                            onClick={() => toggleActive(m.id, !m.active)}
+                          >
+                            <IconPower />
+                          </button>
+                          <button
+                            className="icon-btn danger"
+                            title="Supprimer"
+                            onClick={() => deleteMember(m.id, m.fullName)}
+                          >
+                            <IconTrash />
+                          </button>
+                        </div>
                       ) : (
                         <span style={{ fontSize: 12, color: "var(--color-text-faint)" }}>—</span>
                       )}

@@ -50,7 +50,7 @@ export function ProductTile({
 
   return (
     <div className="product-tile">
-      <Link href={`/catalog/${productId}`} style={{ display: "block" }}>
+      <Link href={`/catalog/${productId}`} className="product-tile-link">
         <div className="product-thumb">
           {imageUrl ? (
             <Image src={imageUrl} alt={name} fill sizes="(max-width: 560px) 45vw, (max-width: 960px) 30vw, 220px" style={{ objectFit: "cover" }} />
