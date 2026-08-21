@@ -6,6 +6,7 @@ import { organizations, users, orders, orderItems, products } from "@marin-froid
 import { Avatar } from "@/components/Avatar";
 import { orderStatusLabel } from "@/lib/order-status";
 import { getOrderTotals } from "@/lib/order-totals";
+import { getInternalOrganizationIds } from "@/lib/organizations";
 import { PageHeader } from "@/components/PageHeader";
 
 export default async function AdminOverviewPage() {
@@ -18,14 +19,15 @@ export default async function AdminOverviewPage() {
   const openStatuses = ["submitted", "acknowledged", "processing", "shipped"] as const;
 
   const [
-    activeOrgs,
+    rawActiveOrgs,
     activeUsers,
     orders7d,
     items30d,
-    orgsToWatch,
+    rawOrgsToWatch,
     recentOrders,
     ordersInProgress,
     lateOrders,
+    internalOrgIds,
   ] = await Promise.all([
     db.query.organizations.findMany({ where: eq(organizations.status, "active") }),
     db.query.users.findMany({ where: eq(users.active, true) }),
@@ -58,7 +60,11 @@ export default async function AdminOverviewPage() {
       limit: 6,
       orderBy: [orders.createdAt],
     }),
+    getInternalOrganizationIds(),
   ]);
+
+  const activeOrgs = rawActiveOrgs.filter((o) => !internalOrgIds.has(o.id));
+  const orgsToWatch = rawOrgsToWatch.filter((o) => !internalOrgIds.has(o.id));
 
   const lateOrdersWithOrg = await Promise.all(
     lateOrders.map(async (o) => ({
