@@ -15,6 +15,7 @@ export async function GET() {
       sku: products.sku,
       unit: products.unit,
       origin: products.origin,
+      brand: products.brand,
       indicativePrice: products.indicativePrice,
       active: products.active,
       categoryId: products.categoryId,
@@ -35,7 +36,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const session = await requireMarinFroidSession();
   const body = await request.json();
-  const { sku, name, categoryId, unit, origin, packaging, indicativePrice, storageInfo, validityInfo, specifications, description } = body;
+  const { sku, name, categoryId, unit, origin, brand, packaging, indicativePrice, storageInfo, validityInfo, specifications, description } = body;
 
   if (!sku || !name) {
     return NextResponse.json({ error: "Référence et nom requis." }, { status: 400 });
@@ -55,6 +56,7 @@ export async function POST(request: Request) {
       categoryId: categoryId || null,
       unit: unit || "unité",
       origin: origin || null,
+      brand: brand || null,
       packaging: packaging || null,
       indicativePrice: indicativePrice || null,
       storageInfo: storageInfo || null,
