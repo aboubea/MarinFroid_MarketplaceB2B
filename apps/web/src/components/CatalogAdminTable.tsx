@@ -14,6 +14,8 @@ interface ProductRow {
   name: string;
   sku: string;
   unit: string;
+  origin: string | null;
+  brand: string | null;
   indicativePrice: string | null;
   active: boolean;
   categoryId: string | null;
@@ -103,6 +105,8 @@ export function CatalogAdminTable() {
                   <th>Produit</th>
                   <th>Référence</th>
                   <th>Catégorie</th>
+                  <th>Marque</th>
+                  <th>Provenance</th>
                   <th>Photo</th>
                   <th>Prix indicatif</th>
                   <th>Statut</th>
@@ -117,6 +121,8 @@ export function CatalogAdminTable() {
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{p.sku}</td>
                     <td style={{ color: "var(--color-text-muted)" }}>{p.categoryName ?? "—"}</td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{p.brand ?? "—"}</td>
+                    <td style={{ color: "var(--color-text-muted)" }}>{p.origin ?? "—"}</td>
                     <td>
                       <span className={`status-dot ${p.hasPhoto ? "on" : "off"}`}>{p.hasPhoto ? "Oui" : "Non"}</span>
                     </td>

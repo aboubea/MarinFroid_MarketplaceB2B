@@ -114,6 +114,7 @@ export const products = pgTable("products", {
   description: text("description"),
   unit: text("unit").notNull().default("unité"),
   origin: text("origin"),
+  brand: text("brand"),
   packaging: text("packaging"),
   indicativePrice: numeric("indicative_price", { precision: 10, scale: 2 }),
   storageInfo: text("storage_info"),

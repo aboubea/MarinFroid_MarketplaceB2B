@@ -28,6 +28,7 @@ interface ProductData {
   categoryId: string | null;
   unit: string;
   origin: string | null;
+  brand: string | null;
   packaging: string | null;
   indicativePrice: string | null;
   storageInfo: string | null;
@@ -54,6 +55,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
   const [categoryId, setCategoryId] = useState(existing?.categoryId ?? "");
   const [unit, setUnit] = useState(existing?.unit ?? "unité");
   const [origin, setOrigin] = useState(existing?.origin ?? "");
+  const [brand, setBrand] = useState(existing?.brand ?? "");
   const [packaging, setPackaging] = useState(existing?.packaging ?? "");
   const [indicativePrice, setIndicativePrice] = useState(existing?.indicativePrice ?? "");
   const [storageInfo, setStorageInfo] = useState(existing?.storageInfo ?? "");
@@ -96,7 +98,7 @@ export function ProductForm({ existing, images: initialImages, documents: initia
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const payload = { sku, name, categoryId: categoryId || null, unit, origin, packaging, indicativePrice: indicativePrice || null, storageInfo, validityInfo, specifications, description, active };
+    const payload = { sku, name, categoryId: categoryId || null, unit, origin, brand, packaging, indicativePrice: indicativePrice || null, storageInfo, validityInfo, specifications, description, active };
 
     const result = await safeFetch<{ product: { id: string } }>(
       isEdit ? `/api/admin/catalog/products/${existing!.id}` : "/api/admin/catalog/products",
@@ -248,6 +250,12 @@ export function ProductForm({ existing, images: initialImages, documents: initia
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Provenance</label>
               <input className="input" value={origin} onChange={(e) => setOrigin(e.target.value)} />
             </div>
+            <div>
+              <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Marque</label>
+              <input className="input" value={brand} onChange={(e) => setBrand(e.target.value)} />
+            </div>
+          </div>
+          <div className="grid-split-2" style={{ gap: 10, marginBottom: 10 }}>
             <div>
               <label style={{ fontSize: 12, color: "var(--color-text-muted)", display: "block", marginBottom: 4 }}>Stockage</label>
               <input className="input" value={storageInfo} onChange={(e) => setStorageInfo(e.target.value)} />
