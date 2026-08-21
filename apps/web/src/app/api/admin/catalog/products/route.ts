@@ -23,7 +23,12 @@ export async function GET() {
     .leftJoin(productCategories, eq(productCategories.id, products.categoryId))
     .orderBy(desc(products.createdAt));
 
-  return NextResponse.json({ products: list });
+  const images = await db.query.productImages.findMany({ columns: { productId: true } });
+  const productsWithPhoto = new Set(images.map((img) => img.productId));
+
+  return NextResponse.json({
+    products: list.map((p) => ({ ...p, hasPhoto: productsWithPhoto.has(p.id) })),
+  });
 }
 
 export async function POST(request: Request) {
