@@ -27,6 +27,8 @@ const ACTION_LABELS: Record<string, string> = {
   client_deleted: "Société supprimée",
   staff_deleted: "Collaborateur supprimé",
   org_user_deleted: "Utilisateur supprimé",
+  staff_role_updated: "Rôle modifié",
+  permissions_updated: "Permissions modifiées",
 };
 
 const ACTION_BADGE: Record<string, string> = {
@@ -41,6 +43,8 @@ const ACTION_BADGE: Record<string, string> = {
   client_deleted: "badge-cancelled",
   staff_deleted: "badge-cancelled",
   org_user_deleted: "badge-cancelled",
+  staff_role_updated: "badge-processing",
+  permissions_updated: "badge-processing",
 };
 
 export function ActivityLog() {
