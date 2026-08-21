@@ -14,6 +14,7 @@ export async function GET() {
       name: products.name,
       sku: products.sku,
       unit: products.unit,
+      origin: products.origin,
       indicativePrice: products.indicativePrice,
       active: products.active,
       categoryId: products.categoryId,
