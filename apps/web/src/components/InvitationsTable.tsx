@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { EmptyState } from "./EmptyState";
-import { IconSearch } from "./icons";
+import { IconSearch, IconTrash } from "./icons";
 import { ListSkeleton } from "./Skeleton";
 import { useToast } from "./Toast";
 import { safeFetch } from "@/lib/safe-fetch";
@@ -84,6 +84,19 @@ export function InvitationsTable() {
     }
   }
 
+  async function handleDelete(id: string, email: string) {
+    if (!window.confirm(`Supprimer définitivement l'invitation envoyée à ${email} ?`)) return;
+    setBusyId(id);
+    const result = await safeFetch(`/api/admin/invitations/${id}`, { method: "DELETE" });
+    setBusyId(null);
+    if (result.ok) {
+      setInvitations((prev) => prev.filter((i) => i.id !== id));
+      toast.show("Invitation supprimée.", "success");
+    } else {
+      toast.show(result.error ?? "Impossible de supprimer l'invitation.", "error");
+    }
+  }
+
   return (
     <div>
       <div className="search-input-wrap" style={{ marginBottom: 16, maxWidth: 360 }}>
@@ -132,6 +145,14 @@ export function InvitationsTable() {
                               Annuler
                             </button>
                           )}
+                          <button
+                            className="icon-btn danger"
+                            title="Supprimer"
+                            disabled={busyId === inv.id}
+                            onClick={() => handleDelete(inv.id, inv.email)}
+                          >
+                            <IconTrash />
+                          </button>
                         </div>
                       </td>
                     </tr>
