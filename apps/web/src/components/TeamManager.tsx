@@ -69,6 +69,22 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
     }
   }
 
+  async function changeRole(id: string, role: "org_admin" | "org_buyer" | "org_viewer") {
+    const previous = members;
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, role } : m)));
+    const result = await safeFetch(`/api/team/users/${id}/role`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role }),
+    });
+    if (!result.ok) {
+      setMembers(previous);
+      toast.show(result.error ?? "Impossible de mettre à jour le rôle.", "error");
+    } else {
+      toast.show("Rôle mis à jour.", "success");
+    }
+  }
+
   async function toggleActive(id: string, active: boolean) {
     const previous = members;
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, active } : m)));
@@ -157,7 +173,22 @@ export function TeamManager({ currentUserId }: { currentUserId: string }) {
                       </div>
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{m.email}</td>
-                    <td>{ROLE_LABELS[m.role] ?? m.role}</td>
+                    <td>
+                      {m.id === currentUserId ? (
+                        ROLE_LABELS[m.role] ?? m.role
+                      ) : (
+                        <select
+                          className="input"
+                          style={{ width: "auto", fontSize: 12.5, padding: "6px 10px" }}
+                          value={m.role}
+                          onChange={(e) => changeRole(m.id, e.target.value as "org_admin" | "org_buyer" | "org_viewer")}
+                        >
+                          <option value="org_buyer">Acheteur</option>
+                          <option value="org_viewer">Lecture / administratif</option>
+                          <option value="org_admin">Administrateur</option>
+                        </select>
+                      )}
+                    </td>
                     <td>
                       {m.role === "org_admin" ? (
                         <span style={{ fontSize: 12, color: "var(--color-text-faint)" }}>Oui</span>
