@@ -18,6 +18,7 @@ interface ProductRow {
   active: boolean;
   categoryId: string | null;
   categoryName: string | null;
+  hasPhoto: boolean;
 }
 
 export function CatalogAdminTable() {
@@ -26,6 +27,7 @@ export function CatalogAdminTable() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [photoFilter, setPhotoFilter] = useState<"all" | "with" | "without">("all");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,9 +60,10 @@ export function CatalogAdminTable() {
     return products.filter((p) => {
       const matchesQuery = !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q);
       const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? p.active : !p.active);
-      return matchesQuery && matchesStatus;
+      const matchesPhoto = photoFilter === "all" || (photoFilter === "with" ? p.hasPhoto : !p.hasPhoto);
+      return matchesQuery && matchesStatus && matchesPhoto;
     });
-  }, [products, query, statusFilter]);
+  }, [products, query, statusFilter, photoFilter]);
 
   return (
     <div>
@@ -80,6 +83,11 @@ export function CatalogAdminTable() {
           <button className={`pill-filter ${statusFilter === "active" ? "active" : ""}`} onClick={() => setStatusFilter("active")}>Actives</button>
           <button className={`pill-filter ${statusFilter === "inactive" ? "active" : ""}`} onClick={() => setStatusFilter("inactive")}>Désactivées</button>
         </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className={`pill-filter ${photoFilter === "all" ? "active" : ""}`} onClick={() => setPhotoFilter("all")}>Toutes photos</button>
+          <button className={`pill-filter ${photoFilter === "with" ? "active" : ""}`} onClick={() => setPhotoFilter("with")}>Avec photo</button>
+          <button className={`pill-filter ${photoFilter === "without" ? "active" : ""}`} onClick={() => setPhotoFilter("without")}>Sans photo</button>
+        </div>
       </div>
 
       <div className="card" style={{ overflow: "hidden" }}>
@@ -95,6 +103,7 @@ export function CatalogAdminTable() {
                   <th>Produit</th>
                   <th>Référence</th>
                   <th>Catégorie</th>
+                  <th>Photo</th>
                   <th>Prix indicatif</th>
                   <th>Statut</th>
                   <th style={{ textAlign: "right" }}>Actions</th>
@@ -108,6 +117,9 @@ export function CatalogAdminTable() {
                     </td>
                     <td style={{ color: "var(--color-text-muted)" }}>{p.sku}</td>
                     <td style={{ color: "var(--color-text-muted)" }}>{p.categoryName ?? "—"}</td>
+                    <td>
+                      <span className={`status-dot ${p.hasPhoto ? "on" : "off"}`}>{p.hasPhoto ? "Oui" : "Non"}</span>
+                    </td>
                     <td>{p.indicativePrice ? `${Number(p.indicativePrice).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} / ${p.unit}` : "—"}</td>
                     <td><span className={`status-dot ${p.active ? "on" : "off"}`}>{p.active ? "Active" : "Désactivée"}</span></td>
                     <td style={{ textAlign: "right" }}>
